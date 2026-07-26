@@ -1,0 +1,23 @@
+<div class="flex flex-col gap-1 w-full">
+  @if (label()) {
+    <label [for]="inputId()" class="text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300">
+      {{ label() }}
+    </label>
+  }
+
+  <tui-textfield
+    class="w-full !text-xs sm:!text-sm textfield-compact"
+    [iconStart]="iconStart()"
+    [iconEnd]="iconEnd()"
+    [tuiTextfieldSize]="size()"
+  >
+    <input
+      tuiInput
+      [id]="inputId()"
+      [type]="type()"
+      [placeholder]="placeholder()"
+      [formControl]="control()"
+      class="!text-xs sm:!text-sm"
+    />
+  </tui-textfield>
+</div>

@@ -1,0 +1,121 @@
+<div class="flex flex-col h-screen h-[100dvh]" style="background-color: var(--bg)">
+  <header
+    class="relative z-20 h-14 md:h-16 border-b flex items-center"
+    style="border-color: var(--line); background-color: var(--bg)"
+  ></header>
+
+  <main class="flex-1 min-h-0 relative">
+    <div class="admin-grid-bg"></div>
+    <div
+      class="absolute rounded-full blur-[80px] w-[520px] h-[520px] top-[-160px] right-[-140px] pointer-events-none"
+      style="background-color: var(--mint); opacity: 0.2"
+    ></div>
+
+    <div
+      class="relative z-10 mx-auto max-w-[1200px] h-full px-4 sm:px-5 md:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center py-6 sm:py-8 md:py-10"
+    >
+      <section class="lg:col-span-6 hidden lg:block font-sans">
+        <h1
+          class="mt-6 text-[36px] xl:text-[48px] leading-[1.05] font-bold tracking-tight"
+          style="color: var(--ink)"
+        >
+          Run the floor.<br />
+          <span style="color: var(--mint-2)">Every ticket, every technician.</span>
+        </h1>
+        <p class="mt-5 max-w-md text-[15px] leading-relaxed" style="color: var(--ink-dim)">
+          Sign in to your Voltrix Ops console — assign requests, track technicians on the map, and
+          keep installations & repairs on time.
+        </p>
+
+        <ul
+          class="mt-8 grid grid-cols-1 gap-3 max-w-md text-[13.5px] font-medium"
+          style="color: var(--ink)"
+        >
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full" style="background-color: var(--mint)"></span>
+            Assign tickets in one click
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full" style="background-color: var(--mint)"></span>
+            Live technician location & ETA
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full" style="background-color: var(--mint)"></span> SLA
+            alerts before a customer notices
+          </li>
+        </ul>
+      </section>
+
+      <!-- RIGHT (CARD) -->
+      <section class="lg:col-span-6 flex justify-center lg:justify-end font-sans w-full">
+        <div
+          class="w-full max-w-[300px] sm:max-w-[240px] lg:max-w-[380px] p-5 sm:p- md:p-5 rounded-xl sm:rounded-2xl shadow-2xl"
+          style="background-color: var(--card-bg); color: var(--ink); border: 1px solid var(--line)"
+        >
+          <h2
+            class="mt-2 sm:mt-3 text-[20px] sm:text-[22px] md:text-[24px] font-bold tracking-tight"
+            style="color: var(--ink)"
+          >
+            Welcome back
+          </h2>
+          <p class="mt-1 text-[12.5px] sm:text-[13.5px]" style="color: var(--ink-dim)">
+            Enter your operator credentials to continue.
+          </p>
+
+          <form class="mt-4 flex flex-col" onsubmit="event.preventDefault()">
+            <app-input-text
+              class="mb-2"
+              [control]="signingIn.controls.username"
+              label="Username"
+              placeholder="Enter your username"
+              iconStart="@tui.user"
+            ></app-input-text>
+
+            <app-input-password
+              class="mb-2"
+              [control]="signingIn.controls.password"
+              label="Password"
+              placeholder="••••••••"
+              iconStart="@tui.lock"
+            ></app-input-password>
+
+            <span class="text-[10px] text-red-600 ml-auto"> 
+              {{errors[0]}}
+            </span>
+
+            <button
+            (click)="submit()"
+              tuiButton
+              appearance="primary"
+              size="m"
+              type="submit"
+              class="mt-3 w-full !text-sm !bg-[#395B64] !text-white !rounded-[10px] !h-[34px] !font-semibold hover:!bg-[#2f4c54] active:!bg-[#263e45] disabled:!bg-[#395B64] disabled:!opacity-50 transition-colors"
+              [ngClass]="{'hover:cursor-pointer': signingIn.valid}"
+              [disabled]="signingIn.invalid"
+            >
+              Sign In
+            </button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer
+    class="relative z-25 border-t py-2 sm:py-3 overflow-hidden font-mono"
+    style="border-color: var(--line); background-color: var(--bg-2)"
+  >
+    <div
+      class="flex gap-[3rem] whitespace-nowrap text-[10px] sm:text-[12px] font-medium uppercase tracking-[0.15em] sm:tracking-[0.2em]"
+      style="color: var(--ink-dim)"
+    >
+      <div class="flex gap-6 sm:gap-10 items-center pr-10">
+        <span style="color: var(--ink)">Monitor</span><span>·</span>
+        <span style="color: var(--mint-2)">Assign</span><span>·</span>
+        <span style="color: var(--ink)">Track live location</span><span>·</span>
+        <span style="color: var(--mint-2)">Resolve on time</span>
+      </div>
+    </div>
+  </footer>
+</div>

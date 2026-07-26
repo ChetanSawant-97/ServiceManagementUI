@@ -1,12 +1,22 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TuiLoader, TuiRoot } from '@taiga-ui/core';
+import { ThemeService } from './common/home/services/theme-service';
+import { UiService } from './common/UiUtility.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet,TuiRoot,TuiLoader],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('system-management');
+
+  private themeService = inject(ThemeService);
+  
+  // Expose the signal to your HTML template
+  readonly currentTheme = this.themeService.currentTheme;
+
+  public uiUtilityService = inject(UiService);
+
 }

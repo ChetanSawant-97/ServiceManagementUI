@@ -1,0 +1,84 @@
+:host {
+    ::ng-deep {
+      [tuiButton] {
+        font-size: 11px !important;
+        line-height: 1.2 !important;
+        padding-inline: 8px !important;
+        gap: 6px;
+      }
+  
+      [tuiButton] .t-icon,
+      [tuiButton] tui-icon {
+        font-size: 16px !important;
+      }
+
+      .t-nav-content{
+        overflow: hidden !important;
+      }
+    }
+  }
+
+  :host {
+    --sidebar-bg: #061E29;
+    --sidebar-text: #cbd5e1;
+    --sidebar-text-dim: #94a3b8;
+    --sidebar-hover-bg: #334155;
+    --sidebar-active-bg: #312e81;
+    --sidebar-active-text: #a5b4fc;
+    --sidebar-border: #334155;
+  }
+  .sidebar-root {
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
+  
+    ::ng-deep {
+      // Base state for every nav button/link
+      [tuiButton] {
+        background-color: transparent !important;
+        color: var(--sidebar-text) !important;
+        border-radius: 8px;
+        transition: background-color 0.15s ease, color 0.15s ease;
+  
+        // Icon color follows text color
+        tui-icon,
+        .t-icon {
+          color: var(--sidebar-text) !important;
+        }
+  
+        &:hover {
+          background-color: var(--sidebar-hover-bg) !important;
+          color: var(--sidebar-text) !important;
+        }
+      }
+  
+      // Active route styling
+      a.nav-active[tuiButton] {
+        background-color: var(--sidebar-active-bg) !important;
+        color: var(--sidebar-active-text) !important;
+        font-weight: 600;
+  
+        tui-icon,
+        .t-icon {
+          color: var(--sidebar-active-text) !important;
+        }
+      }
+  
+      hr {
+        border-color: var(--sidebar-border);
+        margin: 8px 0;
+      }
+    }
+    
+  }
+
+  :host {
+    ::ng-deep {
+      aside.hidden,
+      [tuiNavigationAside].hidden {
+        display: flex !important;
+      }
+    }
+  }
+
+  
+  

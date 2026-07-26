@@ -1,0 +1,68 @@
+<aside class="h-full max-w-36 lg:max-w-52 overflow-hidden sidebar-root shrink-0" [tuiNavigationAside]="expanded()">    
+    <header>
+        <button
+            tuiButton
+            appearance="flat"
+            size="xs"
+            [tuiHint]="''"
+            [tuiHintManual]="false"
+            tuiAsideItem
+            type="button"
+            [iconStart]="expanded() ? '@tui.chevron-left' : '@tui.chevron-right'"
+            (click)="handleToggle()"
+        >
+            <span class="text-xs">{{ expanded() ? 'Collapse' : '' }}</span>
+        </button>
+    </header>
+
+    @for (group of filteredNavigation(); track group.title) {
+        @for (item of group.items; track item.name) {
+            @if (item.subpages && item.subpages.length > 0) {
+                <button
+                    tuiButton
+                    appearance="flat"
+                    size="xs"
+                    tuiAsideItem
+                    tuiChevron
+                    type="button"
+                    [iconStart]="item.icon"
+                    (click)="toggleSubmenu(item.name)"
+                >
+                    <span class="text-xs truncate">{{ item.name }}</span>
+                </button>
+
+                @if (expanded() && openSubmenu() === item.name) {
+                    <div class="flex flex-col w-full">
+                        @for (sub of item.subpages; track sub.route) {
+                            <a
+                                tuiButton
+                                appearance="flat"
+                                size="xs"
+                                tuiAsideItem
+                                [iconStart]="sub.icon"
+                                class="ml-4"
+                                [routerLink]="sub.route"
+                            >
+                                <span class="text-[11px] truncate">{{ sub.name }}</span>
+                            </a>
+                        }
+                    </div>
+                }
+            } @else {
+                <a
+                    tuiButton
+                    appearance="flat"
+                    size="xs"
+                    tuiAsideItem
+                    [iconStart]="item.icon"
+                    [routerLink]="item.route"
+                >
+                    <span class="text-xs truncate">{{ item.name }}</span>
+                </a>
+            }
+        }
+        @if (!$last) {
+            <hr>
+        }
+    }
+</aside>
