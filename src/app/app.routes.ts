@@ -5,6 +5,7 @@ import { SalesPersonnel } from './sales/sales-personnel/sales-personnel';
 import { Designation } from './sales/designation/designation';
 import { TripDetails } from './sales/trip-details/trip-details';
 import { OrdersManagement } from './orders/orders-management/orders-management';
+import { DealerManagement } from './dealer/dealer-management/dealer-management';
 
 export const routes: Routes = [
     {
@@ -35,6 +36,10 @@ export const routes: Routes = [
             {
                 path : 'orders',
                 component : OrdersManagement
+            },
+            {
+                path : 'dealer',
+                component : DealerManagement
             }
         ]
     },

@@ -42,8 +42,8 @@ export class StaffLogin implements OnInit{
  
   submit(): void {
     this.uiUtilityService.showLoader();
-    setTimeout(()=>{},5000);
+    setTimeout(()=>{},3000);
     this.uiUtilityService.hideLoader();
-    this.uiUtilityService.showInfo('Snackbar Works');
+    this.uiUtilityService.showSuccess('Snackbar Works');
   }
 }

@@ -4,10 +4,11 @@ import { TuiInputDirective, TuiTextfield } from '@taiga-ui/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-input-text',
-  imports: [ReactiveFormsModule, TuiTextfield, TuiInputDirective],
+  imports: [ReactiveFormsModule, TuiTextfield, TuiInputDirective,CommonModule],
   templateUrl: './input-text.html',
   styleUrl: './input-text.scss'
 })
@@ -16,6 +17,7 @@ export class InputText {
 
   control = input.required<FormControl>();
   label = input<string>('');
+  labelStyleClasses = input<string>('');
   placeholder = input<string>('');
   type = input<string>('text');
   

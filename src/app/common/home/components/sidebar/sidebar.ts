@@ -88,7 +88,7 @@ export class Sidebar {
         },
         { 
           name: 'Dealer', 
-          route: '/groups', 
+          route: '/dealer', 
           icon: '@tui.store', 
           roles: ['ADMIN', 'SALES'] 
         },

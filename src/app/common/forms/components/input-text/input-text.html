@@ -1,12 +1,12 @@
 <div class="flex flex-col gap-1 w-full">
   @if (label()) {
-    <label [for]="inputId()" class="text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300">
+    <label [for]="inputId()" class="text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300" [ngClass]="labelStyleClasses()">
       {{ label() }}
     </label>
   }
 
   <tui-textfield
-    class="w-full !text-xs sm:!text-sm textfield-compact"
+    class="w-full textfield-compact"
     [iconStart]="iconStart()"
     [iconEnd]="iconEnd()"
     [tuiTextfieldSize]="size()"
@@ -17,7 +17,6 @@
       [type]="type()"
       [placeholder]="placeholder()"
       [formControl]="control()"
-      class="!text-xs sm:!text-sm"
     />
   </tui-textfield>
 </div>

@@ -1,1 +1,42 @@
-<p>dealer-management works!</p>
+<!-- Outer wrapper: column layout, full height -->
+<div class="flex flex-col h-full w-full border-rounded-xl">
+
+    <!-- TOP DIV: button / form wrapper (height = content) -->
+    <div class="w-full bg-white border-b border-gray-200 px-4 rounded-xl">
+  
+      <!-- Header row: title always visible, button toggles between + and X -->
+      <div class="flex items-center justify-between" [class.mb-3]="isOpen">
+        <h2 class="text-lg font-semibold text-gray-800">Dealer Management</h2>
+  
+        <button
+          *ngIf="!isOpen"
+          (click)="openForm()"
+          class="w-12 h-12 hover:cursor-pointer"
+        >
+            <tui-icon icon="@tui.circle-plus" [style.fontSize]="'30px'" [style.color]="'var(--tui-text-positive)'" />
+        </button>
+  
+        <button
+          *ngIf="isOpen"
+          (click)="closeForm()"
+          class="w-12 h-12  hover:cursor-pointer"
+        >
+            <tui-icon icon="@tui.circle-x" [style.fontSize]="'30px'" [style.color]="'var(--tui-text-negative)'" />
+        </button>
+      </div>
+  
+      <!-- Form fields: only shown when open -->
+      <form *ngIf="isOpen" class="space-y-3 w-full">
+        <div class="w-full flex">
+            <app-input-text class="w-[20%] block" [control]="formGroup.controls.name" [label]="'Dealer Name'" [labelStyleClasses]="'!font-medium !text-teal-900 '"  ></app-input-text>
+        </div>
+      </form>
+  
+    </div>
+  
+    <!-- BOTTOM DIV: takes remaining space -->
+    <div class="flex-1 overflow-auto bg-gray-50 p-4">
+      <p class="text-gray-500">Remaining space content goes here...</p>
+    </div>
+  
+  </div>
