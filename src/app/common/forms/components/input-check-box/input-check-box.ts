@@ -1,11 +1,10 @@
 import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { TuiCheckbox } from '@taiga-ui/core';
-import {  } from '@taiga-ui/kit';
+import { Checkbox } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-input-check-box',
-  imports: [TuiCheckbox, ReactiveFormsModule],
+  imports: [Checkbox, ReactiveFormsModule],
   templateUrl: './input-check-box.html',
   styleUrl: './input-check-box.scss',
 })

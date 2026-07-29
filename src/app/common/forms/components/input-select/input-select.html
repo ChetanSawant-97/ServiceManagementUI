@@ -1,24 +1,15 @@
 <div class="flex flex-col gap-1 w-full">
-    @if (label()) {
-      <label [for]="selectId()" class="text-sm font-medium text-surface-700 dark:text-surface-300">
-        {{ label() }}
-      </label>
-    }
-    
-    <tui-textfield 
-      class="w-full"
-      tuiChevron
-      [tuiTextfieldSize]="size()"
-    >
-      <input
-        tuiSelect
-        [id]="selectId()"
-        [placeholder]="placeholder()"
-        [formControl]="control()"
-      />
-      <tui-data-list-wrapper
-        *tuiDropdown
-        [items]="items()"
-      />
-    </tui-textfield>
-  </div>
+  @if (label()) {
+    <label [for]="selectId()" class="text-sm font-medium text-surface-700 dark:text-surface-300">
+      {{ label() }}
+    </label>
+  }
+  
+  <p-select 
+    [formControl]="control()" 
+    [options]="items()" 
+    [inputId]="selectId()"
+    [placeholder]="placeholder()"
+    class="w-full"
+  ></p-select>
+</div>

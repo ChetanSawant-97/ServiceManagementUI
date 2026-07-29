@@ -1,12 +1,13 @@
-<tui-root [attr.data-theme]="currentTheme()">
+<div [attr.data-theme]="currentTheme()" class="h-screen w-screen flex flex-col">
   
-  <!-- The loader wraps the router outlet to block the entire screen -->
-  <tui-loader 
-    [loading]="uiUtilityService.isGlobalLoading()" 
-    [overlay]="true" 
-    size="xxl"
-  >
-    <router-outlet/>
-  </tui-loader>
+  <p-blockui [blocked]="uiUtilityService.isGlobalLoading()">
+      <!-- Updated to the strict v18 kebab-case selector -->
+      <p-progress-spinner 
+          strokeWidth="4" 
+          animationDuration=".5s">
+      </p-progress-spinner>
+  </p-blockui>
 
-</tui-root>
+  <router-outlet></router-outlet>
+
+</div>

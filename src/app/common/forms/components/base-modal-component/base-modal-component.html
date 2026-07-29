@@ -1,0 +1,31 @@
+<p-dialog 
+  [header]="header()" 
+  [(visible)]="visible" 
+  [modal]="true" 
+  [style]="style()"
+  [breakpoints]="breakpoints()"
+  [dismissableMask]="dismissableMask()"
+  [closable]="closable()"
+  [appendTo]="'body'"
+  [pt]="{
+    header: { class: '!px-[20px] !py-[4px] rounded-t-xl' },
+    title: { class: '!text-[18px] font-bold text-gray-900' },
+    headerActions: { class: 'gap-2' }
+  }"
+>
+  
+  <div class="flex flex-col w-full py-2">
+    <ng-content></ng-content>
+  </div>
+
+  <ng-template #footer>
+    @if (showDefaultFooter()) {
+      <div class="flex justify-end gap-2 pt-2">
+        <p-button [label]="cancelLabel()" severity="secondary" (onClick)="onCancel()" />
+        <p-button [label]="confirmLabel()" [loading]="loading()" (onClick)="onConfirm()" />
+      </div>
+    } @else {
+      <ng-content select="[modal-footer]"></ng-content>
+    }
+  </ng-template>
+</p-dialog>

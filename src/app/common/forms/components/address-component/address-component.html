@@ -1,0 +1,92 @@
+<form [formGroup]="addressForm"
+    class="flex flex-col gap-4 w-full">
+
+    <!-- Row 1: First Line -->
+    <div class="flex flex-col gap-1 w-full">
+        <label for="firstLine" class="text-xs sm:text-sm font-[500] [font-family:var(--font-sans)] text-[var(--ink-2)]">
+            Address Line 1 <span class="text-red-500">*</span>
+        </label>
+        <input pInputText id="firstLine" formControlName="firstLine" placeholder="House No, Building, Street Name"
+            class="w-full !text-xs sm:!text-sm" />
+        @if (addressForm.get('firstLine')?.invalid && addressForm.get('firstLine')?.touched) {
+        <small class="text-red-500 text-xs">First line is required.</small>
+        }
+    </div>
+
+    <!-- Row 2: Second Line -->
+    <div class="flex flex-col gap-1 w-full">
+        <label for="secondLine"
+            class="text-xs sm:text-sm font-[500] [font-family:var(--font-sans)] text-[var(--ink-2)]">
+            Address Line 2
+        </label>
+        <input pInputText id="secondLine" formControlName="secondLine"
+            placeholder="Apartment, Suite, Unit, Building Floor" class="w-full !text-xs sm:!text-sm" />
+    </div>
+
+    <!-- Row 3: Landmark & Area -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+        <div class="flex flex-col gap-1 w-full">
+            <label for="landMark"
+                class="text-xs sm:text-sm font-[500] [font-family:var(--font-sans)] text-[var(--ink-2)]">
+                Landmark
+            </label>
+            <input pInputText id="landMark" formControlName="landMark" placeholder="e.g., Near City Mall"
+                class="w-full !text-xs sm:!text-sm" />
+        </div>
+        <div class="flex flex-col gap-1 w-full">
+            <label for="area" class="text-xs sm:text-sm font-[500] [font-family:var(--font-sans)] text-[var(--ink-2)]">
+                Area / Locality <span class="text-red-500">*</span>
+            </label>
+            <input pInputText id="area" formControlName="area" placeholder="e.g., Civil Lines"
+                class="w-full !text-xs sm:!text-sm" />
+            @if (addressForm.get('area')?.invalid && addressForm.get('area')?.touched) {
+            <small class="text-red-500 text-xs">Area is required.</small>
+            }
+        </div>
+    </div>
+
+    <!-- Row 4: State, District/City & Pincode -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+
+        <!-- State Dropdown -->
+        <div class="flex flex-col gap-1 w-full">
+            <label for="state" class="text-xs sm:text-sm font-[500] [font-family:var(--font-sans)] text-[var(--ink-2)]">
+                State <span class="text-red-500">*</span>
+            </label>
+            <p-select formControlName="state" inputId="state" [options]="statesList" optionLabel="state"
+                optionValue="state" placeholder="Select State" styleClass="w-full !text-xs sm:!text-sm"
+                appendTo="body" />
+            @if (addressForm.get('state')?.invalid && addressForm.get('state')?.touched) {
+            <small class="text-red-500 text-xs">State is required.</small>
+            }
+        </div>
+
+        <!-- City / District Dropdown -->
+        <div class="flex flex-col gap-1 w-full">
+            <label for="city" class="text-xs sm:text-sm font-[500] [font-family:var(--font-sans)] text-[var(--ink-2)]">
+                City / District <span class="text-red-500">*</span>
+            </label>
+            <p-select formControlName="city" inputId="city" [options]="availableDistricts" optionLabel="district"
+                optionValue="district" placeholder="Select District" styleClass="w-full !text-xs sm:!text-sm"
+                [disabled]="!addressForm.get('state')?.value" appendTo="body" />
+            @if (addressForm.get('city')?.invalid && addressForm.get('city')?.touched) {
+            <small class="text-red-500 text-xs">City/District is required.</small>
+            }
+        </div>
+
+        <!-- Pincode -->
+        <div class="flex flex-col gap-1 w-full">
+            <label for="pincode"
+                class="text-xs sm:text-sm font-[500] [font-family:var(--font-sans)] text-[var(--ink-2)]">
+                Pincode <span class="text-red-500">*</span>
+            </label>
+            <input pInputText id="pincode" formControlName="pincode" placeholder="6-digit PIN" maxlength="6"
+                class="w-full !text-xs sm:!text-sm" />
+            @if (addressForm.get('pincode')?.invalid && addressForm.get('pincode')?.touched) {
+            <small class="text-red-500 text-xs">Valid 6-digit pincode is required.</small>
+            }
+        </div>
+
+    </div>
+
+</form>

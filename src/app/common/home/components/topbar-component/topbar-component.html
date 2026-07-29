@@ -1,0 +1,16 @@
+<!-- src/app/common/home/components/topbar-component/topbar.html -->
+<div class="flex items-center">
+  <p-avatar 
+    icon="pi pi-user"
+    shape="circle" 
+    size="normal"
+    styleClass="hover:cursor-pointer bg-[var(--bg-2)] text-[var(--ink)] border border-[var(--line)] hover:border-[var(--mint)] transition-colors"
+    (click)="profileMenu.toggle($event)">
+  </p-avatar>
+
+  <p-menu 
+    #profileMenu 
+    [model]="profileMenuItems" 
+    [popup]="true">
+  </p-menu>
+</div>

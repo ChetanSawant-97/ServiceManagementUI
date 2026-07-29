@@ -1,46 +1,102 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
-import { TuiIcon } from '@taiga-ui/core';
+import { Component, signal } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputText } from '../../common/forms/components/input-text/input-text';
+import { TableList } from '../../common/forms/components/table-list/table-list';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { BaseModalComponent } from '../../common/forms/components/base-modal-component/base-modal-component';
+import { TabsModule } from 'primeng/tabs';
+import { AddressComponent } from '../../common/forms/components/address-component/address-component';
+import { Address } from '../../common/home/models/AddressModel';
 import { FormModel } from '../../common/forms/FormsUtility';
 import { DealerMaster } from '../models/DealerMaster';
 
+export interface TabItem {
+  label: string;
+  value: string | number;
+  icon?: string;
+  disabled?: boolean;
+}
+
 @Component({
   selector: 'app-dealer-management',
-  imports: [CommonModule,FormsModule,TuiIcon,InputText],
+  imports: [CommonModule, 
+    ReactiveFormsModule, 
+    DialogModule, 
+    ButtonModule,
+    TableList,
+    InputText,
+    BaseModalComponent,
+    TabsModule,
+    AddressComponent],
   templateUrl: './dealer-management.html',
   styleUrl: './dealer-management.scss',
 })
 export class DealerManagement {
-  public isOpen : boolean = false;
-  public title : string = '';
-  public description :string = '';
+  isOpen = false;
+  isLoading = false;
+  currentTab = signal<string | number>(0);
 
-  public formGroup :FormGroup<FormModel<DealerMaster>> = new FormGroup<FormModel<DealerMaster>>({
-    name : new FormControl('', [Validators.required]),
-    address_id : new FormControl('',[Validators.required]),
-    email_id : new FormControl('',[Validators.required,Validators.email]),
-    mobile_no : new FormControl('',[Validators.required]),
-    is_active : new FormControl('',[Validators.required]),
-    is_deleted : new FormControl('',[Validators.required]),
-    updated_by : new FormControl('',[]),
-    created_by : new FormControl('',[]),
-    branch_code : new FormControl('',[Validators.required]),
-    created_date : new FormControl('',[]),
-    updated_date : new FormControl('',[]),
-  })
- 
-  openForm(): void {
+  dealerTabs: TabItem[] = [
+    { label: 'Dealer Details', value: 0, icon: 'pi pi-user' },
+    { label: 'Address', value: 1, icon: 'pi pi-map-marker' }
+  ];
+  
+  tableColumns = [
+    { field: 'name', header: 'Dealer Name' }
+  ];
+  tableData = [];
+
+  formGroup = new FormGroup({
+    name: new FormControl('', [Validators.required])
+  });
+
+  openForm() {
+    this.formGroup.reset();
     this.isOpen = true;
   }
- 
-  closeForm(): void {
+  closeForm() {
     this.isOpen = false;
   }
 
+  onTabChange(value: string | number | undefined) {
+    if (value !== undefined) {
+      this.currentTab.set(value);
+    }
+  }
 
 
- 
+  public address : Address = new Address;
+  
+  public dealer : FormGroup<FormModel<DealerMaster>> = new FormGroup({
+    address_id : new FormControl(''),
+    branch_code : new FormControl(''),
+    created_by : new FormControl(''),
+    created_date : new FormControl(''),
+    email_id : new FormControl(''),
+    is_active : new FormControl(true),
+    is_deleted : new FormControl(false),
+    mobile_no : new FormControl(''),
+    name : new FormControl(''),
+    updated_by : new FormControl(''),
+    updated_date : new FormControl('')
+  });
+
+
+  saveDealer() {
+    if (this.formGroup.valid) {
+      console.log('Payload:', this.formGroup.value);
+      // Call service to save, then close modal
+      this.isOpen = false;
+    } else {
+      this.formGroup.markAllAsTouched();
+    }
+  }
+
+  //Table Actions
+  handleRowClick(event: any) {
+    console.log('Row clicked:', event);
+  }
 
 }

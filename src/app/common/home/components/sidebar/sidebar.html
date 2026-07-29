@@ -1,68 +1,73 @@
-<aside class="h-full max-w-36 lg:max-w-52 overflow-hidden sidebar-root shrink-0" [tuiNavigationAside]="expanded()">    
-    <header>
-        <button
-            tuiButton
-            appearance="flat"
-            size="xs"
-            [tuiHint]="''"
-            [tuiHintManual]="false"
-            tuiAsideItem
-            type="button"
-            [iconStart]="expanded() ? '@tui.chevron-left' : '@tui.chevron-right'"
-            (click)="handleToggle()"
-        >
-            <span class="text-xs">{{ expanded() ? 'Collapse' : '' }}</span>
-        </button>
+<!-- Dynamically adjust width based on expanded signal -->
+<aside 
+  class="h-full overflow-y-auto overflow-x-hidden sidebar-root shrink-0 transition-[width] duration-300 ease-in-out flex flex-col z-20"
+  [ngClass]="expanded() ? 'w-52' : 'w-16'"
+>
+    <header class="p-2 flex items-center" [ngClass]="expanded() ? 'justify-end' : 'justify-center'">
+        <!-- p-button is used purely for the toggle -->
+        <p-button
+            [icon]="expanded() ? 'pi pi-chevron-left' : 'pi pi-chevron-right'"
+            [label]="expanded() ? 'Collapse' : ''"
+            size="small"
+            [text]="true"
+            (onClick)="handleToggle()"
+        ></p-button>
     </header>
 
-    @for (group of filteredNavigation(); track group.title) {
-        @for (item of group.items; track item.name) {
-            @if (item.subpages && item.subpages.length > 0) {
-                <button
-                    tuiButton
-                    appearance="flat"
-                    size="xs"
-                    tuiAsideItem
-                    tuiChevron
-                    type="button"
-                    [iconStart]="item.icon"
-                    (click)="toggleSubmenu(item.name)"
-                >
-                    <span class="text-xs truncate">{{ item.name }}</span>
-                </button>
-
-                @if (expanded() && openSubmenu() === item.name) {
-                    <div class="flex flex-col w-full">
-                        @for (sub of item.subpages; track sub.route) {
-                            <a
-                                tuiButton
-                                appearance="flat"
-                                size="xs"
-                                tuiAsideItem
-                                [iconStart]="sub.icon"
-                                class="ml-4"
-                                [routerLink]="sub.route"
-                            >
-                                <span class="text-[11px] truncate">{{ sub.name }}</span>
-                            </a>
+    <div class="flex-1 flex flex-col p-2 gap-1 overflow-x-hidden">
+        @for (group of filteredNavigation(); track group.title) {
+            
+            @for (item of group.items; track item.name) {
+                @if (item.subpages && item.subpages.length > 0) {
+                    <!-- Parent Button with Submenu -->
+                    <button
+                        pRipple
+                        class="nav-item-btn flex items-center p-2 rounded-lg cursor-pointer transition-colors w-full border-none outline-none text-left"
+                        (click)="toggleSubmenu(item.name)"
+                    >
+                        <i [class]="item.icon" class="text-lg min-w-[20px] text-center"></i>
+                        
+                        @if (expanded()) {
+                            <span class="ml-3 text-xs truncate flex-1">{{ item.name }}</span>
+                            <i class="pi pi-chevron-down text-[10px] transition-transform" [class.rotate-180]="openSubmenu() === item.name"></i>
                         }
-                    </div>
+                    </button>
+
+                    <!-- Subpages Dropdown -->
+                    @if (expanded() && openSubmenu() === item.name) {
+                        <div class="flex flex-col w-full pl-6 mt-1 gap-1">
+                            @for (sub of item.subpages; track sub.route) {
+                                <a
+                                    pRipple
+                                    [routerLink]="sub.route"
+                                    routerLinkActive="nav-active"
+                                    class="nav-item-btn flex items-center p-2 rounded-lg cursor-pointer transition-colors w-full no-underline"
+                                >
+                                    <i [class]="sub.icon" class="text-sm min-w-[16px] text-center"></i>
+                                    <span class="ml-2 text-[11px] truncate">{{ sub.name }}</span>
+                                </a>
+                            }
+                        </div>
+                    }
+                } @else {
+                    <!-- Standard Nav Link -->
+                    <a
+                        pRipple
+                        [routerLink]="item.route"
+                        routerLinkActive="nav-active"
+                        class="nav-item-btn flex items-center p-2 rounded-lg cursor-pointer transition-colors w-full no-underline"
+                    >
+                        <i [class]="item.icon" class="text-lg min-w-[20px] text-center"></i>
+                        @if (expanded()) {
+                            <span class="ml-3 text-xs truncate">{{ item.name }}</span>
+                        }
+                    </a>
                 }
-            } @else {
-                <a
-                    tuiButton
-                    appearance="flat"
-                    size="xs"
-                    tuiAsideItem
-                    [iconStart]="item.icon"
-                    [routerLink]="item.route"
-                >
-                    <span class="text-xs truncate">{{ item.name }}</span>
-                </a>
+            }
+
+            @if (!$last) {
+                <hr class="border-surface-700/50 my-2 w-full">
             }
         }
-        @if (!$last) {
-            <hr>
-        }
-    }
+    </div>
 </aside>

@@ -2,16 +2,9 @@ import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { 
-  TuiButton, 
-  TuiDataList, 
-  TuiDropdown, 
-  TuiDropdownHover, 
-  TuiHint,
-  TuiHintManual,  
-} from '@taiga-ui/core';
-import { TuiNavigation} from '@taiga-ui/layout';
-import { TuiChevron } from '@taiga-ui/kit';
+
+import { Button } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
 
 export interface NavSubpage {
   name: string;
@@ -39,17 +32,11 @@ export interface NavGroup {
   standalone: true,
   imports: [
     CommonModule,
-    TuiNavigation,  
-    TuiHintManual,
     RouterLink,
     RouterLinkActive,
     FormsModule,
-    TuiButton,
-    TuiDataList,
-    TuiDropdown,
-    TuiHint,
-    TuiChevron,
-    TuiNavigation
+    Button,     // For the toggle button
+    Ripple      // For the material click effect on links
   ],
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.scss']
@@ -58,6 +45,7 @@ export class Sidebar {
   protected readonly expanded = signal<boolean>(true);
   protected readonly userRoles = signal<string[]>(['ADMIN', 'SALES']);
 
+  // Updated icons to use PrimeIcons (pi pi-*)
   private readonly allNavigationModules: NavGroup[] = [
     {
       title: 'Workspace',
@@ -66,38 +54,16 @@ export class Sidebar {
         { 
           name: 'Sales', 
           route: '/sales', 
-          icon: '@tui.trending-up', 
+          icon: 'pi pi-chart-line', 
           roles: ['ADMIN', 'SALES'],
           subpages: [
-            { name: 'Sales Personal', 
-              route: '/dashboard/overview', 
-              icon: '@tui.user',
-              roles: ['ADMIN'] 
-            },
-            { name: 'Designation', 
-              route: '/dashboard/realtime',
-              icon : '@tui.award',
-              roles: ['ADMIN'] 
-            },
-            { name: 'Trip Details', 
-              route: '/dashboard/realtime',
-              icon : '@tui.map-pin',
-              roles: ['ADMIN'] 
-            }
+            { name: 'Sales Personal', route: '/dashboard/overview', icon: 'pi pi-user', roles: ['ADMIN'] },
+            { name: 'Designation', route: '/dashboard/realtime', icon : 'pi pi-id-card', roles: ['ADMIN'] },
+            { name: 'Trip Details', route: '/dashboard/realtime', icon : 'pi pi-map-marker', roles: ['ADMIN'] }
           ]
         },
-        { 
-          name: 'Dealer', 
-          route: '/dealer', 
-          icon: '@tui.store', 
-          roles: ['ADMIN', 'SALES'] 
-        },
-        { 
-          name: 'Orders', 
-          route: '/orders', 
-          icon: '@tui.package', 
-          roles: ['ADMIN', 'SALES','DEALER'] 
-        }
+        { name: 'Dealer', route: '/dealer', icon: 'pi pi-shop', roles: ['ADMIN', 'SALES'] },
+        { name: 'Orders', route: '/orders', icon: 'pi pi-box', roles: ['ADMIN', 'SALES','DEALER'] }
       ]
     }
   ];
@@ -124,14 +90,11 @@ export class Sidebar {
   
   openSubmenu = signal<string | null>(null);
 
-  // Add this method
   toggleSubmenu(itemName: string) {
       if (!this.expanded()) {
-          // If sidebar is collapsed, open sidebar AND the submenu
           this.expanded.set(true);
           this.openSubmenu.set(itemName);
       } else {
-          // If sidebar is already open, just toggle the submenu
           this.openSubmenu.update(current => current === itemName ? null : itemName);
       }
   }

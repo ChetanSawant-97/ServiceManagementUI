@@ -1,16 +1,16 @@
-<header class="w-full h-13 md:h-13 flex items-center justify-between px-4 bg-[#061E29] border-b border-[var(--line)] ">
+<!-- src/app/common/home/components/appbar-component/appbar-component.html -->
+<p-toolbar styleClass="w-full h-12 md:h-16 px-4 md:px-6 bg-[var(--card-bg)] border-b border-[var(--line)] border-x-0 border-t-0 rounded-none shadow-none flex items-center justify-between">
     
-    <div class="flex items-center cursor-pointer">
-        <!-- Image is now h-10 on mobile and h-12 on desktop so it never stretches the header -->
-        <img src="/VDURA.png" alt="VDura Logo" class="h-6 md:h-8 w-auto object-contain shrink-0" />
-    </div>
+    <!-- Left Side: Logo -->
+    <ng-template #start>
+        <div class="flex items-center cursor-pointer py-1">
+            <img src="/VDURA.png" alt="VDura Logo" class="h-6 md:h-8 w-auto object-contain shrink-0" />
+        </div>
+    </ng-template>
 
-    <div class="flex items-center gap-3">
-        <button class="h-7 w-7 md:h-9 md:w-9 rounded-full border border-[var(--line)] bg-[var(--bg-2)] hover:border-[var(--mint)] transition-colors flex items-center justify-center overflow-hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 text-[var(--ink-dim)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-        </button>
-    </div>
+    <!-- Right Side: User Profile -->
+    <ng-template #end>
+        <app-topbar-component></app-topbar-component>
+    </ng-template>
 
-</header>
+</p-toolbar>

@@ -1,42 +1,63 @@
-<!-- Outer wrapper: column layout, full height -->
-<div class="flex flex-col h-full w-full border-rounded-xl">
+<!-- Outer wrapper -->
+<div class="flex flex-col h-full w-full rounded-xl">
 
-    <!-- TOP DIV: button / form wrapper (height = content) -->
-    <div class="w-full bg-white border-b border-gray-200 px-4 rounded-xl">
-  
-      <!-- Header row: title always visible, button toggles between + and X -->
-      <div class="flex items-center justify-between" [class.mb-3]="isOpen">
-        <h2 class="text-lg font-semibold text-gray-800">Dealer Management</h2>
-  
-        <button
-          *ngIf="!isOpen"
-          (click)="openForm()"
-          class="w-12 h-12 hover:cursor-pointer"
-        >
-            <tui-icon icon="@tui.circle-plus" [style.fontSize]="'30px'" [style.color]="'var(--tui-text-positive)'" />
-        </button>
-  
-        <button
-          *ngIf="isOpen"
-          (click)="closeForm()"
-          class="w-12 h-12  hover:cursor-pointer"
-        >
-            <tui-icon icon="@tui.circle-x" [style.fontSize]="'30px'" [style.color]="'var(--tui-text-negative)'" />
-        </button>
-      </div>
-  
-      <!-- Form fields: only shown when open -->
-      <form *ngIf="isOpen" class="space-y-3 w-full">
-        <div class="w-full flex">
-            <app-input-text class="w-[20%] block" [control]="formGroup.controls.name" [label]="'Dealer Name'" [labelStyleClasses]="'!font-medium !text-teal-900 '"  ></app-input-text>
-        </div>
-      </form>
-  
+    <!-- TOP DIV: Header section -->
+    <div class="w-full bg-[var(--bg-2)] border border-[var(--line)] px-4 py-3 rounded-xl mb-2 flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-gray-800">Dealer Management</h2>
+      <button (click)="openForm()" class="hover:cursor-pointer">
+        <i class="pi pi-plus-circle" style="font-size: 1.6rem; color:#245501; font-weight: 500;"></i>
+      </button>
     </div>
-  
-    <!-- BOTTOM DIV: takes remaining space -->
-    <div class="flex-1 overflow-auto bg-gray-50 p-4">
-      <p class="text-gray-500">Remaining space content goes here...</p>
+ 
+    <!-- BOTTOM DIV: Table stays constant -->
+    <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 p-4 rounded-xl border border-[var(--line)]">
+      <app-table-list
+        class="flex-1 flex flex-col h-full overflow-hidden"
+        [columns]="tableColumns"
+        [data]="tableData"
+        [loading]="isLoading"
+        [rows]="10"
+      ></app-table-list>    
     </div>
-  
-  </div>
+
+</div>
+
+<app-base-modal-component 
+  header="Add New Dealer" 
+  [(visible)]="isOpen"
+  [confirmLabel]="'Save Dealer'"
+  (cancel)="closeForm()"
+  (confirm)="saveDealer()"
+>
+    <p-tabs [value]="currentTab()" (valueChange)="onTabChange($event)">
+    <p-tablist>
+      @for (tab of dealerTabs; track tab.value) {
+        <p-tab [value]="tab.value">
+          @if (tab.icon) {
+            <i [class]="tab.icon + ' mr-2'"></i>
+          }
+          {{ tab.label }}
+        </p-tab>
+      }
+    </p-tablist>
+    
+    <p-tabpanels>
+      <!-- Main Details -->
+      <p-tabpanel [value]="0">
+        <form class="flex gap-3">
+          <app-input-text class="w-[45%] block" [control]="dealer.controls.name" label="Dealer Name" >
+
+          </app-input-text>
+          <app-input-text class="w-[25%] block" [control]="dealer.controls.branch_code" label="Branch Code" >
+
+          </app-input-text>
+        </form>
+      </p-tabpanel>
+
+      <!-- Address Tab-->
+      <p-tabpanel [value]="1">
+          <app-address-component (valueChange)="address = $event"></app-address-component>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</app-base-modal-component>
