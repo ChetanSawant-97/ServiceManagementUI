@@ -8,9 +8,13 @@
     <input 
         pInputText 
         [id]="inputId()" 
-        [type]="type()"
+        [type]="resolvedType()"
+        [attr.inputmode]="resolvedInputMode()"
+        [attr.autocomplete]="resolvedAutocomplete()"
         [placeholder]="placeholder()"
         [formControl]="control()"
+        [attr.maxlength]="maxLength()"
+        [attr.pattern]="pattern()"
         class="w-full"
         [class]="
           'w-full !text-xs sm:!text-sm ' + 
@@ -18,5 +22,4 @@
           (size() === 's' ? 'p-inputtext-sm ' : size() === 'l' ? 'p-inputtext-lg' : '')
         " 
     />
-
 </div>

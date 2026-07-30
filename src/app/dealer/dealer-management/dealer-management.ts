@@ -39,7 +39,7 @@ export class DealerManagement {
   currentTab = signal<string | number>(0);
 
   dealerTabs: TabItem[] = [
-    { label: 'Dealer Details', value: 0, icon: 'pi pi-user' },
+    { label: 'Info', value: 0, icon: 'pi pi-user' },
     { label: 'Address', value: 1, icon: 'pi pi-map-marker' }
   ];
   
@@ -71,14 +71,14 @@ export class DealerManagement {
   
   public dealer : FormGroup<FormModel<DealerMaster>> = new FormGroup({
     address_id : new FormControl(''),
-    branch_code : new FormControl(''),
+    branch_code : new FormControl('',[Validators.required]),
     created_by : new FormControl(''),
     created_date : new FormControl(''),
-    email_id : new FormControl(''),
+    email_id : new FormControl('',[Validators.email]),
     is_active : new FormControl(true),
     is_deleted : new FormControl(false),
-    mobile_no : new FormControl(''),
-    name : new FormControl(''),
+    mobile_no : new FormControl('',[Validators.required]),
+    name : new FormControl('',[Validators.required]),
     updated_by : new FormControl(''),
     updated_date : new FormControl('')
   });

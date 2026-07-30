@@ -1,8 +1,8 @@
 <div class="flex flex-col gap-1 w-full">
   @if (label()) {
-    <label [for]="selectId()" class="text-sm font-medium text-surface-700 dark:text-surface-300">
-      {{ label() }}
-    </label>
+      <label [for]="selectId()" class="text-xs sm:text-sm font-[500]" [ngClass]="labelStyleClasses()">
+          {{ label() }}
+      </label>
   }
   
   <p-select 
@@ -10,6 +10,7 @@
     [options]="items()" 
     [inputId]="selectId()"
     [placeholder]="placeholder()"
-    class="w-full"
+    [size]="primeSize()"
+    styleClass="w-full !text-xs sm:!text-sm"
   ></p-select>
 </div>

@@ -1,63 +1,79 @@
 <!-- Outer wrapper -->
-<div class="flex flex-col h-full w-full rounded-xl">
+<div class="flex flex-col h-full w-full rounded-xl overflow-hidden gap-2 relative">
 
-    <!-- TOP DIV: Header section -->
-    <div class="w-full bg-[var(--bg-2)] border border-[var(--line)] px-4 py-3 rounded-xl mb-2 flex items-center justify-between">
+  <!-- TOP DIV: Header section -->
+  <div class="w-full flex flex-col bg-[var(--bg-2)] border border-[var(--line)] px-4 py-3 rounded-xl items-center justify-between shrink-0">
+    <div class="flex w-full justify-between items-center">
       <h2 class="text-lg font-semibold text-gray-800">Dealer Management</h2>
-      <button (click)="openForm()" class="hover:cursor-pointer">
-        <i class="pi pi-plus-circle" style="font-size: 1.6rem; color:#245501; font-weight: 500;"></i>
-      </button>
+      <div class="flex gap-2">
+        @if (!isOpen) {
+          <button (click)="openForm()" class="hover:cursor-pointer" title="Add Dealer">
+            <i class="pi pi-plus-circle" style="font-size: 1.6rem; color:#245501; font-weight: 500;"></i>
+          </button>
+        } @else {
+          <button (click)="closeForm()" class="hover:cursor-pointer" title="Close Form">
+            <i class="pi pi-times-circle" style="font-size: 1.6rem; color:red; font-weight: 500;"></i>
+          </button>
+        }
+      </div>
     </div>
- 
-    <!-- BOTTOM DIV: Table stays constant -->
-    <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 p-4 rounded-xl border border-[var(--line)]">
-      <app-table-list
-        class="flex-1 flex flex-col h-full overflow-hidden"
-        [columns]="tableColumns"
-        [data]="tableData"
-        [loading]="isLoading"
-        [rows]="10"
-      ></app-table-list>    
+  </div>
+
+  <!-- EXPANDABLE FORM SECTION: Curtain on Desktop, Modal on Mobile -->
+  @if (isOpen) {
+    <!-- Backdrop overlay for mobile modal view -->
+    <div class="fixed inset-0 bg-black/40 z-40 md:hidden" (click)="closeForm()"></div>
+
+    <!-- Form Container: Fixed/Centered on mobile, inline curtain on desktop -->
+    <div class="fixed inset-x-4 top-20 z-50 max-h-[85vh] overflow-y-auto bg-white border border-[var(--line)] p-3 rounded-xl shadow-xl shrink-0 transition-all
+                md:static md:inset-auto md:max-h-none md:shadow-sm">
+      <p-tabs [value]="currentTab()" (valueChange)="onTabChange($event)">
+        <p-tablist>
+          @for (tab of dealerTabs; track tab.value) {
+            <p-tab [value]="tab.value">
+              @if (tab.icon) {
+                <i [class]="tab.icon + ' mr-2'"></i>
+              }
+              {{ tab.label }}
+            </p-tab>
+          }
+        </p-tablist>
+        
+        <p-tabpanels>
+          <!-- Main Details -->
+          <p-tabpanel [value]="0">
+            <form class="flex flex-col md:flex-row gap-3 pt-2">
+              <app-input-text class="w-full md:w-[45%] block" [control]="dealer.controls.name" label="Dealer Name"></app-input-text>
+              <app-input-text class="w-full md:w-[25%] block" [control]="dealer.controls.branch_code" label="Branch Code"></app-input-text>
+              <app-input-text class="w-full md:w-[45%] block" [type]="'email'" [control]="dealer.controls.email_id" label="Email"></app-input-text>
+
+            </form>
+          </p-tabpanel>
+      
+          <!-- Address Tab-->
+          <p-tabpanel [value]="1">
+              <app-address-component class="pt-2 block" (valueChange)="address = $event"></app-address-component>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+
+      <!-- Form Actions Bar -->
+      <div class="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-100">
+        <button (click)="closeForm()" class="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50 cursor-pointer">Cancel</button>
+        <button (click)="saveDealer()" class="px-4 py-2 text-sm bg-green-700 text-white rounded-lg hover:bg-green-800 cursor-pointer">Save Dealer</button>
+      </div>
     </div>
+  }
+
+  <!-- BOTTOM DIV: Table automatically shrinks or expands to fill remaining space -->
+  <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 p-4 rounded-xl border border-[var(--line)] min-h-0">
+    <app-table-list
+      class="flex-1 flex flex-col h-full overflow-hidden"
+      [columns]="tableColumns"
+      [data]="tableData"
+      [loading]="isLoading"
+      [rows]="10"
+    ></app-table-list>    
+  </div>
 
 </div>
-
-<app-base-modal-component 
-  header="Add New Dealer" 
-  [(visible)]="isOpen"
-  [confirmLabel]="'Save Dealer'"
-  (cancel)="closeForm()"
-  (confirm)="saveDealer()"
->
-    <p-tabs [value]="currentTab()" (valueChange)="onTabChange($event)">
-    <p-tablist>
-      @for (tab of dealerTabs; track tab.value) {
-        <p-tab [value]="tab.value">
-          @if (tab.icon) {
-            <i [class]="tab.icon + ' mr-2'"></i>
-          }
-          {{ tab.label }}
-        </p-tab>
-      }
-    </p-tablist>
-    
-    <p-tabpanels>
-      <!-- Main Details -->
-      <p-tabpanel [value]="0">
-        <form class="flex gap-3">
-          <app-input-text class="w-[45%] block" [control]="dealer.controls.name" label="Dealer Name" >
-
-          </app-input-text>
-          <app-input-text class="w-[25%] block" [control]="dealer.controls.branch_code" label="Branch Code" >
-
-          </app-input-text>
-        </form>
-      </p-tabpanel>
-
-      <!-- Address Tab-->
-      <p-tabpanel [value]="1">
-          <app-address-component (valueChange)="address = $event"></app-address-component>
-      </p-tabpanel>
-    </p-tabpanels>
-  </p-tabs>
-</app-base-modal-component>

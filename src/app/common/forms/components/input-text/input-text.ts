@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -22,7 +22,15 @@ export class InputText {
   label = input<string>('');
   labelStyleClasses = input<string>('');
   placeholder = input<string>('');
+  
+  // Supports standard text, email, tel, password, number, etc.
   type = input<string>('text');
+  
+  // Optional explicit overrides if needed
+  inputMode = input<string>('');
+  autoComplete = input<string>('');
+  maxLength = input<number | null>(null);
+  pattern = input<string>('');
   
   iconStart = input<string>('');
   iconEnd = input<string>('');
@@ -34,4 +42,28 @@ export class InputText {
     this.bp.observe('(max-width: 639px)').pipe(map(r => r.matches)),
     { initialValue: window.innerWidth < 640 }
   );
+
+  // Automatically configure best mobile keyboard and properties based on type
+  protected readonly resolvedType = computed(() => {
+    const t = this.type().toLowerCase();
+    if (t === 'mobile' || t === 'phone') return 'tel';
+    return t;
+  });
+
+  protected readonly resolvedInputMode = computed(() => {
+    if (this.inputMode()) return this.inputMode();
+    const t = this.type().toLowerCase();
+    if (t === 'email') return 'email';
+    if (t === 'tel' || t === 'mobile' || t === 'phone') return 'tel';
+    if (t === 'number') return 'numeric';
+    return 'text';
+  });
+
+  protected readonly resolvedAutocomplete = computed(() => {
+    if (this.autoComplete()) return this.autoComplete();
+    const t = this.type().toLowerCase();
+    if (t === 'email') return 'email';
+    if (t === 'tel' || t === 'mobile' || t === 'phone') return 'tel';
+    return 'off';
+  });
 }

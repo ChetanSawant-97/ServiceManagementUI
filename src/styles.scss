@@ -75,3 +75,26 @@ body > div[style*="position: fixed"][style*="bottom"][style*="right"] {
 :root {
   --p-tabs-tab-padding: 8px !important;
 }
+
+
+/* Global override to perfectly match text input and p-select bounds on mobile */
+.p-select.p-component {
+  display: flex !important;
+  align-items: center !important;
+  height: auto !important;
+  min-height: 2.15rem !important;
+
+  .p-select-label {
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+    font-size: 0.75rem !important;
+
+    @media (min-width: 640px) {
+      font-size: 0.875rem !important;
+    }
+  }
+
+  .p-select-dropdown {
+    width: 2rem !important;
+  }
+}
