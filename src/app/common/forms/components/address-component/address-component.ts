@@ -1,7 +1,7 @@
 import { Component, output } from '@angular/core';
 import { Address } from '../../../home/models/AddressModel';
-import { DistrictData, INDIA_LOCATIONS_DATA, StateData } from '../../../Utility';
-import { Subscription } from 'rxjs';
+import { DistrictData, getFormErrorMessages, INDIA_LOCATIONS_DATA, StateData } from '../../../Utility';
+import { Subscription, startWith } from 'rxjs'; // 1. Import startWith
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
@@ -16,7 +16,7 @@ import { InputTextModule } from 'primeng/inputtext';
 export class AddressComponent {
   // Outputs emitted on form value modifications and direct status checks
   valueChange = output<Address>();
-  statusChange = output<boolean>();
+  statusChange = output<string[]>();
 
   statesList: StateData[] = INDIA_LOCATIONS_DATA;
   availableDistricts: DistrictData[] = [];
@@ -45,9 +45,12 @@ export class AddressComponent {
       }
     });
 
-    this.sub = this.addressForm.valueChanges.subscribe(() => {
+    // 2. Add startWith to immediately push the initial form state upon subscription
+    this.sub = this.addressForm.valueChanges.pipe(
+      startWith(this.addressForm.value)
+    ).subscribe(() => {
       this.valueChange.emit(this.addressForm.value as Address);
-      this.statusChange.emit(this.addressForm.valid);
+      this.statusChange.emit(getFormErrorMessages(this.addressForm));
     });
   }
 

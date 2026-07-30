@@ -1,8 +1,7 @@
-import { Component, input, output } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 
-// common-table.ts
 export interface TableColumn {
   field: string;
   header: string;
@@ -12,21 +11,27 @@ export interface TableColumn {
 
 @Component({
   selector: 'app-table-list',
-  imports: [CommonModule,TableModule],
+  imports: [CommonModule, TableModule],
   templateUrl: './table-list.html',
   styleUrl: './table-list.scss',
 })
-export class TableList {
-  // Inputs using Angular Signals
-  columns = input.required<TableColumn[]>();
-  data = input.required<any[]>();
-  loading = input<boolean>(false);
-  paginator = input<boolean>(true);
-  rows = input<number>(10);
-  rowsPerPageOptions = input<number[]>([5, 10, 20, 50]);
+export class TableList implements OnChanges{
+  ngOnChanges(changes: SimpleChanges): void {
+    this.columns = changes['columns'].currentValue;
+    this.data = changes['data'].currentValue;
+  }
 
-  // Event emitters for row interactions if needed
-  rowClick = output<any>();
+  
+
+
+  @Input({ required: true }) columns: TableColumn[] = [];
+  @Input({ required: true }) data: any[] = [];
+  @Input() loading: boolean = false;
+  @Input() paginator: boolean = true;
+  @Input() rows: number = 10;
+  @Input() rowsPerPageOptions: number[] = [5, 10, 20, 50];
+
+  @Output() rowClick = new EventEmitter<any>();
 
   onRowSelect(item: any) {
     this.rowClick.emit(item);

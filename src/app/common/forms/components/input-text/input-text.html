@@ -15,6 +15,7 @@
         [formControl]="control()"
         [attr.maxlength]="maxLength()"
         [attr.pattern]="pattern()"
+        (input)="onInput($event)"
         class="w-full"
         [class]="
           'w-full !text-xs sm:!text-sm ' + 

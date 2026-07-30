@@ -1,44 +1,18 @@
 <div class="card w-full h-full flex flex-col overflow-hidden border border-[var(--line)] rounded-lg bg-[var(--bg-2)]">
-  <p-table
-    [value]="data()"
-    [loading]="loading()"
-    [paginator]="paginator()"
-    [rows]="rows()"
-    [rowsPerPageOptions]="rowsPerPageOptions()"
-    [scrollable]="true"
-    scrollHeight="flex"
-    styleClass="p-datatable-sm p-datatable-gridlines flex-1 flex flex-col"
-    [tableStyle]="{ 'min-width': '50rem' }"
-  >
-    <!-- Table Header -->
-    <ng-template pTemplate="header">
-        <tr>
-            @for (col of columns(); track col.field) {
-            <th [pSortableColumn]="col.sortable ? col.field : undefined" [style.width]="col.width">
-                {{ col.header }}
-            </th>
-            }
-        </tr>
-    </ng-template>
-
-    <!-- Table Body -->
-    <ng-template pTemplate="body" let-rowData>
-      <tr (click)="onRowSelect(rowData)" class="cursor-pointer hover:bg-[var(--surface-hover)] transition-colors">
-        @for (col of columns(); track col.field) {
-          <td>
-            {{ rowData[col.field] }}
-          </td>
-        }
-      </tr>
-    </ng-template>
-
-    <!-- Empty State -->
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td [attr.colspan]="columns().length" class="text-center py-6 text-surface-500">
-          No records found.
-        </td>
-      </tr>
-    </ng-template>
+  <p-table [columns]="columns" [value]="data" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template #header let-columns>
+          <tr>
+              <th *ngFor="let col of columns" [style.width]="col.width">
+                  {{ col.header }}
+              </th>
+          </tr>
+      </ng-template>
+      <ng-template #body let-rowData let-columns="columns">
+          <tr>
+              <td *ngFor="let col of columns" [style.width]="col.width">
+                  {{ rowData[col.field] }}
+              </td>
+          </tr>
+      </ng-template>
   </p-table>
 </div>

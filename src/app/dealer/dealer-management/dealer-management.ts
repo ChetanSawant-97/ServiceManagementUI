@@ -1,16 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputText } from '../../common/forms/components/input-text/input-text';
-import { TableList } from '../../common/forms/components/table-list/table-list';
+import { TableColumn, TableList } from '../../common/forms/components/table-list/table-list';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+
 import { BaseModalComponent } from '../../common/forms/components/base-modal-component/base-modal-component';
 import { TabsModule } from 'primeng/tabs';
 import { AddressComponent } from '../../common/forms/components/address-component/address-component';
 import { Address } from '../../common/home/models/AddressModel';
 import { FormModel } from '../../common/forms/FormsUtility';
 import { DealerMaster } from '../models/DealerMaster';
+import { InputCheckBox } from '../../common/forms/components/input-check-box/input-check-box';
+import { getFormErrorMessages } from '../../common/Utility';
 
 export interface TabItem {
   label: string;
@@ -29,11 +32,20 @@ export interface TabItem {
     InputText,
     BaseModalComponent,
     TabsModule,
-    AddressComponent],
+    AddressComponent,
+    InputCheckBox],
   templateUrl: './dealer-management.html',
   styleUrl: './dealer-management.scss',
 })
-export class DealerManagement {
+export class DealerManagement implements OnInit {
+  formErrors : string[] = [];
+  isAddressValid : boolean = false;
+  ngOnInit(): void {
+    this.dealer.valueChanges.subscribe(value=>{
+      this.computeAllError();
+    })  
+  }
+  
   isOpen = false;
   isLoading = false;
   currentTab = signal<string | number>(0);
@@ -43,17 +55,18 @@ export class DealerManagement {
     { label: 'Address', value: 1, icon: 'pi pi-map-marker' }
   ];
   
-  tableColumns = [
-    { field: 'name', header: 'Dealer Name' }
-  ];
-  tableData = [];
+  tableColumns :TableColumn[] = [
+    { field: 'name', header: 'Dealer Name',width:'25%' },
+    { field: 'branch_code', header: 'Branch Code',width:'15%' },
+    { field: 'email_id', header: 'Email Id',width:'25%' },
+    { field: 'mobile_no', header: 'Mobile Number',width:'20%' },
+    { field: 'is_active', header: 'Active',width:'10%' },
 
-  formGroup = new FormGroup({
-    name: new FormControl('', [Validators.required])
-  });
+  ];
+  tableData : DealerMaster[] = [];
 
   openForm() {
-    this.formGroup.reset();
+    this.dealer.reset();
     this.isOpen = true;
   }
   closeForm() {
@@ -66,7 +79,6 @@ export class DealerManagement {
     }
   }
 
-
   public address : Address = new Address;
   
   public dealer : FormGroup<FormModel<DealerMaster>> = new FormGroup({
@@ -77,7 +89,7 @@ export class DealerManagement {
     email_id : new FormControl('',[Validators.email]),
     is_active : new FormControl(true),
     is_deleted : new FormControl(false),
-    mobile_no : new FormControl('',[Validators.required]),
+    mobile_no : new FormControl('',[Validators.required,Validators.minLength(10)]),
     name : new FormControl('',[Validators.required]),
     updated_by : new FormControl(''),
     updated_date : new FormControl('')
@@ -85,18 +97,20 @@ export class DealerManagement {
 
 
   saveDealer() {
-    if (this.formGroup.valid) {
-      console.log('Payload:', this.formGroup.value);
-      // Call service to save, then close modal
-      this.isOpen = false;
-    } else {
-      this.formGroup.markAllAsTouched();
-    }
+   
+    console.log('Payload:', this.dealer.value);
+    
+    this.tableData = [...this.tableData, this.dealer.value as DealerMaster];
+    
+    this.isOpen = false;
+    console.warn(this.tableData);
   }
 
-  //Table Actions
   handleRowClick(event: any) {
     console.log('Row clicked:', event);
   }
 
+  computeAllError(errorsFromAddress ?: string[]){
+    this.formErrors = [...getFormErrorMessages(this.dealer),...errorsFromAddress || []];
+  }
 }

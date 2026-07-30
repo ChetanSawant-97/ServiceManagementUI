@@ -42,25 +42,38 @@
         <p-tabpanels>
           <!-- Main Details -->
           <p-tabpanel [value]="0">
-            <form class="flex flex-col md:flex-row gap-3 pt-2">
-              <app-input-text class="w-full md:w-[45%] block" [control]="dealer.controls.name" label="Dealer Name"></app-input-text>
-              <app-input-text class="w-full md:w-[25%] block" [control]="dealer.controls.branch_code" label="Branch Code"></app-input-text>
-              <app-input-text class="w-full md:w-[45%] block" [type]="'email'" [control]="dealer.controls.email_id" label="Email"></app-input-text>
-
+            <form class="flex flex-col md:flex-row gap-3 pt-2 my-auto">
+              <app-input-text class="w-full md:w-[30%] block" [control]="dealer.controls.name" label="Dealer Name"></app-input-text>
+              <app-input-text class="w-full md:w-[15%] block" [control]="dealer.controls.branch_code" label="Branch Code"></app-input-text>
+              <app-input-text class="w-full md:w-[20%] block" [type]="'email'" [control]="dealer.controls.email_id" label="Email"></app-input-text>
+              <app-input-text class="w-full md:w-[15%] block" [type]="'mobile'" [control]="dealer.controls.mobile_no" label="Mobile Number" [maxLength]="10"></app-input-text>
+              <app-input-check-box class="w-auto block my-auto" [control]="dealer.controls.is_active" label="Is Active"></app-input-check-box>
             </form>
           </p-tabpanel>
-      
           <!-- Address Tab-->
           <p-tabpanel [value]="1">
-              <app-address-component class="pt-2 block" (valueChange)="address = $event"></app-address-component>
+              <app-address-component class="pt-2 block" (valueChange)="address = $event" (statusChange)="computeAllError($event)"></app-address-component>
           </p-tabpanel>
         </p-tabpanels>
       </p-tabs>
 
       <!-- Form Actions Bar -->
-      <div class="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-100">
-        <button (click)="closeForm()" class="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50 cursor-pointer">Cancel</button>
-        <button (click)="saveDealer()" class="px-4 py-2 text-sm bg-green-700 text-white rounded-lg hover:bg-green-800 cursor-pointer">Save Dealer</button>
+     <div class="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-100">
+        <span class="text-red-600 text-sm text-itallic">{{formErrors[0]}}</span>
+        <p-button 
+          label="Cancel" 
+          [outlined]="true" 
+          severity="secondary" 
+          styleClass="!text-sm"
+          (onClick)="closeForm()" 
+        />
+        <p-button 
+          label="Save Dealer" 
+          severity="success" 
+          styleClass="!text-sm"
+          (onClick)="saveDealer()" 
+          [disabled]="formErrors.length>0"
+        />
       </div>
     </div>
   }

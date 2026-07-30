@@ -23,10 +23,8 @@ export class InputText {
   labelStyleClasses = input<string>('');
   placeholder = input<string>('');
   
-  // Supports standard text, email, tel, password, number, etc.
   type = input<string>('text');
   
-  // Optional explicit overrides if needed
   inputMode = input<string>('');
   autoComplete = input<string>('');
   maxLength = input<number | null>(null);
@@ -66,4 +64,19 @@ export class InputText {
     if (t === 'tel' || t === 'mobile' || t === 'phone') return 'tel';
     return 'off';
   });
+
+  protected onInput(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const t = this.type().toLowerCase();
+    
+    // If it's a mobile, tel, or number type, strip out any non-digit characters
+    if (t === 'mobile' || t === 'phone' || t === 'tel' || t === 'number') {
+      const sanitized = inputElement.value.replace(/\D/g, '');
+      if (inputElement.value !== sanitized) {
+        inputElement.value = sanitized;
+        // Manually sync back to the Reactive Form Control
+        this.control().setValue(sanitized, { emitEvent: false });
+      }
+    }
+  }
 }
