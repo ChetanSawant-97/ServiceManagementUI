@@ -1,0 +1,21 @@
+<div class="flex flex-col gap-1 w-full">
+    @if (label()) {
+        <label [for]="inputId()" class="text-xs sm:text-sm font-[500] text-surface-700 dark:text-surface-300">
+            {{ label() }}
+        </label>
+    }
+    
+    <p-datepicker 
+        [formControl]="control()" 
+        [inputId]="inputId()"
+        [placeholder]="placeholder()"
+        [minDate]="minDate() ?? null"
+        [maxDate]="maxDate() ?? null"
+        [showIcon]="showIcon()"
+        [iconDisplay]="iconDisplay()"
+        dateFormat="dd/mm/yy"
+        styleClass="w-full"
+        inputStyleClass="w-full !text-xs sm:!text-sm"
+        appendTo="body">
+    </p-datepicker>
+</div>

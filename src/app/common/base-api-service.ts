@@ -42,7 +42,9 @@ export class BaseApiService {
         finalUrl = finalUrl.replace(`{${key}}`, String(value));
       }
     }
-
+    // ADD THESE TWO LINES:
+    console.log('1. ENVIRONMENT OBJECT:', environment);
+    console.log('2. FINAL URL:', finalUrl);
     // 3. Execute request and attach RxJS lifecycle hooks
     return this.http.request<TResponse>(config.method, finalUrl, { body }).pipe(
       

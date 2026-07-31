@@ -6,6 +6,8 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { definePreset } from '@primeng/themes';
 import { MessageService } from 'primeng/api'; // <-- Import MessageService
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { AuthInterceptor } from './common/auth/Auth.interceptor';
 
 const VortrixPreset = definePreset(Aura, {
     semantic: {
@@ -35,6 +37,8 @@ const VortrixPreset = definePreset(Aura, {
 export const appConfig: ApplicationConfig = {
     providers: [
         provideRouter(routes),
+        provideHttpClient(withInterceptorsFromDi()), 
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         provideAnimationsAsync(),
         providePrimeNG({
             theme: {

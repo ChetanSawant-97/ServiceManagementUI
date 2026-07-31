@@ -7,6 +7,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Toast } from 'primeng/toast';
 import { ToastService } from './common/toast-service';
 import { AsyncPipe } from '@angular/common';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
@@ -15,10 +17,12 @@ import { AsyncPipe } from '@angular/common';
     RouterOutlet,
     BlockUI,           // 2. Add them to your imports array
     ProgressSpinnerModule,
-    AsyncPipe
+    AsyncPipe,
+    ConfirmPopupModule
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  providers : [ConfirmationService]
 })
 export class App {
   private themeService = inject(ThemeService);

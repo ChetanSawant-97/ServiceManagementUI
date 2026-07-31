@@ -1,35 +1,56 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { BaseApiService } from '../common/base-api-service';
-import { DealerMaster } from './models/DealerMaster';
-import { ApiEndpoints } from '../common/ApiConstants';
+import { ApiResponse, DealerEndPoints } from '../common/ApiConstants';
+import { DealerCreatePayload, DealerMaster, DealerUpdatePayload } from './models/DealerMaster';
 
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class DealerService {
+  private baseApi = inject(BaseApiService);
 
-  constructor(private api: BaseApiService) {}
-
-  getDealer(id: number) {
-    // TResponse = Dealer
-    return this.api.request<DealerMaster>(
-      ApiEndpoints['GET_DEALER_BY_ID'], 
-      { dealerId: id }
+  getAllDealers(): Observable<ApiResponse<DealerMaster[]>> {
+    return this.baseApi.request<ApiResponse<DealerMaster[]>>(
+      DealerEndPoints.GET_ALL_DEALERS
     );
   }
 
-//   updateDealer(id: number, payload: DealerMaster) {
-//     // TResponse = Dealer, TBody = UpdateDealerDto
-//     return this.api.request<DealerMaster, DealerMaster>(
-//       ApiEndpoints['UPDATE_DEALER'], 
-//       { dealerId: id }, 
-//       payload
-//     );
-//   }
+  getDealerById(dealerId: number): Observable<ApiResponse<DealerMaster>> {
+    return this.baseApi.request<ApiResponse<DealerMaster>>(
+      DealerEndPoints.GET_DEALER_BY_ID,
+      undefined,
+      { pathParams: { dealerId } }
+    );
+  }
 
-  deleteDealer(id: number) {
-    return this.api.request<void>(
-      ApiEndpoints['DELETE_DEALER'], 
-      { dealerId: id }
+  createDealer(payload: DealerCreatePayload): Observable<ApiResponse<DealerMaster>> {
+    return this.baseApi.request<ApiResponse<DealerMaster>>(
+      DealerEndPoints.CREATE_DEALER,
+      payload,
+      { successMessage: 'Dealer created successfully!' }
+    );
+  }
+
+  updateDealer(dealerId: number, payload: DealerUpdatePayload): Observable<ApiResponse<DealerMaster>> {
+    return this.baseApi.request<ApiResponse<DealerMaster>>(
+      DealerEndPoints.UPDATE_DEALER,
+      payload,
+      { 
+        pathParams: { dealerId },
+        successMessage: 'Dealer updated successfully!'
+      }
+    );
+  }
+
+  deleteDealer(dealerId: number): Observable<ApiResponse<any>> {
+    return this.baseApi.request<ApiResponse<any>>(
+      DealerEndPoints.DELETE_DEALER,
+      undefined,
+      { 
+        pathParams: { dealerId },
+        successMessage: 'Dealer deleted successfully!'
+      }
     );
   }
 }

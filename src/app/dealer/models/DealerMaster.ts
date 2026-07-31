@@ -1,17 +1,37 @@
-export class DealerMaster {
-    public name!: string;
-    public branch_code!: string;
-    public address_id!: string;
-    public is_deleted!: boolean;
-    public is_active!: boolean;
-    public mobile_no!: string;
-    public email_id!: string;
-    public created_date!: string;
-    public updated_date!: string;
-    public created_by!: string;
-    public updated_by!: string;
-
-    constructor(init?: Partial<DealerMaster>) {
-        Object.assign(this,init);
-    }
-}
+export interface DealerMaster {
+    dealerId: number;
+    dealerName: string;
+    branchCode: string;
+    mobileNo: string;
+    emailId: string;
+    addressId: number;
+    addressLine1: string;
+    addressLine2: string;
+    landmark: string;
+    area: string;
+    city: string;
+    state: string;
+    pinCode: string;
+    country: string;
+  }
+  
+  export interface DealerUpdatePayload {
+    dealerName: string;
+    branchCode: string;
+    mobileNo: string;
+    emailId: string;
+    addressLine1: string;
+    addressLine2: string;
+    landmark: string;
+    area: string;
+    city: string;
+    state: string;
+    pinCode: string;
+    country: string;
+  }
+  
+  // Extends the update payload to include auth fields required only during creation
+  export interface DealerCreatePayload extends DealerUpdatePayload {
+    username?: string;
+    password?: string;
+  }

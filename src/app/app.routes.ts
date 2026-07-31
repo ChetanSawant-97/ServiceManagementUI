@@ -1,11 +1,5 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './common/auth/guards/auth.guard';
-import { Dashboard } from './common/home/components/dashboard/dashboard';
-import { SalesPersonnel } from './sales/sales-personnel/sales-personnel';
-import { Designation } from './sales/designation/designation';
-import { TripDetails } from './sales/trip-details/trip-details';
-import { OrdersManagement } from './orders/orders-management/orders-management';
-import { DealerManagement } from './dealer/dealer-management/dealer-management';
 
 export const routes: Routes = [
     {
@@ -19,32 +13,31 @@ export const routes: Routes = [
         children : [
             {
                 path : '',
-                component : Dashboard,
+                loadComponent: () => import('./common/home/components/dashboard/dashboard').then(m => m.Dashboard)
             },
             {
                 path : 'sales',
-                component : SalesPersonnel
+                loadComponent: () => import('./sales/sales-personnel/sales-personnel').then(m => m.SalesPersonnel)
             },
             {
-                path : 'designaion',
-                component :Designation
+                path : 'designaion', 
+                loadComponent: () => import('./sales/designation/designation').then(m => m.Designation)
             },
             {
                 path : 'tripDetails',
-                component : TripDetails
+                loadComponent: () => import('./sales/trip-details/trip-details').then(m => m.TripDetails)
             },
             {
                 path : 'orders',
-                component : OrdersManagement
+                loadComponent: () => import('./orders/orders-management/orders-management').then(m => m.OrdersManagement)
             },
             {
                 path : 'dealer',
-                component : DealerManagement
+                loadComponent: () => import('./dealer/dealer-management/dealer-management').then(m => m.DealerManagement)
             }
         ]
     },
     {
-        // Catch-all route: Redirects any unknown URLs to the login page
         path: '**',
         redirectTo: ''
     }

@@ -1,13 +1,14 @@
 <div [attr.data-theme]="currentTheme()" class="h-screen w-screen flex flex-col">
   <p-toast />
-  
-  <!-- Add the async pipe here. The === true ensures strict boolean typing -->
+  <p-confirmpopup />
   <p-blockui [blocked]="(toastService.isLoading$ | async) === true">
-      <!-- Updated to the strict v18 kebab-case selector -->
-      <p-progress-spinner 
-          strokeWidth="4" 
-          animationDuration=".5s">
-      </p-progress-spinner>
+      <!-- Added a wrapper div with fixed positioning and flexbox centering -->
+      <div class="fixed inset-0 flex items-center justify-center z-[9999]">
+          <p-progress-spinner 
+              strokeWidth="4" 
+              animationDuration=".5s">
+          </p-progress-spinner>
+      </div>
   </p-blockui>
 
   <router-outlet></router-outlet>

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -19,29 +19,28 @@ export class ToastService {
     hideLoader() {
         this.loadingSubject.next(false);
     }
-
-    // --- Toast Management ---
-    showSuccess(successMsg: string, summary: string = 'Success') {
-        this.messageService.add({ severity: 'success', summary, detail: successMsg });
+    
+    showSuccess(successMsg: string) {
+        this.messageService.add({ severity: 'success', detail: successMsg });
     }
 
-    showInfo(infoMsg: string, summary: string = 'Info') {
-        this.messageService.add({ severity: 'info', summary, detail: infoMsg });
+    showInfo(infoMsg: string) {
+        this.messageService.add({ severity: 'info', detail: infoMsg });
     }
 
-    showWarn(warningMsg: string, summary: string = 'Warning') {
-        this.messageService.add({ severity: 'warn', summary, detail: warningMsg });
+    showWarn(warningMsg: string) {
+        this.messageService.add({ severity: 'warn', detail: warningMsg });
     }
 
-    showError(errorMsg: string, summary: string = 'Error') {
-        this.messageService.add({ severity: 'error', summary, detail: errorMsg });
+    showError(errorMsg: string) {
+        this.messageService.add({ severity: 'error', detail: errorMsg });
     }
 
-    showContrast(contrastMsg: string, summary: string = 'Contrast') {
-        this.messageService.add({ severity: 'contrast', summary, detail: contrastMsg });
+    showContrast(contrastMsg: string) {
+        this.messageService.add({ severity: 'contrast', detail: contrastMsg });
     }
 
-    showSecondary(secondaryMsg: string, summary: string = 'Secondary') {
-        this.messageService.add({ severity: 'secondary', summary, detail: secondaryMsg });
+    showSecondary(secondaryMsg: string) {
+        this.messageService.add({ severity: 'secondary', detail: secondaryMsg });
     }
 }

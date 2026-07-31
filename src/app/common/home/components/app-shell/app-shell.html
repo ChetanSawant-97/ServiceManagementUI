@@ -1,9 +1,10 @@
 <div class="h-screen w-screen flex flex-col overflow-hidden">
     
-    <app-appbar class="block w-full shrink-0 z-10"></app-appbar>
+    <app-appbar class="block w-full shrink-0 z-20 relative"></app-appbar>
     
     <div class="w-full flex flex-1 overflow-hidden relative">
-        <app-sidebar class="shrink-0 h-full border-r border-[var(--line)] hidden md:block"></app-sidebar>
+        
+        <app-sidebar class="h-full z-40 absolute md:relative"></app-sidebar>
         
         <main class="flex-1 h-full overflow-y-auto bg-[var(--bg)] p-4 md:p-6 lg:p-8">
             <router-outlet></router-outlet>

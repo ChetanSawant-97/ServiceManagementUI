@@ -1,7 +1,8 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, NavigationEnd, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { filter } from 'rxjs';
 
 import { Button } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
@@ -35,17 +36,19 @@ export interface NavGroup {
     RouterLink,
     RouterLinkActive,
     FormsModule,
-    Button,     // For the toggle button
-    Ripple      // For the material click effect on links
+    Button,
+    Ripple
   ],
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.scss']
 })
-export class Sidebar {
+export class Sidebar implements OnInit {
+  private router = inject(Router);
+
+  // Default to true on desktop, but you can set this to false if you want it closed by default
   protected readonly expanded = signal<boolean>(true);
   protected readonly userRoles = signal<string[]>(['ADMIN', 'SALES']);
 
-  // Updated icons to use PrimeIcons (pi pi-*)
   private readonly allNavigationModules: NavGroup[] = [
     {
       title: 'Workspace',
@@ -67,6 +70,22 @@ export class Sidebar {
       ]
     }
   ];
+
+  ngOnInit() {
+    // Check if on mobile initially and collapse
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+        this.expanded.set(false);
+    }
+
+    // Auto-close sidebar on mobile after navigation
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      if (typeof window !== 'undefined' && window.innerWidth < 768) {
+        this.expanded.set(false);
+      }
+    });
+  }
 
   protected readonly filteredNavigation = computed(() => {
     const currentRoles = this.userRoles();

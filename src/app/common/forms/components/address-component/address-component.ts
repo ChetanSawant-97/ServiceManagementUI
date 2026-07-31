@@ -1,8 +1,7 @@
-import { Component, output } from '@angular/core';
-import { Address } from '../../../home/models/AddressModel';
-import { DistrictData, getFormErrorMessages, INDIA_LOCATIONS_DATA, StateData } from '../../../Utility';
-import { Subscription, startWith } from 'rxjs'; // 1. Import startWith
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { DistrictData, INDIA_LOCATIONS_DATA, StateData } from '../../../Utility';
+import { Subscription } from 'rxjs';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
@@ -13,62 +12,47 @@ import { InputTextModule } from 'primeng/inputtext';
   templateUrl: './address-component.html',
   styleUrl: './address-component.scss',
 })
-export class AddressComponent {
-  // Outputs emitted on form value modifications and direct status checks
-  valueChange = output<Address>();
-  statusChange = output<string[]>();
+export class AddressComponent implements OnInit, OnDestroy {
+  // Accept individual FormControls from the parent
+  @Input({ required: true }) firstLine!: FormControl;
+  @Input({ required: true }) secondLine!: FormControl;
+  @Input({ required: true }) landMark!: FormControl;
+  @Input({ required: true }) area!: FormControl;
+  @Input({ required: true }) pincode!: FormControl;
+  @Input({ required: true }) city!: FormControl;
+  @Input({ required: true }) state!: FormControl;
 
   statesList: StateData[] = INDIA_LOCATIONS_DATA;
   availableDistricts: DistrictData[] = [];
   
-  private sub?: Subscription;
-
-  public addressForm: FormGroup = new FormGroup({
-    firstLine: new FormControl('', [Validators.required]),
-    secondLine: new FormControl(''),
-    landMark: new FormControl(''),
-    area: new FormControl('', [Validators.required]),
-    pincode: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]),
-    city: new FormControl('', [Validators.required]),
-    state: new FormControl('', [Validators.required])
-  });
+  private stateSub?: Subscription;
 
   ngOnInit(): void {
-    this.addressForm.get('state')?.valueChanges.subscribe((newState: string) => {
-      const foundState = this.statesList.find(s => s.state === newState);
-      this.availableDistricts = foundState ? foundState.districts : [];
+    // Populate districts if the state control already has a value on initialization
+    if (this.state.value) {
+      this.updateDistricts(this.state.value);
+    }
+
+    // Listen for state changes to update the dependent city dropdown
+    this.stateSub = this.state.valueChanges.subscribe((newState: string) => {
+      this.updateDistricts(newState);
       
-      const currentCity = this.addressForm.get('city')?.value;
+      const currentCity = this.city.value;
       const isValidCity = this.availableDistricts.some(d => d.district === currentCity);
       if (!isValidCity) {
-        this.addressForm.get('city')?.setValue('');
+        this.city.setValue(''); // Clear city if it doesn't belong to the new state
       }
-    });
-
-    // 2. Add startWith to immediately push the initial form state upon subscription
-    this.sub = this.addressForm.valueChanges.pipe(
-      startWith(this.addressForm.value)
-    ).subscribe(() => {
-      this.valueChange.emit(this.addressForm.value as Address);
-      this.statusChange.emit(getFormErrorMessages(this.addressForm));
     });
   }
 
   ngOnDestroy(): void {
-    if (this.sub) {
-      this.sub.unsubscribe();
+    if (this.stateSub) {
+      this.stateSub.unsubscribe();
     }
   }
 
-  public getAddressValue(): Address {
-    return this.addressForm.value as Address;
-  }
-
-  public isValid(): boolean {
-    return this.addressForm.valid;
-  }
-
-  public markAllTouched(): void {
-    this.addressForm.markAllAsTouched();
+  private updateDistricts(stateName: string): void {
+    const foundState = this.statesList.find(s => s.state === stateName);
+    this.availableDistricts = foundState ? foundState.districts : [];
   }
 }
