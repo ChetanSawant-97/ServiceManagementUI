@@ -6,7 +6,6 @@ import { TableColumn, TableList } from '../../common/forms/components/table-list
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 
-import { BaseModalComponent } from '../../common/forms/components/base-modal-component/base-modal-component';
 import { TabsModule } from 'primeng/tabs';
 import { AddressComponent } from '../../common/forms/components/address-component/address-component';
 import { Address } from '../../common/home/models/AddressModel';
@@ -30,7 +29,6 @@ export interface TabItem {
     ButtonModule,
     TableList,
     InputText,
-    BaseModalComponent,
     TabsModule,
     AddressComponent,
     InputCheckBox],

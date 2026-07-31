@@ -5,6 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { definePreset } from '@primeng/themes';
+import { MessageService } from 'primeng/api'; // <-- Import MessageService
 
 const VortrixPreset = definePreset(Aura, {
     semantic: {
@@ -42,6 +43,7 @@ export const appConfig: ApplicationConfig = {
                     darkModeSelector: "[data-theme='dark']"
                 }
             }
-        })
+        }),
+        MessageService
     ]
 };

@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Menu } from 'primeng/menu';
 import { Avatar } from 'primeng/avatar';
 import { MenuItem } from 'primeng/api';
+import { AuthService } from '../../../auth/services/Authentication.service';
 
 @Component({
   selector: 'app-topbar-component',
@@ -10,13 +11,14 @@ import { MenuItem } from 'primeng/api';
   styleUrl: './topbar-component.scss',
 })
 export class TopbarComponent {
+  authenticationService = inject(AuthService);
   // Define your menu options
   profileMenuItems: MenuItem[] = [
     {
       label: 'Profile',
       icon: 'pi pi-user',
       command: () => {
-        console.log('Navigate to profile');
+        
       }
     },
     {
@@ -33,7 +35,7 @@ export class TopbarComponent {
       label: 'Logout',
       icon: 'pi pi-sign-out',
       command: () => {
-        console.log('Trigger logout logic');
+        this.authenticationService.logout();
       }
     }
   ];

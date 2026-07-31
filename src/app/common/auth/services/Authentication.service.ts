@@ -1,48 +1,60 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
-import { AuthResponse, AuthResponseData } from '../models/AuthResponse';
-
-export interface LoginRequest {
-    username?: string;
-    password?: string;
-}
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { tap } from 'rxjs/operators';
+import { BaseApiService } from '../../base-api-service';
+import { TokenService } from './Token.service';
+import { ApiEndpoints } from '../../ApiConstants';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class AuthService {
-    private readonly http = inject(HttpClient);
-    private readonly loginUrl = 'http://localhost:8080/api/auth/login';
 
-    login(credentials: LoginRequest): Observable<AuthResponse> {
-        const headers = new HttpHeaders({
-            'Content-Type': 'application/json'
-        });
+  constructor(
+    private router: Router,
+    private api: BaseApiService,
+    private tokenService: TokenService
+  ) {}
 
-        return this.http.post<AuthResponse>(this.loginUrl, credentials, { headers })
-            .pipe(
-                map(response => new AuthResponse(response))
-            );
-    }
+  login(credentials: LoginRequest,showToast : boolean) {
+    return this.api.request<AuthResponse, LoginRequest>(
+      ApiEndpoints['AUTH_LOGIN'], 
+      credentials, 
+      { 
+        showLoader: true, 
+        successMessage: 'Login successful!' 
+      }
+    ).pipe(
+      tap((response: AuthResponse) => {
+        if (response.success && response.data) {
+          this.tokenService.saveSession(response.data);
+        }
+      })
+    );
+  }
 
-    setSession(authData: AuthResponseData): void {
-        localStorage.setItem('jwt_token', authData.token);
-        localStorage.setItem('user_role', authData.role);
-    }
+  logout() {
+    this.tokenService.clearSession();
+    this.router.navigate(['/login']);
+  }
+}
 
-    isLoggedIn(): boolean {
-        return true;
-        return !!localStorage.getItem('jwt_token');
-    }
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
 
-    getRole(): string | null {
-        return localStorage.getItem('user_role');
-    }
+export interface AuthData {
+  token: string;
+  tokenType: string;
+  userId: number;
+  username: string;
+  role: string;
+  dealerId: number;
+}
 
-    logout(): void {
-        localStorage.removeItem('jwt_token');
-        localStorage.removeItem('user_role');
-    }
-
+export interface AuthResponse {
+  success: boolean;
+  message: string;
+  data: AuthData;
 }

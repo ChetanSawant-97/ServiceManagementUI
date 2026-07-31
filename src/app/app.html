@@ -1,6 +1,8 @@
 <div [attr.data-theme]="currentTheme()" class="h-screen w-screen flex flex-col">
+  <p-toast />
   
-  <p-blockui [blocked]="uiUtilityService.isGlobalLoading()">
+  <!-- Add the async pipe here. The === true ensures strict boolean typing -->
+  <p-blockui [blocked]="(toastService.isLoading$ | async) === true">
       <!-- Updated to the strict v18 kebab-case selector -->
       <p-progress-spinner 
           strokeWidth="4" 
@@ -9,5 +11,4 @@
   </p-blockui>
 
   <router-outlet></router-outlet>
-
 </div>

@@ -4,8 +4,9 @@ import { InputText } from '../../../forms/components/input-text/input-text';
 import { InputPasswordComponent } from '../../../forms/components/input-password/input-password-component';
 import { CommonModule } from '@angular/common';
 import { getFormErrorMessages } from '../../../Utility';
-import { AuthService } from '../../services/Authentication.service';
-import { UiService } from '../../../UiUtility.service';
+import { AuthService, LoginRequest } from '../../services/Authentication.service';
+import { ToastService } from '../../../toast-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-staff-login',
@@ -15,8 +16,8 @@ import { UiService } from '../../../UiUtility.service';
 })
 export class StaffLogin implements OnInit{
   public authenticationService : AuthService = inject(AuthService);
-
-  public uiUtilityService : UiService = inject(UiService);
+  public toastService = inject(ToastService);
+  public router = inject(Router);
 
   public errors : string[] = [];
 
@@ -29,7 +30,7 @@ export class StaffLogin implements OnInit{
  
   public signingIn = new FormGroup({
     username: new FormControl('', { 
-      validators: [Validators.required,Validators.minLength(10),Validators.maxLength(50)], 
+      validators: [Validators.required,Validators.minLength(5),Validators.maxLength(50)], 
       nonNullable: true 
     }),
     password: new FormControl('', { 
@@ -41,9 +42,15 @@ export class StaffLogin implements OnInit{
   
  
   submit(): void {
-    this.uiUtilityService.showLoader();
-    setTimeout(()=>{},3000);
-    this.uiUtilityService.hideLoader();
-    this.uiUtilityService.showSuccess('Snackbar Works');
+    if (this.signingIn.invalid) {
+      return;
+    }
+
+    // Call the login service with the form values
+    this.authenticationService.login(this.signingIn.value as LoginRequest,false).subscribe({
+      next: (response) => {
+        this.router.navigate(['/']); 
+      }
+    });
   }
 }

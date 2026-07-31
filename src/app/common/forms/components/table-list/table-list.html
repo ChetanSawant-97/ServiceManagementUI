@@ -10,7 +10,32 @@
       <ng-template #body let-rowData let-columns="columns">
           <tr>
               <td *ngFor="let col of columns" [style.width]="col.width">
-                  {{ rowData[col.field] }}
+                  <!-- Check if it's the actions column -->
+                  @if (col.field === 'actions' || col.field === 'action') {
+                      <div class="flex items-center gap-2">
+                          <button 
+                              type="button" 
+                              (click)="onEdit(rowData, $event)" 
+                              class="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                              title="Edit">
+                              <i class="pi pi-pencil"></i>
+                          </button>
+                          <button 
+                              type="button" 
+                              (click)="onDelete(rowData, $event)" 
+                              class="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                              title="Delete">
+                              <i class="pi pi-trash"></i>
+                          </button>
+                      </div>
+                  } @else {
+                    @if(rowData[col.field]==true){
+                      <span class="pi pi-check text-green-700 font-medium"></span>
+                    }@else{
+                      {{ rowData[col.field] }}
+                    }
+                      
+                  }
               </td>
           </tr>
       </ng-template>
