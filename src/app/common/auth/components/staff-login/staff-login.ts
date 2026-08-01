@@ -28,11 +28,11 @@ export class StaffLogin implements OnInit{
  
   public signingIn = new FormGroup({
     username: new FormControl('', { 
-      validators: [Validators.required,Validators.minLength(5),Validators.maxLength(50)], 
+      validators: [Validators.required], 
       nonNullable: true 
     }),
     password: new FormControl('', { 
-      validators: [Validators.required, Validators.minLength(6), Validators.maxLength(50)], 
+      validators: [Validators.required], 
       nonNullable: true 
     })
   });

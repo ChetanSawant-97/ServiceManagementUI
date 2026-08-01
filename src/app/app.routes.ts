@@ -12,7 +12,7 @@ export const routes: Routes = [
         loadComponent: () => import('./common/home/components/app-shell/app-shell').then(m => m.AppShell),
         children : [
             {
-                path : '',
+                path : 'dashboard',
                 loadComponent: () => import('./common/home/components/dashboard/dashboard').then(m => m.Dashboard)
             },
             {
