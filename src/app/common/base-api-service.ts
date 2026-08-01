@@ -2,9 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
 import { UiFeedbackService } from './UiFeedbackService.service';
 import { EndpointConfig } from './ApiConstants';
+import { environment } from '../../environments/environment.development';
 // Import your updated ToastService
 
 export interface RequestOptions {
@@ -36,15 +36,13 @@ export class BaseApiService {
     }
 
     // 2. Format URL
-    let finalUrl = `${environment.apiUrl}/${config.url}`;
+    let finalUrl = `${environment.apiUrl}${config.url}`;
     if (options.pathParams) {
       for (const [key, value] of Object.entries(options.pathParams)) {
         finalUrl = finalUrl.replace(`{${key}}`, String(value));
       }
     }
-    // ADD THESE TWO LINES:
-    console.log('1. ENVIRONMENT OBJECT:', environment);
-    console.log('2. FINAL URL:', finalUrl);
+
     // 3. Execute request and attach RxJS lifecycle hooks
     return this.http.request<TResponse>(config.method, finalUrl, { body }).pipe(
       

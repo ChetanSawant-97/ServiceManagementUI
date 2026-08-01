@@ -74,7 +74,7 @@
               label="Bill Date">
             </app-input-date>
             
-            <app-modal-uploader ></app-modal-uploader>
+          <app-modal-uploader (fileChanged)="this.uploadedFile = $event"></app-modal-uploader>
           </form>
   
         <!-- Form Actions Bar -->

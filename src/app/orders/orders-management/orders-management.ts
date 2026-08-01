@@ -14,6 +14,7 @@ import { DealerService } from '../../dealer/dealer.service';
 import { OrderMaster } from '../models/OrderMaster';
 import { InputDateComponent } from '../../common/forms/components/input-date-component/input-date-component';
 import { ModalUploaderComponent } from '../../common/forms/components/modal-uploader/modal-uploader';
+import { Observable, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-orders-management',
@@ -29,6 +30,7 @@ export class OrdersManagement implements OnInit {
   private orderService = inject(OrderService);
   private dealerService = inject(DealerService);
   private cdr = inject(ChangeDetectorRef);
+  public uploadedFile: File | null = null; 
 
   isOpen = false;
   isLoading = false;
@@ -122,21 +124,60 @@ export class OrdersManagement implements OnInit {
       billDate: formValues.billDate ? new Date(formValues.billDate).toISOString().split('T')[0] : ''
     };
 
-    const saveRequest$ = (orderId && orderId > 0)
-      ? this.orderService.updateOrder(orderId, payload)
-      : this.orderService.createOrder(payload);
+    // ... inside your component method
 
-    saveRequest$.subscribe({
-      next: () => {
-        this.isSaving = false;
-        this.closeForm(); 
-        this.fetchOrders(); 
-      },
-      error: () => {
-        this.isSaving = false;
-        this.cdr.detectChanges();
-      }
-    });
+const saveRequest$ = (orderId && orderId > 0)
+  ? this.orderService.updateOrder(orderId, payload)
+  : this.orderService.createOrder(payload);
+
+saveRequest$.pipe(
+  switchMap((response: any) => {
+    const savedOrderId = (orderId && orderId > 0) ? orderId : response.id; 
+
+    if (this.uploadedFile) {
+      // 1. Store it in a local variable so TypeScript knows it is strictly a 'File' and not 'null'
+      const fileToUpload = this.uploadedFile;
+
+      const readFile$ = new Observable<string>((observer) => {
+        const reader = new FileReader();
+        
+        // 2. Pass the local variable to the reader
+        reader.readAsDataURL(fileToUpload); 
+        
+        reader.onload = () => {
+          observer.next(reader.result as string);
+          observer.complete();
+        };
+        reader.onerror = (error) => observer.error(error);
+      });
+
+      return readFile$.pipe(
+        switchMap((base64String: string) => {
+          // Clean base64 prefix if your backend requires it:
+          const cleanBase64 = base64String.split(',')[1];
+          return this.orderService.uploadBillImage(savedOrderId, { file: cleanBase64 });
+          
+          // Or send the raw string if the prefix is fine:
+          // return this.orderService.uploadBillImage(savedOrderId, { file: base64String });
+        })
+      );
+    }
+
+    // 3. If no file, continue the chain
+    return of(null); 
+  })
+).subscribe({
+  next: () => {
+    this.isSaving = false;
+    this.closeForm(); 
+    this.fetchOrders(); 
+  },
+  error: (err) => {
+    console.error('Error saving or uploading', err);
+    this.isSaving = false;
+    this.cdr.detectChanges();
+  }
+});
   }
 
   deleteRow(deletedRow: OrderMaster) {
