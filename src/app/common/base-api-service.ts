@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { ToastService } from './toast-service';
+import { UiFeedbackService } from './UiFeedbackService.service';
 import { EndpointConfig } from './ApiConstants';
 // Import your updated ToastService
 
@@ -19,7 +19,7 @@ export interface RequestOptions {
 export class BaseApiService {
   // Using inject() keeps the constructor clean
   private http = inject(HttpClient);
-  private toast = inject(ToastService);
+    private uiFeedbackService = inject(UiFeedbackService);
 
   request<TResponse, TBody = unknown>(
     config: EndpointConfig,
@@ -32,7 +32,7 @@ export class BaseApiService {
 
     // 1. Show loader before the request starts
     if (shouldShowLoader) {
-      this.toast.showLoader();
+      this.uiFeedbackService.showLoader();
     }
 
     // 2. Format URL
@@ -51,7 +51,7 @@ export class BaseApiService {
       // Handle Success
       tap(() => {
         if (options.successMessage) {
-          this.toast.showSuccess(options.successMessage);
+          this.uiFeedbackService.showSuccess(options.successMessage);
         }
       }),
 
@@ -59,7 +59,7 @@ export class BaseApiService {
       catchError((error: HttpErrorResponse) => {
         // Extract the error message from your microservice backend, or use a fallback
         const errorMsg = error.error?.message || 'An unexpected error occurred.';
-        this.toast.showError(errorMsg);
+        this.uiFeedbackService.showError(errorMsg);
         
         return throwError(() => error);
       }),
@@ -67,7 +67,7 @@ export class BaseApiService {
       // Finalize runs ALWAYS (whether the request succeeded or failed)
       finalize(() => {
         if (shouldShowLoader) {
-          this.toast.hideLoader();
+          this.uiFeedbackService.hideLoader();
         }
       })
     );

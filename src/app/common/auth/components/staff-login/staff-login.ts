@@ -5,7 +5,6 @@ import { InputPasswordComponent } from '../../../forms/components/input-password
 import { CommonModule } from '@angular/common';
 import { getFormErrorMessages } from '../../../Utility';
 import { AuthService, LoginRequest } from '../../services/Authentication.service';
-import { ToastService } from '../../../toast-service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -16,7 +15,6 @@ import { Router } from '@angular/router';
 })
 export class StaffLogin implements OnInit{
   public authenticationService : AuthService = inject(AuthService);
-  public toastService = inject(ToastService);
   public router = inject(Router);
 
   public errors : string[] = [];

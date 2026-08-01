@@ -2,9 +2,9 @@
 <div class="flex flex-col h-full w-full rounded-xl overflow-hidden gap-2 relative">
 
     <!-- TOP DIV: Header section -->
-    <div class="w-full flex flex-col bg-[var(--bg-2)] border border-[var(--line)] px-4 py-3 rounded-xl items-center justify-between shrink-0">
+    <div class="w-full flex flex-col bg-[var(--bg-2)] border border-[var(--line)] px-5 py-3 rounded-[30px] items-center justify-between shrink-0">
       <div class="flex w-full justify-between items-center">
-        <h2 class="text-lg font-semibold text-gray-800">Orders Management</h2>
+        <h2 class="text-base md:text-lg font-medium md:font-semibold text-gray-800">Orders Management</h2>
         <div class="flex gap-2">
           @if (!isOpen) {
             <button (click)="openForm()" class="hover:cursor-pointer" title="Add Order">
@@ -25,10 +25,7 @@
       <div class="fixed inset-0 bg-black/40 z-40 md:hidden" (click)="closeForm()"></div>
   
       <!-- Form Container -->
-      <div class="fixed inset-x-4 top-20 z-50 max-h-[85vh] overflow-y-auto bg-white border border-[var(--line)] p-4 rounded-xl shadow-xl shrink-0 transition-all md:static md:inset-auto md:max-h-none md:shadow-sm">
-        
-        <h3 class="text-md font-medium text-gray-700 border-b pb-2 mb-4">Order Details</h3>
-        
+      <div class="fixed inset-x-4 top-20 z-50 max-h-[85vh] overflow-y-auto bg-white border border-[var(--line)] p-4 rounded-xl shadow-xl shrink-0 transition-all md:static md:inset-auto md:max-h-none md:shadow-sm">        
         <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" [formGroup]="orderForm">
         
             <!-- Dealer Selection -->
@@ -77,6 +74,7 @@
               label="Bill Date">
             </app-input-date>
             
+            <app-modal-uploader ></app-modal-uploader>
           </form>
   
         <!-- Form Actions Bar -->

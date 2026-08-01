@@ -1,0 +1,111 @@
+<!-- The Trigger / Streamlined Row -->
+<div class="w-72 h-11 rounded-lg border border-slate-300 bg-white flex items-center px-2 gap-2 transition-all duration-200">
+
+  <!-- Always present, just visually hidden — kept outside the *ngIf blocks
+       below so #fileInput is referenceable from both of them. -->
+  <input
+    #fileInput
+    id="file-input"
+    type="file"
+    class="hidden"
+    [accept]="primeNgAcceptStr"
+    (change)="onNativeFileSelect($event)" />
+
+  <!-- BEFORE upload -->
+  <div *ngIf="!selectedFile" class="flex items-center w-full">
+    <label
+      for="file-input"
+      class="cursor-pointer flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors duration-150 px-1">
+      <i class="pi pi-cloud-upload text-sm"></i>
+      {{ buttonLabel }}
+    </label>
+  </div>
+
+  <!-- AFTER upload -->
+  <div *ngIf="selectedFile" class="flex items-center w-full animate-pop">
+    <i class="pi pi-file text-slate-400 shrink-0"></i>
+
+    <span
+      class="text-sm text-slate-700 truncate ml-2 flex-1"
+      [pTooltip]="selectedFile.name"
+      tooltipPosition="top">
+      {{ selectedFile.name }}
+    </span>
+
+    <button
+      type="button"
+      title="Preview"
+      class="p-1 text-slate-400 hover:text-teal-600 transition-colors duration-150 cursor-pointer"
+      (click)="viewFile()">
+      <i class="pi pi-eye !text-lg"></i>
+    </button>
+
+    <button
+      type="button"
+      title="Remove"
+      class="p-1 text-slate-400 hover:text-rose-600 transition-colors duration-150 cursor-pointer"
+      (click)="removeFile(fileInput)">
+      <i class="pi pi-times text-sm"></i>
+    </button>
+  </div>
+
+</div>
+
+<!-- The Preview Modal (unchanged) -->
+<p-dialog
+  [(visible)]="showPreviewModal"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '450px' }"
+  (onHide)="closeModal()">
+
+  <div class="flex flex-col items-center gap-6 py-4" *ngIf="selectedFile">
+
+    <!-- Visual Preview Area -->
+    <div class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 flex items-center justify-center" style="height: 250px;">
+
+        <!-- Render Image Preview -->
+        <img *ngIf="isImage"
+             [src]="previewUrl"
+             alt="File Preview"
+             class="max-w-full max-h-full object-contain drop-shadow-sm rounded" />
+
+        <!-- Fallback for Documents (PDFs, CSVs) -->
+        <div *ngIf="!isImage" class="flex flex-col items-center text-slate-400">
+            <i class="pi pi-file text-6xl mb-3"></i>
+            <span class="text-sm font-medium">Document Preview Not Available</span>
+        </div>
+    </div>
+
+    <!-- File Metadata -->
+    <div class="text-center w-full px-4">
+      <p class="text-base font-semibold text-slate-800 truncate" [pTooltip]="selectedFile.name" tooltipPosition="top">
+        {{ selectedFile.name }}
+      </p>
+      <p class="text-sm text-slate-500 mt-1">
+        {{ (selectedFile.size / 1024 / 1024) | number:'1.2-2' }} MB
+      </p>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3 w-full">
+        <button
+          pButton
+          type="button"
+          label="Cancel"
+          icon="pi pi-times"
+          class="p-button-text p-button-secondary"
+          (click)="closeModal()">
+        </button>
+
+        <button
+          pButton
+          type="button"
+          label="Confirm & Upload"
+          icon="pi pi-check"
+          (click)="confirmUpload()">
+        </button>
+    </div>
+  </ng-template>
+</p-dialog>

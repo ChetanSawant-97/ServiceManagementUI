@@ -1,0 +1,75 @@
+/* src/fonts.scss */
+
+/* --- MONTSERRAT --- */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- RALEWAY --- */
+@font-face {
+  font-family: 'Raleway';
+  src: url('/fonts/Raleway/static/Raleway-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/fonts/Raleway/static/Raleway-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =========================================
+   INTER (Highly Legible, Screen-Optimized)
+   ========================================= */
+
+/* Inter - Regular (400) - For standard table data and body text */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter/static/Inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter - Medium (500) - For secondary headers, inputs, or slightly emphasized text */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter/static/Inter-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter - SemiBold (600) - Perfect for table column headers and buttons */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter/static/Inter-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter - Bold (700) - For main page titles */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter/static/Inter-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

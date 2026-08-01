@@ -13,6 +13,7 @@ import { getFormErrorMessages } from '../../common/Utility';
 import { DealerService } from '../dealer.service';
 import { DealerMaster } from '../models/DealerMaster';
 import { InputPasswordComponent } from '../../common/forms/components/input-password/input-password-component';
+import { UiFeedbackService } from '../../common/UiFeedbackService.service';
 
 export interface TabItem {
   label: string;
@@ -33,6 +34,7 @@ export interface TabItem {
 export class DealerManagement implements OnInit {
   private dealerService = inject(DealerService);
   private cdr = inject(ChangeDetectorRef); // <-- Injected to force immediate UI updates
+  private uiFeedbackService = inject(UiFeedbackService);
 
   isOpen = false;
   isLoading = false;
@@ -52,7 +54,6 @@ export class DealerManagement implements OnInit {
     { field: 'emailId', header: 'Email Id', width: '25%' },
     { field: 'mobileNo', header: 'Mobile Number', width: '20%' },
     { field: 'isActive', header: 'Active', width: '10%' },
-    { field: 'actions', header: 'Actions', width: '15%' }
   ];
 
   tableData: DealerMaster[] = [];
@@ -140,20 +141,24 @@ export class DealerManagement implements OnInit {
   }
 
   deleteRow(deletedRow: DealerMaster) {
-    if (!confirm(`Are you sure you want to delete ${deletedRow.dealerName}?`)) return;
-
-    this.isLoading = true;
-    this.cdr.detectChanges();
-
-    this.dealerService.deleteDealer(deletedRow.dealerId).subscribe({
-      next: () => {
-        this.fetchDealers(); 
-      },
-      error: () => {
-        this.isLoading = false;
+    
+    this.uiFeedbackService.confirmDelete(
+      deletedRow.dealerName, 
+      () => {
+        this.isLoading = true;
         this.cdr.detectChanges();
+
+        this.dealerService.deleteDealer(deletedRow.dealerId).subscribe({
+          next: () => {
+            this.fetchDealers(); 
+          },
+          error: () => {
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          }
+        });
       }
-    });
+    );
   }
 
   // --- UI Interactions ---

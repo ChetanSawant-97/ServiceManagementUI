@@ -4,8 +4,8 @@
 }
 
 <!-- Dynamically adjust width based on expanded signal -->
-<aside 
-  class="h-full overflow-y-auto overflow-x-hidden sidebar-root shrink-0 transition-[width] duration-300 ease-in-out flex flex-col z-40 bg-[var(--bg-2)] border-r border-[var(--line)]"
+<aside
+  class="h-full overflow-y-auto overflow-x-hidden sidebar-root shrink-0 transition-[width] duration-300 ease-in-out flex flex-col z-40"
   [ngClass]="expanded() ? 'w-52 shadow-2xl md:shadow-none' : 'w-14 shadow-none'"
 >
     <header class="p-2 flex items-center" [ngClass]="expanded() ? 'justify-end' : 'justify-center'">
@@ -21,7 +21,7 @@
 
     <div class="flex-1 flex flex-col p-2 gap-1 overflow-x-hidden">
         @for (group of filteredNavigation(); track group.title) {
-            
+
             @for (item of group.items; track item.name) {
                 @if (item.subpages && item.subpages.length > 0) {
                     <!-- Parent Button with Submenu -->
@@ -31,7 +31,7 @@
                         (click)="toggleSubmenu(item.name)"
                     >
                         <i [class]="item.icon" class="text-lg min-w-[20px] text-center"></i>
-                        
+
                         @if (expanded()) {
                             <span class="ml-3 text-xs truncate flex-1">{{ item.name }}</span>
                             <i class="pi pi-chevron-down text-[10px] transition-transform" [class.rotate-180]="openSubmenu() === item.name"></i>
@@ -71,7 +71,7 @@
             }
 
             @if (!$last) {
-                <hr class="border-surface-700/50 my-2 w-full">
+                <hr class="my-2 w-full" style="border-color: var(--sidebar-border)">
             }
         }
     </div>

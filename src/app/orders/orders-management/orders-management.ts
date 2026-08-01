@@ -13,13 +13,14 @@ import { OrderService } from '../services/OrderMaster.service';
 import { DealerService } from '../../dealer/dealer.service';
 import { OrderMaster } from '../models/OrderMaster';
 import { InputDateComponent } from '../../common/forms/components/input-date-component/input-date-component';
+import { ModalUploaderComponent } from '../../common/forms/components/modal-uploader/modal-uploader';
 
 @Component({
   selector: 'app-orders-management',
   imports: [
     CommonModule, ReactiveFormsModule, ButtonModule, 
-    TableList, InputText, SelectComponent, TabsModule,InputDateComponent
-
+    TableList, InputText, SelectComponent, TabsModule,InputDateComponent,
+    ModalUploaderComponent
   ],
   templateUrl: './orders-management.html',
   styleUrl: './orders-management.scss',
@@ -44,7 +45,6 @@ export class OrdersManagement implements OnInit {
     { field: 'productName', header: 'Product', width: '20%' },
     { field: 'productSerialNumber', header: 'Product', width: '20%' },
     { field: 'billDate', header: 'Bill Date', width: '15%' },
-    { field: 'actions', header: 'Actions', width: '20%' }
   ];
 
   tableData: OrderMaster[] = [];

@@ -1,59 +1,76 @@
-/* src/styles.scss */
 @use 'tailwindcss';
-
-/* 1. Google Fonts MUST come before any other CSS rules */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
-/* 2. PrimeIcons can safely go here */
+@use './font.scss';
 @import "primeicons/primeicons.css";
 
+/* Base Light Theme — Scheme B: Navy & Teal */
 :root {
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
-:root {
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
-
-@layer base {
-  html {
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-}
-
-/* Base Light Theme */
-:root {
-  /* Default Light Palette */
-  --bg: #6b5ca5;
-  --bg-2: #edf2fb;
-  --line: #e2d9c4;
-  --ink: #12241d;
-  --ink-2: #343a40;
-  --ink-dim: #6d7a72;
-  --mint: #3f906c;
-  --mint-2: #63b895;
-  --coral: #ff5c46;
+  /* Core palette */
+  --bg: #EAEFF2;              /* main body / canvas background */
+  --bg-2: #F8FAFC;            /* secondary surface, table stripe */
+  --line: #DCE3E8;            /* borders, dividers */
+  --ink: #0B1F33;             /* primary text */
+  --ink-2: #3A4750;           /* secondary text */
+  --ink-dim: #5F6E78;         /* muted / label text */
+  --mint: #0F6E56;            /* primary accent — links, active states, buttons */
+  --mint-2: #4FD1C5;          /* lighter accent — active nav text, highlights */
+  --coral: #E2725B;           /* secondary/warm accent — badges, warnings, callouts */
   --card-bg: #ffffff;
-  --card-shadow: 0 30px 80px -20px rgba(18, 36, 29, 0.18), 0 6px 20px -6px rgba(255, 92, 70, 0.14);
+  --card-shadow: 0 30px 80px -20px rgba(11, 31, 51, 0.16), 0 6px 20px -6px rgba(15, 110, 86, 0.12);
+
+  /* Top bar */
+  --topbar-bg: #ffffff;
+  --topbar-border: var(--line);
+  --topbar-ink: var(--ink);
+
+  /* Sidebar */
+  --sidebar-bg: #0B1F33;
+  --sidebar-ink: #B8C4D0;         /* default nav item text */
+  --sidebar-ink-heading: #DCE6EC; /* section labels e.g. "Sales" */
+  --sidebar-hover-bg: #17324A;
+  --sidebar-active-bg: #12324B;
+  --sidebar-active-ink: #4FD1C5;
+  --sidebar-active-border: #4FD1C5;
+
+  /* Inputs */
+  --input-bg: #ffffff;
+  --input-border: #C7D0D6;
+  --input-focus-ring: var(--mint);
+
+  /* Semantic — kept independent of accent */
+  --error: #EF4444;
+  --success: #22C55E;
+  --warning: #F59E0B;
 }
 
-/* Base Dark Theme */
+/* Base Dark Theme — Navy & Teal, dark variant */
 [data-theme='dark'] {
-  /* Admin-style Dark Palette */
-  --bg: #0b0d10; 
+  --bg: #0b0d10;
   --bg-2: #0f1217;
   --line: #1e232c;
   --ink: #ffffff;
   --ink-2: #e9edf3;
   --ink-dim: #8a94a3;
-  --mint: #3d7bff;
-  --mint-2: #6fa2ff;
-  --coral: #3d7bff;
+  --mint: #2DD4BF;
+  --mint-2: #5EEAD4;
+  --coral: #2DD4BF;
   --card-bg: #11141a;
-  --card-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 30px 80px -20px rgba(0, 0, 0, 0.55), 0 6px 20px -6px rgba(61, 123, 255, 0.25);
+  --card-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 30px 80px -20px rgba(0, 0, 0, 0.55), 0 6px 20px -6px rgba(45, 212, 191, 0.25);
+
+  --topbar-bg: #11141a;
+  --topbar-border: var(--line);
+  --topbar-ink: var(--ink);
+
+  --sidebar-bg: #0b0d10;
+  --sidebar-ink: #8a94a3;
+  --sidebar-ink-heading: #e9edf3;
+  --sidebar-hover-bg: #171b22;
+  --sidebar-active-bg: #171b22;
+  --sidebar-active-ink: #2DD4BF;
+  --sidebar-active-border: #2DD4BF;
+
+  --input-bg: #11141a;
+  --input-border: #1e232c;
+  --input-focus-ring: var(--mint);
 }
 
 html, body {
@@ -64,6 +81,17 @@ html, body {
   overflow: hidden;
   background-color: var(--bg);
   color: var(--ink);
+
+  /* Apply Raleway as the default body font globally */
+  font-family: 'Raleway', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Apply Raleway to all headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 700;
 }
 
 /* Target fixed bottom-right floating badge containers */
@@ -75,11 +103,124 @@ body > div[style*="position: fixed"][style*="bottom"][style*="right"] {
   pointer-events: none !important;
 }
 
-
 :root {
   --p-tabs-tab-padding: 8px !important;
 }
 
+/* ==========================================================================
+   Top bar
+   ========================================================================== */
+.topbar {
+  background: var(--topbar-bg);
+  border-bottom: 1px solid var(--topbar-border);
+  color: var(--topbar-ink);
+}
+
+/* ==========================================================================
+   Sidebar
+   ========================================================================== */
+.sidebar {
+  background: var(--sidebar-bg);
+}
+
+.sidebar-section-label {
+  color: var(--sidebar-ink-heading);
+  font-weight: 500;
+}
+
+.sidebar-item {
+  color: var(--sidebar-ink);
+  border-radius: 0 6px 6px 0;
+  border-left: 3px solid transparent;
+  padding: 8px 12px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-item:hover {
+  background: var(--sidebar-hover-bg);
+}
+
+.sidebar-item.active,
+.sidebar-item[aria-current='page'] {
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active-ink);
+  border-left-color: var(--sidebar-active-border);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Cards
+   ========================================================================== */
+.card,
+.p-card {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+}
+
+/* ==========================================================================
+   Tabs (Info / Address / Credentials style tabs)
+   ========================================================================== */
+.p-tabs-tab.p-tabs-tab-active,
+.tab.active {
+  color: var(--mint) !important;
+  border-bottom: 2px solid var(--mint) !important;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+td {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem !important;
+  padding: 0.25rem 0.5rem !important;
+  color: var(--ink-2);
+
+  @media (min-width: 768px) {
+    font-size: 0.875rem !important;
+    padding: 0.4rem 1rem !important;
+  }
+}
+
+th {
+  font-size: 0.75rem !important;
+  padding: 0.25rem 0.5rem !important;
+  color: var(--ink-dim);
+
+  @media (min-width: 768px) {
+    font-size: 0.875rem !important;
+    padding: 0.4rem 1rem !important;
+  }
+}
+
+tr:nth-child(even) td {
+  background: var(--bg-2);
+}
+
+label {
+  font-family: 'Raleway', sans-serif;
+  color: var(--ink-dim);
+}
+
+/* ==========================================================================
+   Inputs (native + PrimeVue)
+   ========================================================================== */
+input, textarea, select,
+.p-inputtext {
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  color: var(--ink) !important;
+  border-radius: 6px;
+}
+
+input:focus, textarea:focus, select:focus,
+.p-inputtext:focus {
+  outline: none !important;
+  border-color: var(--mint) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--mint) 25%, transparent) !important;
+}
 
 /* Global override to perfectly match text input and p-select bounds on mobile */
 .p-select.p-component {
@@ -87,11 +228,14 @@ body > div[style*="position: fixed"][style*="bottom"][style*="right"] {
   align-items: center !important;
   height: auto !important;
   min-height: 2.15rem !important;
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
 
   .p-select-label {
     padding-top: 0.35rem !important;
     padding-bottom: 0.35rem !important;
     font-size: 0.75rem !important;
+    color: var(--ink) !important;
 
     @media (min-width: 640px) {
       font-size: 0.875rem !important;
@@ -100,5 +244,40 @@ body > div[style*="position: fixed"][style*="bottom"][style*="right"] {
 
   .p-select-dropdown {
     width: 2rem !important;
+    color: var(--ink-dim) !important;
   }
+}
+
+/* ==========================================================================
+   Buttons (PrimeVue)
+   ========================================================================== */
+.p-button.p-button-primary,
+.btn-primary {
+  background: var(--mint) !important;
+  border-color: var(--mint) !important;
+  color: #ffffff !important;
+}
+
+.p-button.p-button-primary:hover,
+.btn-primary:hover {
+  filter: brightness(0.9);
+}
+
+.p-button.p-button-secondary,
+.btn-secondary {
+  background: transparent !important;
+  border: 1px solid var(--input-border) !important;
+  color: var(--ink-2) !important;
+}
+
+/* ==========================================================================
+   Feedback text
+   ========================================================================== */
+.error-text,
+.p-message-error {
+  color: var(--error) !important;
+}
+
+.success-text {
+  color: var(--success) !important;
 }

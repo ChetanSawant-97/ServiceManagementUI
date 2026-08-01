@@ -1,14 +1,12 @@
 <div class="h-screen w-screen flex flex-col overflow-hidden">
-    
-    <app-appbar class="block w-full shrink-0 z-20 relative"></app-appbar>
-    
+    <app-appbar class="block w-full h-12 md:h-16 shrink-0 z-20 relative"></app-appbar>
     <div class="w-full flex flex-1 overflow-hidden relative">
-        
+
         <app-sidebar class="h-full z-40 absolute md:relative"></app-sidebar>
-        
-        <main class="flex-1 h-full overflow-y-auto bg-[var(--bg)] p-4 md:p-6 lg:p-8">
+
+        <!-- Replaced p-4 with py-4 pr-4 pl-20 (or whatever width your sidebar is) -->
+        <main class="flex-1 h-full overflow-y-auto bg-[var(--bg)] py-4 pr-4 pl-20 md:p-6 lg:p-8">
             <router-outlet></router-outlet>
         </main>
     </div>
-
-</div>
+</div>  

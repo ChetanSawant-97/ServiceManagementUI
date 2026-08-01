@@ -1,7 +1,7 @@
 <div [attr.data-theme]="currentTheme()" class="h-screen w-screen flex flex-col">
+<p-confirmdialog appendTo="body" />
   <p-toast />
-  <p-confirmpopup />
-  <p-blockui [blocked]="(toastService.isLoading$ | async) === true">
+  <p-blockui [blocked]="(uiFeedbackService.isLoading$ | async) === true">
       <!-- Added a wrapper div with fixed positioning and flexbox centering -->
       <div class="fixed inset-0 flex items-center justify-center z-[9999]">
           <p-progress-spinner 

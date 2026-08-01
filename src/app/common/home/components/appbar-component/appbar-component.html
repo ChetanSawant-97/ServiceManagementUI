@@ -1,16 +1,18 @@
 <!-- src/app/common/home/components/appbar-component/appbar-component.html -->
-<p-toolbar styleClass="w-full h-12 md:h-16 px-4 md:px-6 bg-[var(--card-bg)] border-b border-[var(--line)] border-x-0 border-t-0 rounded-none shadow-none flex items-center justify-between">
-    
+<p-toolbar class="!flex-nowrap w-full h-full px-4 md:px-6 bg-[var(--card-bg)] border-b border-[var(--line)] border-x-0 border-t-0 rounded-none shadow-none flex items-center justify-between relative z-50 overflow-hidden">
+
     <!-- Left Side: Logo -->
     <ng-template #start>
-        <div class="flex items-center cursor-pointer py-1">
-            <img src="/VDURA.png" alt="VDura Logo" class="h-6 md:h-8 w-auto object-contain shrink-0" />
+        <div class="flex items-center h-full shrink-0 cursor-pointer py-1">
+            <img src="/VDURA.png" alt="VDura Logo" class="h-full max-h-6 md:max-h-8 w-auto object-contain shrink-0" />
         </div>
     </ng-template>
 
     <!-- Right Side: User Profile -->
     <ng-template #end>
-        <app-topbar-component></app-topbar-component>
+        <div class="flex items-center h-full shrink-0">
+            <app-topbar-component></app-topbar-component>
+        </div>
     </ng-template>
 
 </p-toolbar>

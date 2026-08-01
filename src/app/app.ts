@@ -5,10 +5,9 @@ import { BlockUI } from 'primeng/blockui';
 import { ThemeService } from './common/home/services/theme-service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Toast } from 'primeng/toast';
-import { ToastService } from './common/toast-service';
+import { UiFeedbackService } from './common/UiFeedbackService.service';
 import { AsyncPipe } from '@angular/common';
-import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialog } from 'primeng/confirmdialog'; // New v18 Standalone
 
 @Component({
   selector: 'app-root',
@@ -18,14 +17,13 @@ import { ConfirmationService } from 'primeng/api';
     BlockUI,           // 2. Add them to your imports array
     ProgressSpinnerModule,
     AsyncPipe,
-    ConfirmPopupModule
+    ConfirmDialog
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
-  providers : [ConfirmationService]
 })
 export class App {
   private themeService = inject(ThemeService);
   readonly currentTheme = this.themeService.currentTheme;
-  public toastService = inject(ToastService);
+  public uiFeedbackService = inject(UiFeedbackService);
 }

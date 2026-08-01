@@ -1,0 +1,12 @@
+// No PrimeNG button overrides needed anymore — the trigger is a plain
+// <label>/<input type="file"> styled directly with Tailwind classes
+// in the template, so there's no PrimeNG chrome to fight with.
+
+.animate-pop {
+  animation: pop 0.2s ease-out;
+}
+
+@keyframes pop {
+  0% { opacity: 0; transform: scale(0.96); }
+  100% { opacity: 1; transform: scale(1); }
+}

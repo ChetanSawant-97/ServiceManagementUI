@@ -1,42 +1,61 @@
 <div class="card w-full h-full flex flex-col overflow-hidden border border-[var(--line)] rounded-lg bg-[var(--bg-2)]">
-  <p-table [columns]="columns" [value]="data" [tableStyle]="{ 'min-width': '50rem' }">
+  
+  <!-- 1. scrollable="true" is required for pFrozenColumn to work -->
+  <p-table 
+      [columns]="columns" 
+      [value]="data" 
+      styleClass="p-datatable-sm" 
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [scrollable]="true">
+      
       <ng-template #header let-columns>
           <tr>
+              <!-- Standard Dynamic Columns -->
               <th *ngFor="let col of columns" [style.width]="col.width">
                   {{ col.header }}
               </th>
+              
+              <!-- 2. Independent Actions Header frozen to the right -->
+              @if (showActions) {
+                  <th pFrozenColumn alignFrozen="right" [style.width]="'100px'" class="text-center z-10 bg-[var(--bg-2)]">
+                      Actions
+                  </th>
+              }
           </tr>
       </ng-template>
+      
       <ng-template #body let-rowData let-columns="columns">
           <tr>
+              <!-- Standard Dynamic Columns (no longer checking for 'actions') -->
               <td *ngFor="let col of columns" [style.width]="col.width">
-                  <!-- Check if it's the actions column -->
-                  @if (col.field === 'actions' || col.field === 'action') {
-                      <div class="flex items-center gap-2">
+                  @if(rowData[col.field] == true){
+                      <span class="pi pi-check text-green-700 font-medium"></span>
+                  } @else {
+                      {{ rowData[col.field] }}
+                  }
+              </td>
+              
+              <!-- 3. Independent Actions Cell frozen to the right -->
+              @if (showActions) {
+                  <td pFrozenColumn alignFrozen="right" class="z-10 bg-[var(--bg-2)] border-l border-[var(--line)]">
+                      <div class="flex items-center justify-center gap-2">
                           <button 
                               type="button" 
                               (click)="onEdit(rowData, $event)" 
-                              class="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors cursor-pointer"
+                              class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-full transition-colors cursor-pointer text-sm"
                               title="Edit">
                               <i class="pi pi-pencil"></i>
                           </button>
                           <button 
                               type="button" 
-                              (click)="onDelete(rowData, $event)" 
-                              class="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
+                              (click)="onDelete(rowData)" 
+                              class="p-1.5 text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer text-sm"
                               title="Delete">
                               <i class="pi pi-trash"></i>
                           </button>
                       </div>
-                  } @else {
-                    @if(rowData[col.field]==true){
-                      <span class="pi pi-check text-green-700 font-medium"></span>
-                    }@else{
-                      {{ rowData[col.field] }}
-                    }
-                      
-                  }
-              </td>
+                  </td>
+              }
           </tr>
       </ng-template>
   </p-table>

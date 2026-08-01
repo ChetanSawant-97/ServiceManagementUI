@@ -1,12 +1,12 @@
 :host {
-  --sidebar-bg: #061E29;
-  --sidebar-text: #cbd5e1;
-  --sidebar-text-dim: #94a3b8;
-  --sidebar-hover-bg: #334155;
-  --sidebar-active-bg: #312e81;
-  --sidebar-active-text: #a5b4fc;
-  --sidebar-border: #334155;
-  
+  --sidebar-bg: #0B1F33;
+  --sidebar-text: #B8C4D0;
+  --sidebar-text-dim: #7A8894;
+  --sidebar-hover-bg: #17324A;
+  --sidebar-active-bg: #12324B;
+  --sidebar-active-text: #4FD1C5;
+  --sidebar-border: #17324A;
+
   display: block;
   height: 100%;
 }
@@ -20,7 +20,7 @@
 .nav-item-btn {
   background-color: transparent;
   color: var(--sidebar-text);
-  
+
   i {
     color: var(--sidebar-text);
     transition: color 0.15s ease;
