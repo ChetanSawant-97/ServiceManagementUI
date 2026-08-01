@@ -2,6 +2,19 @@
 @use './font.scss';
 @import "primeicons/primeicons.css";
 
+
+@layer base {
+  /* Disable text selection globally */
+  body {
+    @apply select-none;
+  }
+
+  /* Re-enable text selection for form inputs so they don't break */
+  input, textarea {
+    @apply select-text;
+  }
+}
+
 /* Base Light Theme — Scheme B: Navy & Teal */
 :root {
   /* Core palette */
