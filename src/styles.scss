@@ -294,3 +294,77 @@ input:focus, textarea:focus, select:focus,
 .success-text {
   color: var(--success) !important;
 }
+
+/* Wrap everything in a custom class so it doesn't break other dialogs */
+.custom-confirm {
+
+  // --- MOBILE FIRST (Default) ---
+  .p-dialog-header {
+    padding: 0.5rem 1rem !important;
+  }
+
+  .p-dialog-content {
+    padding: 0 1rem !important;
+    font-size: 0.85rem !important;
+    
+    i {
+      display: none !important;
+    }
+  }
+
+  .p-dialog-footer {
+    padding: 0.75rem 1rem !important;
+    font-family: 'Inter', sans-serif;
+    
+    span {
+      font-size: 1.1rem !important;
+    }
+    
+    button {
+      padding: 0.35rem 0.8rem !important;
+      font-size: 0.75rem !important;
+    }
+  }
+
+  // --- TABLET (768px and up) ---
+  @media (min-width: 768px) {
+    .p-dialog-header {
+      padding: 0.75rem 1.25rem !important;
+    }
+    
+    .p-dialog-content {
+      padding: 0 1.25rem !important;
+      font-size: 0.95rem !important;
+    }
+    
+    .p-dialog-footer {
+      padding: 1rem 1.25rem !important;
+      
+      button {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.85rem !important;
+      }
+    }
+  }
+
+  // --- DESKTOP (1024px and up) ---
+  @media (min-width: 1024px) {
+    .p-dialog-header {
+      padding: 1rem 1.5rem !important;
+    }
+    
+    .p-dialog-content {
+      padding: 0 1.5rem !important;
+      font-size: 1rem !important;
+    }
+    
+    .p-dialog-footer {
+      padding: 1.25rem 1.5rem !important;
+      
+      button {
+        padding: 0.5rem 1.25rem !important;
+        font-size: 0.9rem !important;
+      }
+    }
+  }
+}

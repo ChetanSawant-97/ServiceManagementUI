@@ -18,4 +18,5 @@ export interface OrderMaster {
     productSerialNumber: string;
     billDate: string;
     dealerId: number;
+    photoBase64 : string;
   }

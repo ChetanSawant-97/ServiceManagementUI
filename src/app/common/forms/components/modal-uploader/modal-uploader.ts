@@ -1,8 +1,10 @@
-import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
+import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 export type FileCategory = 'images' | 'pdfs' | 'docs' | 'spreadsheets' | 'all' | string;
 
@@ -13,7 +15,8 @@ export type FileCategory = 'images' | 'pdfs' | 'docs' | 'spreadsheets' | 'all' |
   templateUrl: './modal-uploader.html',
   styleUrls: ['./modal-uploader.scss']
 })
-export class ModalUploaderComponent implements OnDestroy {
+export class ModalUploaderComponent implements OnInit, OnDestroy {
+  @Input({ required: true }) control!: FormControl; 
 
   primeNgAcceptStr: string = 'image/*';
 
@@ -31,14 +34,30 @@ export class ModalUploaderComponent implements OnDestroy {
   @Input() buttonLabel: string = 'Upload file';
   @Input() maxFileSize: number = 5000000;
 
-  @Output() fileChanged = new EventEmitter<File | null>();
+  @Output() validationError = new EventEmitter<string>();
 
   showPreviewModal = false;
   selectedFile: File | null = null;
   previewUrl: string | null = null;
   isImage = false;
+  private formSub!: Subscription;
 
-  @Output() validationError = new EventEmitter<string>();
+  // Inject ChangeDetectorRef here
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  ngOnInit() {
+    if (this.control.value) {
+      this.loadExistingBase64(this.control.value);
+    }
+
+    this.formSub = this.control.valueChanges.subscribe(val => {
+      if (!val) {
+        this.clearUI();
+      } else if (!this.selectedFile) {
+        this.loadExistingBase64(val);
+      }
+    });
+  }
 
   onNativeFileSelect(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -57,7 +76,19 @@ export class ModalUploaderComponent implements OnDestroy {
     this.isImage = file.type.startsWith('image/');
     this.previewUrl = URL.createObjectURL(file);
 
-    this.fileChanged.emit(this.selectedFile);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64Value = typeof reader.result === 'string' ? reader.result : '';
+      this.control.setValue(base64Value, { emitEvent: false }); // Prevent infinite loop
+      this.cdr.detectChanges(); // Force UI update
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeFile(fileInputRef: HTMLInputElement) {
+    this.clearUI();
+    fileInputRef.value = '';
+    this.control.setValue('', { emitEvent: false }); 
   }
 
   viewFile() {
@@ -69,26 +100,55 @@ export class ModalUploaderComponent implements OnDestroy {
   }
 
   confirmUpload() {
-    // selectedFile is already emitted to the parent via fileChanged on select.
-    // This just closes the review modal; hook in an actual upload call here
-    // if this component should trigger the HTTP request itself.
     this.showPreviewModal = false;
   }
 
-  removeFile(fileInputRef: HTMLInputElement) {
+  private clearUI() {
     this.selectedFile = null;
     if (this.previewUrl) {
       URL.revokeObjectURL(this.previewUrl);
       this.previewUrl = null;
     }
-    // Reset the native input so selecting the same file again still fires 'change'
-    fileInputRef.value = '';
-    this.fileChanged.emit(null);
+    this.cdr.detectChanges(); // Force UI to clear
+  }
+
+  private loadExistingBase64(val: string) {
+    try {
+      const isDataUri = val.includes(',');
+      const rawBase64 = isDataUri ? val.split(',')[1] : val;
+      
+      // Strip any whitespace/newlines from DB strings so atob() doesn't crash
+      const cleanBase64 = rawBase64.replace(/[^A-Za-z0-9+/=]/g, ""); 
+      
+      const mimeType = isDataUri ? val.split(',')[0].match(/:(.*?);/)?.[1] || 'image/jpeg' : 'image/jpeg';
+
+      const byteString = atob(cleanBase64);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const int8Array = new Uint8Array(arrayBuffer);
+      for (let i = 0; i < byteString.length; i++) {
+        int8Array[i] = byteString.charCodeAt(i);
+      }
+
+      const blob = new Blob([int8Array], { type: mimeType });
+      
+      // Default file name as requested
+      this.selectedFile = new File([blob], 'bill_image.jpg', { type: mimeType });
+      
+      this.isImage = true;
+      this.previewUrl = isDataUri ? val : `data:${mimeType};base64,${cleanBase64}`;
+
+      // Force Angular to render the "AFTER upload" HTML template immediately
+      this.cdr.detectChanges(); 
+      
+    } catch (e) {
+      console.error('Failed to parse existing base64 image', e);
+    }
   }
 
   ngOnDestroy() {
-    if (this.previewUrl) {
-      URL.revokeObjectURL(this.previewUrl);
+    this.clearUI();
+    if (this.formSub) {
+      this.formSub.unsubscribe();
     }
   }
 }

@@ -56,7 +56,8 @@ export class UiFeedbackService {
     confirmDelete(itemName: string, acceptCallback: () => void) {
         console.log('✅ Service was called for:', itemName); // <-- Add this
     this.confirmationService.confirm({
-      header: 'Confirm Deletion', 
+      header: '', 
+        closable: false,
       message: `Are you sure you want to delete ${itemName}?`,
       icon: 'pi pi-exclamation-triangle text-red-500',
       

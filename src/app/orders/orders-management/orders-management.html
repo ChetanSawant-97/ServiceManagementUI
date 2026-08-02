@@ -74,8 +74,11 @@
               label="Bill Date">
             </app-input-date>
             
-          <app-modal-uploader (fileChanged)="this.uploadedFile = $event"></app-modal-uploader>
-          </form>
+          <app-modal-uploader 
+            [control]="orderForm.controls.photoBase64">
+          </app-modal-uploader>
+          
+        </form>
   
         <!-- Form Actions Bar -->
         <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-gray-100">

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
@@ -11,16 +11,15 @@ import { TableColumn, TableList } from '../../common/forms/components/table-list
 import { getFormErrorMessages } from '../../common/Utility';
 import { OrderService } from '../services/OrderMaster.service';
 import { DealerService } from '../../dealer/dealer.service';
-import { OrderMaster } from '../models/OrderMaster';
+import { OrderMaster, OrderPayload } from '../models/OrderMaster';
 import { InputDateComponent } from '../../common/forms/components/input-date-component/input-date-component';
 import { ModalUploaderComponent } from '../../common/forms/components/modal-uploader/modal-uploader';
-import { Observable, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-orders-management',
   imports: [
     CommonModule, ReactiveFormsModule, ButtonModule, 
-    TableList, InputText, SelectComponent, TabsModule,InputDateComponent,
+    TableList, InputText, SelectComponent, TabsModule, InputDateComponent,
     ModalUploaderComponent
   ],
   templateUrl: './orders-management.html',
@@ -30,7 +29,6 @@ export class OrdersManagement implements OnInit {
   private orderService = inject(OrderService);
   private dealerService = inject(DealerService);
   private cdr = inject(ChangeDetectorRef);
-  public uploadedFile: File | null = null; 
 
   isOpen = false;
   isLoading = false;
@@ -51,14 +49,15 @@ export class OrdersManagement implements OnInit {
 
   tableData: OrderMaster[] = [];
 
- public orderForm = new FormGroup({
-    orderId: new FormControl(0), // Keep if needed for frontend logic/edits
+  public orderForm = new FormGroup({
+    orderId: new FormControl(0),
     dealerId: new FormControl<number | null>(null, [Validators.required]),
     customerName: new FormControl('', [Validators.required]),
     customerNumber: new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$')]),
     productName: new FormControl('', [Validators.required]),
     productSerialNumber: new FormControl('', [Validators.required]),
-    billDate: new FormControl<Date | string | null>(null, [Validators.required])
+    billDate: new FormControl<Date | string | null>(null, [Validators.required]),
+    photoBase64: new FormControl<string | null>('', [Validators.required]), 
   });
 
   ngOnInit(): void {
@@ -69,14 +68,10 @@ export class OrdersManagement implements OnInit {
     });  
   }
 
-  // --- API Integrations ---
-
   loadInitialData() {
     this.isLoading = true;
     this.cdr.detectChanges();
 
-    // Fetch dealers for the dropdown (assuming your SelectComponent accepts standard objects, 
-    // you may need to map optionLabel/optionValue inside the SelectComponent HTML if it doesn't automatically)
     this.dealerService.getAllDealers().subscribe(res => {
       if (res.success) {
         this.dealerOptions = res.data.map(d => ({ label: d.dealerName, value: d.dealerId }));
@@ -113,71 +108,34 @@ export class OrdersManagement implements OnInit {
     
     const formValues = this.orderForm.getRawValue();
     const orderId = formValues.orderId;
+    const photoBase64 = formValues.photoBase64 ?? '';
 
-    // Use fallback values (??) or non-null assertions (!) to satisfy the OrderPayload type
-    const payload = {
+    const payload: OrderPayload = {
       dealerId: formValues.dealerId!, 
       customerName: formValues.customerName ?? '',
       customerNumber: formValues.customerNumber ?? '',
       productName: formValues.productName ?? '',
       productSerialNumber: formValues.productSerialNumber ?? '',
-      billDate: formValues.billDate ? new Date(formValues.billDate).toISOString().split('T')[0] : ''
+      billDate: formValues.billDate ? new Date(formValues.billDate).toISOString().split('T')[0] : '',
+      photoBase64,
     };
 
-    // ... inside your component method
+    const saveRequest$ = (orderId && orderId > 0)
+      ? this.orderService.updateOrder(orderId, payload as OrderPayload)
+      : this.orderService.createOrder(payload as OrderPayload);
 
-const saveRequest$ = (orderId && orderId > 0)
-  ? this.orderService.updateOrder(orderId, payload)
-  : this.orderService.createOrder(payload);
-
-saveRequest$.pipe(
-  switchMap((response: any) => {
-    const savedOrderId = (orderId && orderId > 0) ? orderId : response.id; 
-
-    if (this.uploadedFile) {
-      // 1. Store it in a local variable so TypeScript knows it is strictly a 'File' and not 'null'
-      const fileToUpload = this.uploadedFile;
-
-      const readFile$ = new Observable<string>((observer) => {
-        const reader = new FileReader();
-        
-        // 2. Pass the local variable to the reader
-        reader.readAsDataURL(fileToUpload); 
-        
-        reader.onload = () => {
-          observer.next(reader.result as string);
-          observer.complete();
-        };
-        reader.onerror = (error) => observer.error(error);
-      });
-
-      return readFile$.pipe(
-        switchMap((base64String: string) => {
-          // Clean base64 prefix if your backend requires it:
-          const cleanBase64 = base64String.split(',')[1];
-          return this.orderService.uploadBillImage(savedOrderId, { file: cleanBase64 });
-          
-          // Or send the raw string if the prefix is fine:
-          // return this.orderService.uploadBillImage(savedOrderId, { file: base64String });
-        })
-      );
-    }
-
-    // 3. If no file, continue the chain
-    return of(null); 
-  })
-).subscribe({
-  next: () => {
-    this.isSaving = false;
-    this.closeForm(); 
-    this.fetchOrders(); 
-  },
-  error: (err) => {
-    console.error('Error saving or uploading', err);
-    this.isSaving = false;
-    this.cdr.detectChanges();
-  }
-});
+    saveRequest$.subscribe({
+      next: () => {
+        this.isSaving = false;
+        this.closeForm(); 
+        this.fetchOrders(); 
+      },
+      error: (err) => {
+        console.error('Error saving order', err);
+        this.isSaving = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   deleteRow(deletedRow: OrderMaster) {
@@ -219,6 +177,8 @@ saveRequest$.pipe(
     this.orderService.getOrderById(editedRow.orderId).subscribe({
       next: (res) => {
         if (res.success && res.data) {
+          // Because photoBase64 is part of res.data, patchValue automatically 
+          // feeds it to the ModalUploaderComponent via the control binding!
           this.orderForm.patchValue(res.data);
         }
         this.isLoading = false;
@@ -236,7 +196,6 @@ saveRequest$.pipe(
     this.formErrors = getFormErrorMessages(this.orderForm);
   }
 
-  // 3. Update resetFormToDefault
   private resetFormToDefault() {
     this.orderForm.reset({
       orderId: 0,
@@ -245,7 +204,8 @@ saveRequest$.pipe(
       customerNumber: '',
       productName: '',
       productSerialNumber: '',
-      billDate: new Date() // Sets to today's date
+      billDate: new Date(), 
+      photoBase64: '' // Resets the uploader instantly
     });
   }
 }

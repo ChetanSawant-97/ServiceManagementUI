@@ -1,5 +1,5 @@
 <div [attr.data-theme]="currentTheme()" class="h-screen w-screen flex flex-col">
-<p-confirmdialog appendTo="body" />
+<p-confirmdialog appendTo="body" styleClass="custom-confirm"/>
   <p-toast />
   <p-blockui [blocked]="(uiFeedbackService.isLoading$ | async) === true">
       <!-- Added a wrapper div with fixed positioning and flexbox centering -->
