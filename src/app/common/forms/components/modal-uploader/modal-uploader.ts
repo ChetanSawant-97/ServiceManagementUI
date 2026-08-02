@@ -79,8 +79,9 @@ export class ModalUploaderComponent implements OnInit, OnDestroy {
     const reader = new FileReader();
     reader.onload = () => {
       const base64Value = typeof reader.result === 'string' ? reader.result : '';
-      this.control.setValue(base64Value, { emitEvent: false }); // Prevent infinite loop
-      this.cdr.detectChanges(); // Force UI update
+      this.control.setValue(base64Value); 
+      
+      this.cdr.detectChanges(); 
     };
     reader.readAsDataURL(file);
   }
@@ -88,9 +89,9 @@ export class ModalUploaderComponent implements OnInit, OnDestroy {
   removeFile(fileInputRef: HTMLInputElement) {
     this.clearUI();
     fileInputRef.value = '';
-    this.control.setValue('', { emitEvent: false }); 
+    this.control.setValue(''); 
   }
-
+  
   viewFile() {
     this.showPreviewModal = true;
   }

@@ -62,9 +62,9 @@
                 [pincode]="dealerForm.controls.pinCode">
             </app-address-component>
           </p-tabpanel>
-          <p-tabpanel [value]="2">
+          <p-tabpanel [value]="2" class="gap-2 flex flex-col">
             <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.username" label="Login Usernamw"></app-input-text>
-            <app-input-password class="w-full md:w-[30%] block" [control]="dealerForm.controls.password" label="Login Password"></app-input-password>
+            <app-input-password class="w-full md:w-[30%] block" [requireConfirm]="true" [control]="dealerForm.controls.password" label="Login Password"></app-input-password>
           </p-tabpanel>
         </p-tabpanels>
       </p-tabs>

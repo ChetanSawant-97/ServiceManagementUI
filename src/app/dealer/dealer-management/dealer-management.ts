@@ -115,6 +115,7 @@ export class DealerManagement implements OnInit {
   saveDealer() {
     if (this.dealerForm.invalid) {
       this.dealerForm.markAllAsTouched();
+      this.computeAllError();
       return;
     }
 
@@ -167,7 +168,7 @@ export class DealerManagement implements OnInit {
     this.resetFormToDefault();
     this.isOpen = true;
     this.currentTab.set(0);
-    this.formErrors = [];
+    this.computeAllError();
   }
 
   closeForm() {

@@ -101,6 +101,7 @@ export class OrdersManagement implements OnInit {
   saveOrder() {
     if (this.orderForm.invalid) {
       this.orderForm.markAllAsTouched();
+      this.computeAllError();
       return;
     }
 
@@ -160,7 +161,7 @@ export class OrdersManagement implements OnInit {
   openForm() {
     this.resetFormToDefault();
     this.isOpen = true;
-    this.formErrors = [];
+    this.computeAllError();
   }
 
   closeForm() {
