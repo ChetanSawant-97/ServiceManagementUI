@@ -6,7 +6,7 @@
     }
     
     <p-datepicker 
-        [formControl]="control()" 
+        [formControl]="internalControl" 
         [inputId]="inputId()"
         [placeholder]="placeholder()"
         [minDate]="minDate() ?? null"
@@ -16,6 +16,7 @@
         dateFormat="dd/mm/yy"
         styleClass="w-full"
         inputStyleClass="w-full !text-xs sm:!text-sm"
-        appendTo="body">
+        appendTo="body"
+        (onBlur)="control().markAsTouched()">
     </p-datepicker>
 </div>

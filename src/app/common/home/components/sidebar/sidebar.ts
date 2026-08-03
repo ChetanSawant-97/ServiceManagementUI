@@ -54,15 +54,24 @@ export class Sidebar implements OnInit {
       title: 'Workspace',
       roles: ['ADMIN','SALES'],
       items: [
+        {
+          name:"Configuration",
+          route: '/config',
+          icon: 'pi pi-cog',
+          roles: ['ADMIN'],
+          subpages: [
+            { name: 'Product Master', route: '/config', icon: 'pi pi-box', roles: ['ADMIN'] },
+            { name: 'Trip Master', route: '/tripDetails', icon: 'pi pi-calculator', roles: ['ADMIN'] }
+          ]
+        },
         { 
           name: 'Sales', 
           route: '/sales', 
           icon: 'pi pi-chart-line', 
           roles: ['ADMIN', 'SALES'],
           subpages: [
-            { name: 'Sales Personal', route: '/dashboard/overview', icon: 'pi pi-user', roles: ['ADMIN'] },
-            { name: 'Designation', route: '/dashboard/realtime', icon : 'pi pi-id-card', roles: ['ADMIN'] },
-            { name: 'Trip Details', route: '/dashboard/realtime', icon : 'pi pi-map-marker', roles: ['ADMIN'] }
+            { name: 'Sales Personal', route: '/sales/personal', icon: 'pi pi-user', roles: ['ADMIN'] },
+            { name: 'Designation', route: '/sales/designation', icon : 'pi pi-id-card', roles: ['ADMIN'] }
           ]
         },
         { name: 'Dealer', route: '/dealer', icon: 'pi pi-shop', roles: ['ADMIN', 'SALES'] },

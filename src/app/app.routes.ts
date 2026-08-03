@@ -16,12 +16,12 @@ export const routes: Routes = [
                 loadComponent: () => import('./common/home/components/dashboard/dashboard').then(m => m.Dashboard)
             },
             {
-                path : 'sales',
-                loadComponent: () => import('./sales/sales-personnel/sales-personnel').then(m => m.SalesPersonnel)
+                path : 'config',
+                loadChildren: () => import('./sales/sales.routes').then(m => m.salesRoutes)
             },
             {
-                path : 'designaion', 
-                loadComponent: () => import('./sales/designation/designation').then(m => m.Designation)
+                path : 'sales',
+                loadChildren: () => import('./sales/sales.routes').then(m => m.salesRoutes)
             },
             {
                 path : 'tripDetails',

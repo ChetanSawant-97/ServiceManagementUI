@@ -11,7 +11,6 @@ import { AuthService } from '../../../auth/services/Authentication.service';
   styleUrl: './topbar-component.scss',
 })
 export class TopbarComponent {
-  authenticationService = inject(AuthService);
   // Define your menu options
   profileMenuItems: MenuItem[] = [
     {
@@ -35,7 +34,7 @@ export class TopbarComponent {
       label: 'Logout',
       icon: 'pi pi-sign-out',
       command: () => {
-        this.authenticationService.logout();
+        
       }
     }
   ];

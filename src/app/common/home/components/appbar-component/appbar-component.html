@@ -8,11 +8,15 @@
         </div>  
     </ng-template>
 
-    <!-- Right Side: User Profile -->
+  <!-- Right Side: User Profile -->
     <ng-template #end>
         <div class="flex items-center h-full shrink-0 cursor-pointer">
-            <app-topbar-component></app-topbar-component>
+            <p-button 
+                icon="pi pi-sign-out" 
+                [rounded]="true" 
+                [text]="true" 
+                styleClass="!text-white hover:!bg-white/20" 
+                (click)="logout()" />
         </div>
     </ng-template>
-
 </p-toolbar>

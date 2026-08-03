@@ -1,7 +1,9 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+// Adjust this path to wherever your service actually lives relative to the table component
+import { UiFeedbackService } from '../../../UiFeedbackService.service'; 
 
 export interface TableColumn {
   field: string;
@@ -18,6 +20,8 @@ export interface TableColumn {
   styleUrl: './table-list.scss',
 })
 export class TableList {
+  private uiFeedbackService = inject(UiFeedbackService);
+
   @Input({ required: true }) columns: TableColumn[] = [];
   @Input({ required: true }) data: any[] = [];
   @Input() loading: boolean = false;
@@ -25,13 +29,15 @@ export class TableList {
   @Input() rows: number = 10;
   @Input() rowsPerPageOptions: number[] = [5, 10, 20, 50];
   
-  // 1. Add the new flag (Defaults to true)
   @Input() showActions: boolean = true;
+  
+  // NEW: Let the parent tell the table which field to use for the delete warning (e.g., 'dealerName')
+  @Input() deleteNameKey?: string;
 
   @Output() rowClick = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
   
-  // 2. Ensure delete emits the event for ConfirmPopup
+  // Now, this event ONLY fires if the user clicks "Yes" in the confirmation box!
   @Output() delete = new EventEmitter<any>();
 
   onRowSelect(item: any) {
@@ -44,6 +50,15 @@ export class TableList {
   }
 
   onDelete(item: any) {
-    this.delete.emit( item );
+    // Dynamically grab the name based on the key provided, fallback to "this record" if none provided
+    const recordName = this.deleteNameKey && item[this.deleteNameKey] 
+      ? item[this.deleteNameKey] 
+      : 'this record';
+
+    // Trigger the confirmation popup from INSIDE the table component
+    this.uiFeedbackService.confirmDelete(recordName, () => {
+      // Only emit to the parent if they confirmed!
+      this.delete.emit(item);
+    });
   }
 }

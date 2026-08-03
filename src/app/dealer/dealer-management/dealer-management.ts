@@ -141,28 +141,21 @@ export class DealerManagement implements OnInit {
     });
   }
 
-  deleteRow(deletedRow: DealerMaster) {
-    
-    this.uiFeedbackService.confirmDelete(
-      deletedRow.dealerName, 
-      () => {
-        this.isLoading = true;
-        this.cdr.detectChanges();
+  deleteRow(deletedRow: DealerMaster) {    
+    this.isLoading = true;
+    this.cdr.detectChanges();
 
-        this.dealerService.deleteDealer(deletedRow.dealerId).subscribe({
-          next: () => {
-            this.fetchDealers(); 
-          },
-          error: () => {
-            this.isLoading = false;
-            this.cdr.detectChanges();
-          }
-        });
+    this.dealerService.deleteDealer(deletedRow.dealerId).subscribe({
+      next: () => {
+        this.fetchDealers(); 
+      },
+      error: () => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
-    );
+    });
   }
 
-  // --- UI Interactions ---
 
   openForm() {
     this.resetFormToDefault();
