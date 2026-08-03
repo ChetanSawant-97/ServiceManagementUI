@@ -15,7 +15,7 @@ export class InputPasswordComponent implements OnInit, OnDestroy {
   
   // Flag to toggle the second confirm field
   requireConfirm = input<boolean>(false);
-  
+  showFeedback = input<boolean>(false);
   label = input<string>('Password');
   placeholder = input<string>('••••••••');
   iconStart = input<string>('');
