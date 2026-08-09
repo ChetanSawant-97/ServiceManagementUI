@@ -1,6 +1,7 @@
 <div class="flex flex-col gap-1 w-full">
     @if (label()) {
-        <label [for]="inputId()" class="text-xs sm:text-sm font-[500] text-surface-700 dark:text-surface-300">
+        <label [for]="inputId()" class="text-xs sm:text-sm font-[500] text-surface-700 dark:text-surface-300" 
+               [class.opacity-60]="control().disabled">
             {{ label() }}
         </label>
     }
@@ -15,7 +16,7 @@
         [iconDisplay]="iconDisplay()"
         dateFormat="dd/mm/yy"
         styleClass="w-full"
-        inputStyleClass="w-full !text-xs sm:!text-sm"
+        inputStyleClass="w-full !text-xs sm:!text-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed disabled:border-gray-200"
         appendTo="body"
         (onBlur)="control().markAsTouched()">
     </p-datepicker>

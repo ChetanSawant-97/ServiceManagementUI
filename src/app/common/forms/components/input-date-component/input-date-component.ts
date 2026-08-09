@@ -37,6 +37,22 @@ export class InputDateComponent implements OnInit, OnDestroy {
     // 1. Initial load (Translate Parent String -> UI Date)
     this.updateInternalFromParent(this.control().value);
 
+    // NEW: Sync initial disabled state
+    if (this.control().disabled) {
+      this.internalControl.disable({ emitEvent: false });
+    }
+
+    // NEW: Listen to disable()/enable() calls from the parent
+    this.subs.add(
+      this.control().statusChanges.subscribe(status => {
+        if (status === 'DISABLED') {
+          this.internalControl.disable({ emitEvent: false });
+        } else {
+          this.internalControl.enable({ emitEvent: false });
+        }
+      })
+    );
+
     // 2. Listen to API/Parent changes (e.g. form.patchValue)
     this.subs.add(
       this.control().valueChanges.subscribe(val => {

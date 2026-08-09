@@ -29,13 +29,15 @@
       <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" [formGroup]="orderForm">
       
         <!-- Dealer Selection -->
-        <app-input-select 
-          class="w-full block" 
-          [control]="orderForm.controls.dealerId" 
-          [items]="dealerOptions" 
-          label="Select Dealer" 
-          placeholder="Choose a dealer">
-        </app-input-select>
+        @if (userData?.role !== 'DEALER') {
+          <app-input-select 
+            class="w-full block" 
+            [control]="orderForm.controls.dealerId" 
+            [items]="dealerOptions" 
+            label="Select Dealer" 
+            placeholder="Choose a dealer">
+          </app-input-select>
+        }
         
         <!-- Customer Name -->
         <app-input-text 

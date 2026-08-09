@@ -28,7 +28,8 @@ export const OrderEndpoints = {
   CREATE_ORDER:     { url: '/api/orders', method: 'POST' },
   UPDATE_ORDER:     { url: '/api/orders/{orderId}', method: 'PUT' },
   DELETE_ORDER:     { url: '/api/orders/{orderId}', method: 'DELETE' },
-  UPLOAD_ORDER_BILL:{ url: '/api/orders/{orderId}/bill-image', method: 'POST' }
+  UPLOAD_ORDER_BILL:{ url: '/api/orders/{orderId}/bill-image', method: 'POST' },
+  GET_ORDERS_BY_DEALER: { url: '/api/orders?dealerId={dealerId}', method: 'GET' }
 } as const;
 
 export const DealerEndPoints = {

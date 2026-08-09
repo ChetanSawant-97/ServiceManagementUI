@@ -17,6 +17,8 @@ import { OrderService } from '../services/OrderMaster.service';
 import { DealerService } from '../../dealer/dealer.service';
 import { OrderMaster, OrderPayload } from '../models/OrderMaster';
 import { ProductService } from '../../config/services/Product.service';
+import { TokenService } from '../../common/auth/services/Token.service';
+import { AuthData } from '../../common/auth/services/Authentication.service';
 
 @Component({
   selector: 'app-orders-management',
@@ -33,6 +35,12 @@ export class OrdersManagement implements OnInit {
   private dealerService = inject(DealerService);
   private productService = inject(ProductService);
   private cdr = inject(ChangeDetectorRef);
+  private tokenService = inject(TokenService); 
+  public userData : AuthData | null = this.tokenService.getUserData();
+
+  get isDealerUser(): boolean {
+    return this.userData?.role?.toUpperCase() === 'DEALER';
+  }
 
   isOpen = false;
   isLoading = false;
@@ -54,8 +62,11 @@ export class OrdersManagement implements OnInit {
   tableData: OrderMaster[] = [];
 
   public orderForm = new FormGroup({
-    orderId: new FormControl(0),
-    dealerId: new FormControl<number | null>(null, [Validators.required]),
+    orderId: new FormControl(0), 
+    dealerId: new FormControl<number | null>(
+      this.isDealerUser ? this.userData!.dealerId : null, 
+      [Validators.required]
+    ),
     customerName: new FormControl('', [Validators.required]),
     customerNumber: new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$')]),
     productId: new FormControl<number | null>(null, [Validators.required]), // Changed to productId
@@ -66,7 +77,7 @@ export class OrdersManagement implements OnInit {
 
   ngOnInit(): void {
     this.loadInitialData();
-
+    console.warn('User Data:', this.userData); // Log user data for debugging
     this.orderForm.valueChanges.subscribe(() => {
       this.computeAllError();
     });  
@@ -77,11 +88,13 @@ export class OrdersManagement implements OnInit {
     this.cdr.detectChanges();
 
     // Load Dealers
-    this.dealerService.getAllDealers().subscribe(res => {
-      if (res.success) {
-        this.dealerOptions = res.data.map(d => ({ label: d.dealerName, value: d.dealerId }));
-      }
-    });
+    if(this.userData!=null && this.userData.role.toLowerCase() !== 'dealer') {
+      this.dealerService.getAllDealers().subscribe(res => {
+        if (res.success) {
+          this.dealerOptions = res.data.map(d => ({ label: d.dealerName, value: d.dealerId }));
+        }
+      });
+    }
 
     // Load Products for the dropdown
     this.productService.getAllProducts().subscribe(res => {
@@ -96,7 +109,13 @@ export class OrdersManagement implements OnInit {
 
   fetchOrders() {
     this.isLoading = true;
-    this.orderService.getAllOrders().subscribe({
+    this.cdr.detectChanges(); 
+
+    const fetchRequest$ = this.isDealerUser 
+      ? this.orderService.getOrdersByDealer(this.userData!.dealerId)
+      : this.orderService.getAllOrders();
+
+    fetchRequest$.subscribe({
       next: (res) => {
         if (res.success) {
           this.tableData = [...res.data]; 
@@ -182,14 +201,16 @@ export class OrdersManagement implements OnInit {
 
   editRow(editedRow: OrderMaster) {
     this.openForm(); 
+    
+    // FIX: Disable the Bill Date field when editing an existing record
+    this.orderForm.controls.billDate.disable();
+
     this.isLoading = true; 
     this.cdr.detectChanges();
 
     this.orderService.getOrderById(editedRow.orderId).subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          // patchValue will automatically map productId to the SelectComponent 
-          // and billPhotoBase64 to the ModalUploaderComponent
           this.orderForm.patchValue(res.data);
         }
         this.isLoading = false;
@@ -208,9 +229,11 @@ export class OrdersManagement implements OnInit {
   }
 
   private resetFormToDefault() {
+    this.orderForm.controls.billDate.enable();
+
     this.orderForm.reset({
       orderId: 0,
-      dealerId: null,
+      dealerId: this.isDealerUser ? this.userData!.dealerId : null,
       customerName: '',
       customerNumber: '',
       productId: null, 

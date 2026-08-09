@@ -65,4 +65,12 @@ export class OrderService {
       }
     );
   }
+
+  getOrdersByDealer(dealerId: number): Observable<ApiResponse<OrderMaster[]>> {
+    return this.baseApi.request<ApiResponse<OrderMaster[]>>(
+      OrderEndpoints.GET_ORDERS_BY_DEALER,
+      undefined, 
+      { pathParams: { dealerId } } 
+    );
+  }
 }
