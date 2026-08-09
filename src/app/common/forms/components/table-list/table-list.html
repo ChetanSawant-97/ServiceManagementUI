@@ -60,20 +60,23 @@
         </ng-template>
   
         <!-- 4. Empty State Template -->
-        <ng-template #emptymessage let-columns>
-            <tr>
-                <td [attr.colspan]="columns.length + (showActions ? 1 : 0)">
-                    <div class="flex flex-col items-center justify-center py-14 px-4 text-[var(--ink-dim)]">
-                        <!-- Modern Empty Box SVG -->
-                        <svg class="w-16 h-16 mb-4 text-[#C7D0D6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                        </svg>
-                        <p class="text-sm font-semibold text-[var(--ink-2)]">No records found</p>
-                        <p class="text-xs mt-1 text-[var(--ink-dim)]">There is currently no data available to display.</p>
-                    </div>
-                </td>
-            </tr>
-        </ng-template>
+      <ng-template #emptymessage let-columns>
+        <tr>
+            <!-- Add relative positioning to the td -->
+            <td [attr.colspan]="columns.length + (showActions ? 1 : 0)" class="relative">
+                
+                <!-- FIX: sticky left-1/2 -translate-x-1/2 keeps it centered in the viewport while scrolling -->
+                <div class="sticky left-1/2 -translate-x-1/2 w-[300px] flex flex-col items-center justify-center py-14 px-4 text-[var(--ink-dim)]">
+                    <!-- Modern Empty Box SVG -->
+                    <svg class="w-16 h-16 mb-4 text-[#C7D0D6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                    <p class="text-sm font-semibold text-[var(--ink-2)]">No records found</p>
+                </div>
+                
+            </td>
+        </tr>
+    </ng-template>
   
     </p-table>
   </div>

@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { filter } from 'rxjs';
-
 import { Button } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
+import { TokenService } from '../../../auth/services/Token.service';
 
 export interface NavSubpage {
   name: string;
@@ -44,49 +44,52 @@ export interface NavGroup {
 })
 export class Sidebar implements OnInit {
   private router = inject(Router);
+  private tokenService = inject(TokenService); // <-- Inject TokenService
 
-  // Default to true on desktop, but you can set this to false if you want it closed by default
   protected readonly expanded = signal<boolean>(true);
-  protected readonly userRoles = signal<string[]>(['ADMIN', 'SALES']);
+  
+  // Dynamically initialize the signal with the role from the token. 
+  // We use toLowerCase() to safely match the lowercase roles in the array below.
+  protected readonly userRole = signal<string>(
+    this.tokenService.getUserData()?.role?.toLowerCase() || ''
+  );
 
   private readonly allNavigationModules: NavGroup[] = [
     {
       title: 'Workspace',
-      roles: ['ADMIN','SALES'],
+      roles: ['admin', 'sales', 'dealer'],
       items: [
         {
           name:"Configuration",
           route: '/config',
           icon: 'pi pi-cog',
-          roles: ['ADMIN'],
+          roles: ['admin'],
           subpages: [
-            { name: 'Product Master', route: '/config/products', icon: 'pi pi-box', roles: ['ADMIN'] },
-            { name: 'Trip Master', route: '/config/tripDetails', icon: 'pi pi-calculator', roles: ['ADMIN'] }
+            { name: 'Product Master', route: '/config/products', icon: 'pi pi-box', roles: ['admin'] },
+            { name: 'Trip Master', route: '/config/tripDetails', icon: 'pi pi-calculator', roles: ['admin'] }
           ]
         },
         { 
           name: 'Sales', 
           route: '/sales', 
           icon: 'pi pi-chart-line', 
-          roles: ['ADMIN', 'SALES'],
+          roles: ['admin', 'sales'],
           subpages: [
-            { name: 'Sales Personal', route: '/sales/personal', icon: 'pi pi-user', roles: ['ADMIN'] },
-            { name: 'Designation', route: '/sales/designation', icon : 'pi pi-id-card', roles: ['ADMIN'] }
+            { name: 'Sales Personal', route: '/sales/personal', icon: 'pi pi-user', roles: ['admin', 'sales'] },
+            { name: 'Designation', route: '/sales/designation', icon : 'pi pi-id-card', roles: ['admin', 'sales'] }
           ]
         },
-        { name: 'Dealer', route: '/dealer', icon: 'pi pi-shop', roles: ['ADMIN', 'SALES'] },
-        { name: 'Orders', route: '/orders', icon: 'pi pi-box', roles: ['ADMIN', 'SALES','DEALER'] }
+        { name: 'Dealer', route: '/dealer', icon: 'pi pi-shop', roles: ['admin', 'sales'] },
+        { name: 'Orders', route: '/orders', icon: 'pi pi-box', roles: ['admin', 'sales', 'dealer'] }
       ]
     }
   ];
 
   ngOnInit() {
-    // Check if on mobile initially and collapse
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
         this.expanded.set(false);
     }
 
-    // Auto-close sidebar on mobile after navigation
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
@@ -96,18 +99,22 @@ export class Sidebar implements OnInit {
     });
   }
 
+  // Corrected filtering logic to match a single role string against the arrays
   protected readonly filteredNavigation = computed(() => {
-    const currentRoles = this.userRoles();
+    const currentRole = this.userRole();
+
+    // Safety check: if no role exists, show nothing
+    if (!currentRole) return [];
 
     return this.allNavigationModules
-      .filter(group => group.roles.some(role => currentRoles.includes(role)))
+      .filter(group => group.roles.includes(currentRole))
       .map(group => ({
         ...group,
         items: group.items
-          .filter(item => item.roles.some(role => currentRoles.includes(role)))
+          .filter(item => item.roles.includes(currentRole))
           .map(item => ({
             ...item,
-            subpages: item.subpages?.filter(sub => sub.roles.some(role => currentRoles.includes(role)))
+            subpages: item.subpages?.filter(sub => sub.roles.includes(currentRole))
           }))
       }));
   });

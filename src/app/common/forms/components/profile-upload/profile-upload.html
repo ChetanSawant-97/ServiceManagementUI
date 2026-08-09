@@ -1,0 +1,54 @@
+<div class="flex flex-col items-center gap-2">
+  
+    <!-- Outer wrapper needs relative for the remove button positioning -->
+    <div class="relative inline-block">
+      
+      <!-- Hidden native file input -->
+      <input 
+        type="file" 
+        #fileInput 
+        class="hidden" 
+        accept="image/*" 
+        (change)="onNativeFileSelect($event)"
+      >
+  
+      <!-- Avatar Container -->
+      <!-- Responsive sizing: 24 (6rem) on mobile, 32 (8rem) on tablet/desktop -->
+      <div 
+        class="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-[3px] border-[var(--line)] bg-[var(--bg-2)] flex items-center justify-center group cursor-pointer relative shadow-sm hover:border-[var(--mint)] transition-colors duration-200"
+        (click)="fileInput.click()">
+        
+        @if (previewUrl) {
+          <!-- Display selected/existing image -->
+          <img [src]="previewUrl" alt="Profile Photo" class="w-full h-full object-cover">
+        } @else {
+          <!-- Default Placeholder Icon -->
+          <i class="pi pi-user text-4xl sm:text-5xl text-[var(--ink-dim)] group-hover:text-[var(--mint)] transition-colors"></i>
+        }
+  
+        <!-- Hover Overlay: Shows a camera icon when hovering over the avatar -->
+        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <i class="pi pi-camera text-white text-xl sm:text-2xl drop-shadow-md"></i>
+        </div>
+      </div>
+  
+      <!-- Remove Button (Only shows if an image is loaded) -->
+      @if (previewUrl) {
+        <button 
+          type="button"
+          class="absolute bottom-0 right-0 sm:bottom-1 sm:right-1 bg-white border border-gray-200 text-red-500 rounded-full w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center shadow-md hover:bg-red-50 hover:text-red-600 transition-colors z-10 focus:outline-none"
+          (click)="removeFile(fileInput, $event)"
+          pTooltip="Remove photo" 
+          tooltipPosition="top">
+          <i class="pi pi-trash text-sm sm:text-base"></i>
+        </button>
+      }
+    </div>
+    
+    <!-- Optional Label (e.g. "Upload Photo") -->
+    @if (label) {
+      <span class="text-xs sm:text-sm font-medium text-[var(--ink-dim)] mt-1">
+        {{ label }}
+      </span>
+    }
+  </div>

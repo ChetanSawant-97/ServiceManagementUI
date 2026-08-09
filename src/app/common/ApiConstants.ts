@@ -67,3 +67,11 @@ export const ProductEndpoints = {
   UPDATE_DESIGNATION:    { url: '/api/sales-designations/{designationId}', method: 'PUT' },
   DELETE_DESIGNATION:    { url: '/api/sales-designations/{designationId}', method: 'DELETE' }
 } as const;
+
+export const SalesPersonEndpoints = {
+  GET_ALL_SALES_PERSONS:  { url: '/api/sales-persons', method: 'GET' },
+  GET_SALES_PERSON_BY_ID: { url: '/api/sales-persons/{userId}', method: 'GET' },
+  CREATE_SALES_PERSON:    { url: '/api/sales-persons', method: 'POST' },
+  UPDATE_SALES_PERSON:    { url: '/api/sales-persons/{userId}', method: 'PUT' },
+  DELETE_SALES_PERSON:    { url: '/api/sales-persons/{userId}', method: 'DELETE' }
+} as const;
