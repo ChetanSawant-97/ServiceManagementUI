@@ -1,62 +1,79 @@
 <div class="card w-full h-full flex flex-col overflow-hidden border border-[var(--line)] rounded-lg bg-[var(--bg-2)]">
   
-  <!-- 1. scrollable="true" is required for pFrozenColumn to work -->
-  <p-table 
-      [columns]="columns" 
-      [value]="data" 
-      styleClass="p-datatable-sm" 
-      [tableStyle]="{ 'min-width': '50rem' }"
-      [scrollable]="true">
-      
-      <ng-template #header let-columns>
-          <tr>
-              <!-- Standard Dynamic Columns -->
-              <th *ngFor="let col of columns" [style.width]="col.width">
-                  {{ col.header }}
-              </th>
-              
-              <!-- 2. Independent Actions Header frozen to the right -->
-              @if (showActions) {
-                  <th pFrozenColumn alignFrozen="right" [style.width]="'100px'" class="text-center z-10 bg-[var(--bg-2)]">
-                      Actions
-                  </th>
-              }
-          </tr>
-      </ng-template>
-      
-      <ng-template #body let-rowData let-columns="columns">
-          <tr>
-              <!-- Standard Dynamic Columns (no longer checking for 'actions') -->
-              <td *ngFor="let col of columns" [style.width]="col.width">
-                  @if(rowData[col.field] == true){
-                      <span class="pi pi-check text-green-700 !font-bold"></span>
-                  } @else {
-                      {{ rowData[col.field] }}
-                  }
-              </td>
-              
-              <!-- 3. Independent Actions Cell frozen to the right -->
-              @if (showActions) {
-                  <td pFrozenColumn alignFrozen="right" class="z-10 bg-[var(--bg-2)] border-l border-[var(--line)]">
-                      <div class="flex items-center justify-center gap-2">
-                          <button 
-                              type="button" 
-                              (click)="onEdit(rowData, $event)" 
-                              class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-full transition-colors cursor-pointer text-sm"
-                              title="Edit">
-                              <i class="pi pi-pencil"></i>
-                          </button>
-                          <button 
-                              type="button" 
-                              (click)="onDelete(rowData)" 
-                              class="p-1.5 text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer text-sm"
-                              title="Delete">
-                              <i class="pi pi-trash"></i>
-                          </button>
-                      </div>
-                  </td>
-              }
-          </tr>
-      </ng-template>
-  </p-table>
-</div>
+    <!-- 1. scrollable="true" is required for pFrozenColumn to work -->
+    <p-table 
+        [columns]="columns" 
+        [value]="data" 
+        styleClass="p-datatable-sm" 
+        [tableStyle]="{ 'min-width': '50rem' }"
+        [scrollable]="true">
+        
+        <ng-template #header let-columns>
+            <tr>
+                <!-- Standard Dynamic Columns -->
+                <th *ngFor="let col of columns" [style.width]="col.width">
+                    {{ col.header }}
+                </th>
+                
+                <!-- 2. Independent Actions Header frozen to the right -->
+                @if (showActions) {
+                    <th pFrozenColumn alignFrozen="right" [style.width]="'100px'" class="text-center z-10 bg-[var(--bg-2)]">
+                        Actions
+                    </th>
+                }
+            </tr>
+        </ng-template>
+        
+        <ng-template #body let-rowData let-columns="columns">
+            <tr>
+                <!-- Standard Dynamic Columns (no longer checking for 'actions') -->
+                <td *ngFor="let col of columns" [style.width]="col.width">
+                    @if(rowData[col.field] == true){
+                        <span class="pi pi-check text-green-700 !font-bold"></span>
+                    } @else {
+                        {{ rowData[col.field] }}
+                    }
+                </td>
+                
+                <!-- 3. Independent Actions Cell frozen to the right -->
+                @if (showActions) {
+                    <td pFrozenColumn alignFrozen="right" class="z-10 bg-[var(--bg-2)] border-l border-[var(--line)]">
+                        <div class="flex items-center justify-center gap-2">
+                            <button 
+                                type="button" 
+                                (click)="onEdit(rowData, $event)" 
+                                class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-full transition-colors cursor-pointer text-sm"
+                                title="Edit">
+                                <i class="pi pi-pencil"></i>
+                            </button>
+                            <button 
+                                type="button" 
+                                (click)="onDelete(rowData)" 
+                                class="p-1.5 text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer text-sm"
+                                title="Delete">
+                                <i class="pi pi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                }
+            </tr>
+        </ng-template>
+  
+        <!-- 4. Empty State Template -->
+        <ng-template #emptymessage let-columns>
+            <tr>
+                <td [attr.colspan]="columns.length + (showActions ? 1 : 0)">
+                    <div class="flex flex-col items-center justify-center py-14 px-4 text-[var(--ink-dim)]">
+                        <!-- Modern Empty Box SVG -->
+                        <svg class="w-16 h-16 mb-4 text-[#C7D0D6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                        <p class="text-sm font-semibold text-[var(--ink-2)]">No records found</p>
+                        <p class="text-xs mt-1 text-[var(--ink-dim)]">There is currently no data available to display.</p>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+  
+    </p-table>
+  </div>

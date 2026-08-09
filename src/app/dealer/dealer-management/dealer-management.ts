@@ -85,8 +85,8 @@ export class DealerManagement implements OnInit {
     country: new FormControl('India'), 
     
     // Credentials
-    username: new FormControl(''), 
-    password: new FormControl('')
+    username: new FormControl('',Validators.required), 
+    password: new FormControl('',Validators.required)
   });
 
   ngOnInit(): void {
