@@ -5,12 +5,21 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
-// 1. Alias the PrimeNG import to avoid colliding with your class name
 import { InputText as PrimeInputText } from 'primeng/inputtext';
+
+// 1. Define the allowed input types strictly
+export type InputFieldType = 
+  | 'text' 
+  | 'email' 
+  | 'password' 
+  | 'number' 
+  | 'mobile' 
+  | 'phone' 
+  | 'tel' 
+  | 'alphanumeric';
 
 @Component({
   selector: 'app-input-text',
-  // 2. Use the aliased import here
   imports: [ReactiveFormsModule, CommonModule, PrimeInputText],
   templateUrl: './input-text.html',
   styleUrl: './input-text.scss'
@@ -23,7 +32,8 @@ export class InputText {
   labelStyleClasses = input<string>('');
   placeholder = input<string>('');
   
-  type = input<string>('text');
+  // 2. Apply the interface to the type input
+  type = input<InputFieldType>('text');
   
   inputMode = input<string>('');
   autoComplete = input<string>('');
@@ -38,30 +48,37 @@ export class InputText {
 
   protected readonly isMobile = toSignal(
     this.bp.observe('(max-width: 639px)').pipe(map(r => r.matches)),
-    { initialValue: window.innerWidth < 640 }
+    { initialValue: typeof window !== 'undefined' ? window.innerWidth < 640 : false }
   );
 
-  // Automatically configure best mobile keyboard and properties based on type
   protected readonly resolvedType = computed(() => {
     const t = this.type().toLowerCase();
     if (t === 'mobile' || t === 'phone') return 'tel';
+    
+    // Fallbacks to standard 'text' so maxLength and custom filtering works natively
+    if (t === 'number' || t === 'alphanumeric') return 'text'; 
+    
     return t;
   });
 
   protected readonly resolvedInputMode = computed(() => {
     if (this.inputMode()) return this.inputMode();
     const t = this.type().toLowerCase();
+    
     if (t === 'email') return 'email';
     if (t === 'tel' || t === 'mobile' || t === 'phone') return 'tel';
     if (t === 'number') return 'numeric';
-    return 'text';
+    
+    return 'text'; 
   });
 
   protected readonly resolvedAutocomplete = computed(() => {
     if (this.autoComplete()) return this.autoComplete();
     const t = this.type().toLowerCase();
+    
     if (t === 'email') return 'email';
     if (t === 'tel' || t === 'mobile' || t === 'phone') return 'tel';
+    
     return 'off';
   });
 
@@ -69,14 +86,22 @@ export class InputText {
     const inputElement = event.target as HTMLInputElement;
     const t = this.type().toLowerCase();
     
-    // If it's a mobile, tel, or number type, strip out any non-digit characters
+    let sanitized = inputElement.value;
+
     if (t === 'mobile' || t === 'phone' || t === 'tel' || t === 'number') {
-      const sanitized = inputElement.value.replace(/\D/g, '');
-      if (inputElement.value !== sanitized) {
-        inputElement.value = sanitized;
-        // Manually sync back to the Reactive Form Control
-        this.control().setValue(sanitized, { emitEvent: false });
-      }
+      sanitized = sanitized.replace(/\D/g, '');
+    } else if (t === 'alphanumeric') {
+      sanitized = sanitized.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    }
+
+    const max = this.maxLength();
+    if (max && sanitized.length > max) {
+      sanitized = sanitized.substring(0, max);
+    }
+
+    if (inputElement.value !== sanitized) {
+      inputElement.value = sanitized;
+      this.control().setValue(sanitized, { emitEvent: false });
     }
   }
 }

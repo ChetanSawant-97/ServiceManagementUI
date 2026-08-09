@@ -11,7 +11,7 @@ import { AddressComponent } from '../../common/forms/components/address-componen
 import { InputCheckBox } from '../../common/forms/components/input-check-box/input-check-box';
 import { getFormErrorMessages } from '../../common/Utility';
 import { DealerService } from '../dealer.service';
-import { DealerMaster } from '../models/DealerMaster';
+import { DealerMaster, DealerCreatePayload, DealerUpdatePayload } from '../models/DealerMaster';
 import { InputPasswordComponent } from '../../common/forms/components/input-password/input-password-component';
 import { UiFeedbackService } from '../../common/UiFeedbackService.service';
 
@@ -24,6 +24,7 @@ export interface TabItem {
 
 @Component({
   selector: 'app-dealer-management',
+  standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, DialogModule, ButtonModule, 
     TableList, InputText, TabsModule, AddressComponent, InputCheckBox, InputPasswordComponent 
@@ -33,7 +34,7 @@ export interface TabItem {
 })
 export class DealerManagement implements OnInit {
   private dealerService = inject(DealerService);
-  private cdr = inject(ChangeDetectorRef); // <-- Injected to force immediate UI updates
+  private cdr = inject(ChangeDetectorRef);
   private uiFeedbackService = inject(UiFeedbackService);
 
   isOpen = false;
@@ -64,6 +65,12 @@ export class DealerManagement implements OnInit {
     branchCode: new FormControl('', [Validators.required]),
     emailId: new FormControl('', [Validators.email, Validators.required]),
     mobileNo: new FormControl('', [Validators.required, Validators.minLength(10)]),
+    
+    // NEW FIELDS
+    adharCard: new FormControl('', [Validators.required]),
+    panCard: new FormControl('', [Validators.required]),
+    gst: new FormControl('', [Validators.required]),
+    
     isActive: new FormControl(true),
     
     // Address fields
@@ -78,8 +85,8 @@ export class DealerManagement implements OnInit {
     country: new FormControl('India'), 
     
     // Credentials
-    username: new FormControl('', [Validators.required]), 
-    password: new FormControl('', [Validators.required])
+    username: new FormControl(''), 
+    password: new FormControl('')
   });
 
   ngOnInit(): void {
@@ -90,20 +97,17 @@ export class DealerManagement implements OnInit {
     });  
   }
 
-  // --- API Integrations ---
-
   fetchDealers() {
     this.isLoading = true;
-    this.cdr.detectChanges(); // Force loader to show immediately
+    this.cdr.detectChanges();
 
     this.dealerService.getAllDealers().subscribe({
       next: (res) => {
         if (res.success) {
-          // Destructure into a NEW array reference so the p-table instantly detects the change
           this.tableData = [...res.data]; 
         }
         this.isLoading = false;
-        this.cdr.detectChanges(); // Force table to render immediately
+        this.cdr.detectChanges();
       },
       error: () => {
         this.isLoading = false;
@@ -120,22 +124,50 @@ export class DealerManagement implements OnInit {
     }
 
     this.isSaving = true;
-    const payload = this.dealerForm.getRawValue() as any;
-    const dealerId = payload.dealerId;
+    const formValues = this.dealerForm.getRawValue();
+    const dealerId = formValues.dealerId;
 
-    const saveRequest$ = (dealerId && dealerId > 0)
-      ? this.dealerService.updateDealer(dealerId, payload)
-      : this.dealerService.createDealer(payload);
+    // Strict payload mapping based on Swagger contract
+    const basePayload: DealerUpdatePayload = {
+      dealerName: formValues.dealerName ?? '',
+      branchCode: formValues.branchCode ?? '',
+      mobileNo: formValues.mobileNo ?? '',
+      emailId: formValues.emailId ?? '',
+      adharCard: formValues.adharCard ?? '',
+      panCard: formValues.panCard ?? '',
+      gst: formValues.gst ?? '',
+      addressLine1: formValues.addressLine1 ?? '',
+      addressLine2: formValues.addressLine2 ?? '',
+      landmark: formValues.landmark ?? '',
+      area: formValues.area ?? '',
+      city: formValues.city ?? '',
+      state: formValues.state ?? '',
+      pinCode: formValues.pinCode ?? '',
+      country: formValues.country ?? 'India'
+    };
+
+    let saveRequest$;
+
+    if (dealerId && dealerId > 0) {
+      saveRequest$ = this.dealerService.updateDealer(dealerId, basePayload);
+    } else {
+      // Add username and password only for creation
+      const createPayload: DealerCreatePayload = {
+        ...basePayload,
+        username: formValues.username ?? '',
+        password: formValues.password ?? ''
+      };
+      saveRequest$ = this.dealerService.createDealer(createPayload);
+    }
 
     saveRequest$.subscribe({
       next: () => {
         this.isSaving = false;
-        this.closeForm(); // This will now properly reset the form and close it
-        this.fetchDealers(); // Fetch the latest data
+        this.closeForm(); 
+        this.fetchDealers(); 
       },
       error: () => {
         this.isSaving = false;
-        // On error, we leave the form open so the user can fix the data
         this.cdr.detectChanges();
       }
     });
@@ -156,7 +188,6 @@ export class DealerManagement implements OnInit {
     });
   }
 
-
   openForm() {
     this.resetFormToDefault();
     this.isOpen = true;
@@ -166,30 +197,27 @@ export class DealerManagement implements OnInit {
 
   closeForm() {
     this.isOpen = false;
-    this.resetFormToDefault(); // Clear data immediately when closing
-    this.cdr.detectChanges(); // Force UI to remove the modal immediately
+    this.resetFormToDefault(); 
+    this.cdr.detectChanges(); 
   }
 
   editRow(editedRow: DealerMaster) {
-    // 1. Open the form immediately so the user sees the modal pop up
     this.openForm(); 
-    
-    // Optional: show a loading state while fetching the full data
     this.isLoading = true; 
     this.cdr.detectChanges();
 
-    // 2. Call the By ID API using the ID from the list object
     this.dealerService.getDealerById(editedRow.dealerId).subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          // 3. Populate the form with the FULL data object from the API
           this.dealerForm.patchValue(res.data);
+          
+          // Optional: clear password field on edit so it doesn't show old hashed passwords
+          this.dealerForm.controls.password.setValue('');
         }
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: () => {
-        // If the API fails, close the modal and reset loading state
         this.isLoading = false;
         this.closeForm(); 
         this.cdr.detectChanges();
@@ -207,11 +235,13 @@ export class DealerManagement implements OnInit {
     this.formErrors = getFormErrorMessages(this.dealerForm);
   }
 
-  // Helper method to ensure form resets to the exact correct defaults
   private resetFormToDefault() {
     this.dealerForm.reset({
       dealerId: 0,
       addressId: 0,
+      adharCard: '',
+      panCard: '',
+      gst: '',
       isActive: true,
       country: 'India'
     });

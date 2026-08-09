@@ -25,27 +25,42 @@
     <div class="fixed inset-0 bg-black/40 z-40 md:hidden" (click)="closeForm()"></div>
 
     <!-- Form Container -->
-    <div class="fixed inset-x-4 top-20 z-50 max-h-[85vh] overflow-y-auto bg-white border border-[var(--line)] p-3 rounded-xl shadow-xl shrink-0 transition-all md:static md:inset-auto md:max-h-none md:shadow-sm">
+    <!-- Removed p-3 on mobile to allow edge-to-edge sticky headers. Restored p-3 on md -->
+    <div class="fixed inset-x-4 top-20 z-50 max-h-[85vh] overflow-y-auto bg-white border border-[var(--line)] rounded-xl shadow-xl shrink-0 transition-all md:static md:inset-auto md:max-h-none md:shadow-sm md:overflow-visible md:p-3">
       <p-tabs [value]="currentTab()" (valueChange)="onTabChange($event)">
-        <p-tablist>
+        
+        <!-- STICKY MOBILE TAB HEADER -->
+        <p-tablist class="block sticky top-0 z-20 bg-white pt-3 px-3 pb-1 md:static md:p-0 md:bg-transparent">
           @for (tab of dealerTabs; track tab.value) {
             <p-tab [value]="tab.value">
-              @if (tab.icon) { <i [class]="tab.icon + ' mr-2'"></i> }
-              {{ tab.label }}
+              <!-- FIX: Added 'hidden md:inline-block' to hide the icon on mobile screens -->
+              @if (tab.icon) { <i [class]="tab.icon + ' hidden md:inline-block mr-2'"></i> }
+              <span class="text-sm md:text-base">{{ tab.label }}</span>
             </p-tab>
           }
         </p-tablist>
         
-        <p-tabpanels>
+        <!-- SCROLLABLE MOBILE CONTENT -->
+        <p-tabpanels class="block px-3 pb-3 md:p-0">
+          
           <!-- Main Details -->
           <p-tabpanel [value]="0">
-            <form class="flex flex-col md:flex-row gap-3 pt-2 my-auto" [formGroup]="dealerForm">
-              <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.dealerName" label="Dealer Name"></app-input-text>
-              <app-input-text class="w-full md:w-[15%] block" [control]="dealerForm.controls.branchCode" label="Branch Code"></app-input-text>
-              <app-input-text class="w-full md:w-[20%] block" [type]="'email'" [control]="dealerForm.controls.emailId" label="Email"></app-input-text>
-              <app-input-text class="w-full md:w-[15%] block" [type]="'mobile'" [control]="dealerForm.controls.mobileNo" label="Mobile Number" [maxLength]="10"></app-input-text>
-              <!-- Checking isActive manually as requested -->
-              <app-input-check-box class="w-auto block my-auto" [control]="dealerForm.controls.isActive" label="Is Active"></app-input-check-box>
+            <form class="flex flex-col gap-3 pt-2 my-auto" [formGroup]="dealerForm">
+              <!-- Row 1: Basic Info -->
+              <div class="flex flex-col md:flex-row gap-3">
+                <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.dealerName" label="Dealer Name"></app-input-text>
+                <app-input-text class="w-full md:w-[15%] block" [control]="dealerForm.controls.branchCode" label="Branch Code"></app-input-text>
+                <app-input-text class="w-full md:w-[25%] block" [type]="'email'" [control]="dealerForm.controls.emailId" label="Email"></app-input-text>
+                <app-input-text class="w-full md:w-[20%] block" [type]="'mobile'" [control]="dealerForm.controls.mobileNo" label="Mobile Number" [maxLength]="10"></app-input-text>
+                <app-input-check-box class="w-auto block my-auto mt-6" [control]="dealerForm.controls.isActive" label="Is Active"></app-input-check-box>
+              </div>
+
+              <!-- Row 2: Tax & ID Info -->
+              <div class="flex flex-col md:flex-row gap-3 mt-2 border-t border-gray-100 pt-3">
+                <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.adharCard" [maxLength]="12" [type]="'number'" label="Aadhar Card"></app-input-text>
+                <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.panCard" [type]="'alphanumeric'" label="PAN Card"></app-input-text>
+                <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.gst" label="GST Number"></app-input-text>
+              </div>
             </form>
           </p-tabpanel>
           
@@ -62,22 +77,26 @@
                 [pincode]="dealerForm.controls.pinCode">
             </app-address-component>
           </p-tabpanel>
+
+          <!-- Credentials Tab -->
           <p-tabpanel [value]="2" class="gap-2 flex flex-col">
-            <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.username" label="Login Usernamw"></app-input-text>
+            <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.username" label="Login Username"></app-input-text>
             <app-input-password class="w-full md:w-[30%] block" [requireConfirm]="true" [control]="dealerForm.controls.password" label="Login Password"></app-input-password>
           </p-tabpanel>
+
         </p-tabpanels>
       </p-tabs>
 
-      <!-- Form Actions Bar -->
-      <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
+      <!-- STICKY MOBILE FORM ACTIONS -->
+      <div class="sticky bottom-0 z-20 flex justify-end gap-2 p-3 border-t border-gray-100 bg-white mt-auto md:static md:px-0 md:pb-0 md:bg-transparent">
         <span class="text-red-600 text-sm italic mr-auto self-center">{{formErrors[0]}}</span>
         <p-button label="Cancel" [outlined]="true" severity="secondary" styleClass="!text-sm" (onClick)="closeForm()" />
-        <p-button label="Save" severity="success" styleClass="!text-sm" (onClick)="saveDealer()" [disabled]="formErrors.length > 0" [loading]="isSaving" />
+        <p-button label="Save" severity="success" styleClass="!text-sm" (onClick)="saveDealer()" [disabled]="dealerForm.invalid" [loading]="isSaving" />
       </div>
     </div>
   }
 
+  <!-- Data Table -->
   <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 p-4 rounded-xl border border-[var(--line)] min-h-0">
     <app-table-list
       (edit)="editRow($event)"
