@@ -21,7 +21,6 @@ export const ApiEndpoints = {
   DELETE_DEALER:    { url: '/api/dealers/{dealerId}', method: 'DELETE' }
 } as const;
 
-
 export const OrderEndpoints = {
   // Orders
   GET_ALL_ORDERS:   { url: '/api/orders', method: 'GET' },
@@ -40,4 +39,31 @@ export const DealerEndPoints = {
   DELETE_DEALER:     { url: '/api/dealers/{dealerId}', method: 'DELETE' },
   
   UPLOAD_ORDER_BILL: { url: '/api/orders/{orderId}/bill-image', method: 'POST' }
+} as const;
+
+// NEW: Configuration Endpoints
+export const ConfigEndpoints = {
+  GET_ALL_TRANSPORTS:  { url: '/api/transport-details', method: 'GET' },
+  TRANSPORT_BY_ID:     { url: '/api/transport-details/{transportId}', method: 'GET' },
+  CREATE_TRANSPORT:    { url: '/api/transport-details', method: 'POST' },
+  UPDATE_TRANSPORT:    { url: '/api/transport-details/{transportId}', method: 'PUT' },
+  DELETE_TRANSPORT:    { url: '/api/transport-details/{transportId}', method: 'DELETE' }
+} as const;
+
+
+export const ProductEndpoints = {
+  GET_ALL_PRODUCTS:  { url: '/api/products', method: 'GET' },
+  GET_PRODUCT_BY_ID: { url: '/api/products/{productId}', method: 'GET' },
+  CREATE_PRODUCT:    { url: '/api/products', method: 'POST' },
+  UPDATE_PRODUCT:    { url: '/api/products/{productId}', method: 'PUT' },
+  DELETE_PRODUCT:    { url: '/api/products/{productId}', method: 'DELETE' }
+} as const;
+
+ // ApiConstants.ts (Add this block)
+ export const DesignationEndpoints = {
+  GET_ALL_DESIGNATIONS:  { url: '/api/sales-designations', method: 'GET' },
+  GET_DESIGNATION_BY_ID: { url: '/api/sales-designations/{designationId}', method: 'GET' },
+  CREATE_DESIGNATION:    { url: '/api/sales-designations', method: 'POST' },
+  UPDATE_DESIGNATION:    { url: '/api/sales-designations/{designationId}', method: 'PUT' },
+  DELETE_DESIGNATION:    { url: '/api/sales-designations/{designationId}', method: 'DELETE' }
 } as const;

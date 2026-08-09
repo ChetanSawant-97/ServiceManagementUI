@@ -9,11 +9,14 @@ import { InputText } from '../../common/forms/components/input-text/input-text';
 import { SelectComponent } from '../../common/forms/components/input-select/input-select';
 import { TableColumn, TableList } from '../../common/forms/components/table-list/table-list';
 import { getFormErrorMessages } from '../../common/Utility';
+import { InputDateComponent } from '../../common/forms/components/input-date-component/input-date-component';
+import { ModalUploaderComponent } from '../../common/forms/components/modal-uploader/modal-uploader';
+
+// Services & Models
 import { OrderService } from '../services/OrderMaster.service';
 import { DealerService } from '../../dealer/dealer.service';
 import { OrderMaster, OrderPayload } from '../models/OrderMaster';
-import { InputDateComponent } from '../../common/forms/components/input-date-component/input-date-component';
-import { ModalUploaderComponent } from '../../common/forms/components/modal-uploader/modal-uploader';
+import { ProductService } from '../../config/services/Product.service';
 
 @Component({
   selector: 'app-orders-management',
@@ -28,6 +31,7 @@ import { ModalUploaderComponent } from '../../common/forms/components/modal-uplo
 export class OrdersManagement implements OnInit {
   private orderService = inject(OrderService);
   private dealerService = inject(DealerService);
+  private productService = inject(ProductService);
   private cdr = inject(ChangeDetectorRef);
 
   isOpen = false;
@@ -36,14 +40,14 @@ export class OrdersManagement implements OnInit {
   formErrors: string[] = [];
 
   // Dropdown options
-  statusOptions = ['Pending', 'Approved', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
   dealerOptions: { label: string, value: number }[] = []; 
+  productOptions: { label: string, value: number }[] = []; // New product options
 
   tableColumns: TableColumn[] = [
     { field: 'customerName', header: 'Customer Name', width: '20%' },
     { field: 'customerNumber', header: 'Mobile No.', width: '15%' },
-    { field: 'productName', header: 'Product', width: '20%' },
-    { field: 'productSerialNumber', header: 'Product', width: '20%' },
+    { field: 'productName', header: 'Product', width: '20%' }, // Displaying productName in table
+    { field: 'productSerialNumber', header: 'Serial Number', width: '20%' },
     { field: 'billDate', header: 'Bill Date', width: '15%' },
   ];
 
@@ -54,10 +58,10 @@ export class OrdersManagement implements OnInit {
     dealerId: new FormControl<number | null>(null, [Validators.required]),
     customerName: new FormControl('', [Validators.required]),
     customerNumber: new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$')]),
-    productName: new FormControl('', [Validators.required]),
+    productId: new FormControl<number | null>(null, [Validators.required]), // Changed to productId
     productSerialNumber: new FormControl('', [Validators.required]),
     billDate: new FormControl<Date | string | null>(null, [Validators.required]),
-    photoBase64: new FormControl<string | null>('', [Validators.required]), 
+    billPhotoBase64: new FormControl<string | null>('', [Validators.required]), // Updated key
   });
 
   ngOnInit(): void {
@@ -72,9 +76,18 @@ export class OrdersManagement implements OnInit {
     this.isLoading = true;
     this.cdr.detectChanges();
 
+    // Load Dealers
     this.dealerService.getAllDealers().subscribe(res => {
       if (res.success) {
         this.dealerOptions = res.data.map(d => ({ label: d.dealerName, value: d.dealerId }));
+      }
+    });
+
+    // Load Products for the dropdown
+    this.productService.getAllProducts().subscribe(res => {
+      if (res.success) {
+        // Assuming your product model has productName and productId
+        this.productOptions = res.data.map(p => ({ label: p.productName, value: p.productId }));
       }
     });
 
@@ -109,16 +122,15 @@ export class OrdersManagement implements OnInit {
     
     const formValues = this.orderForm.getRawValue();
     const orderId = formValues.orderId;
-    const photoBase64 = formValues.photoBase64 ?? '';
 
     const payload: OrderPayload = {
       dealerId: formValues.dealerId!, 
       customerName: formValues.customerName ?? '',
       customerNumber: formValues.customerNumber ?? '',
-      productName: formValues.productName ?? '',
+      productId: formValues.productId!, // Using the new ID
       productSerialNumber: formValues.productSerialNumber ?? '',
       billDate: formValues.billDate ? new Date(formValues.billDate).toISOString().split('T')[0] : '',
-      photoBase64,
+      billPhotoBase64: formValues.billPhotoBase64 ?? '', // Updated key
     };
 
     const saveRequest$ = (orderId && orderId > 0)
@@ -156,8 +168,6 @@ export class OrdersManagement implements OnInit {
     });
   }
 
-  // --- UI Interactions ---
-
   openForm() {
     this.resetFormToDefault();
     this.isOpen = true;
@@ -178,8 +188,8 @@ export class OrdersManagement implements OnInit {
     this.orderService.getOrderById(editedRow.orderId).subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          // Because photoBase64 is part of res.data, patchValue automatically 
-          // feeds it to the ModalUploaderComponent via the control binding!
+          // patchValue will automatically map productId to the SelectComponent 
+          // and billPhotoBase64 to the ModalUploaderComponent
           this.orderForm.patchValue(res.data);
         }
         this.isLoading = false;
@@ -203,10 +213,10 @@ export class OrdersManagement implements OnInit {
       dealerId: null,
       customerName: '',
       customerNumber: '',
-      productName: '',
+      productId: null, 
       productSerialNumber: '',
       billDate: new Date(), 
-      photoBase64: '' // Resets the uploader instantly
+      billPhotoBase64: '' 
     });
   }
 }

@@ -60,8 +60,8 @@ export class Sidebar implements OnInit {
           icon: 'pi pi-cog',
           roles: ['ADMIN'],
           subpages: [
-            { name: 'Product Master', route: '/config', icon: 'pi pi-box', roles: ['ADMIN'] },
-            { name: 'Trip Master', route: '/tripDetails', icon: 'pi pi-calculator', roles: ['ADMIN'] }
+            { name: 'Product Master', route: '/config/products', icon: 'pi pi-box', roles: ['ADMIN'] },
+            { name: 'Trip Master', route: '/config/tripDetails', icon: 'pi pi-calculator', roles: ['ADMIN'] }
           ]
         },
         { 

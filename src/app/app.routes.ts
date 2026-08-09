@@ -17,15 +17,11 @@ export const routes: Routes = [
             },
             {
                 path : 'config',
-                loadChildren: () => import('./sales/sales.routes').then(m => m.salesRoutes)
+                loadChildren: () => import('./config/config.routes').then(m => m.routes)
             },
             {
                 path : 'sales',
                 loadChildren: () => import('./sales/sales.routes').then(m => m.salesRoutes)
-            },
-            {
-                path : 'tripDetails',
-                loadComponent: () => import('./sales/trip-details/trip-details').then(m => m.TripDetails)
             },
             {
                 path : 'orders',

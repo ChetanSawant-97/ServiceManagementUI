@@ -5,10 +5,11 @@ import { CommonModule } from '@angular/common';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-input-select',
-  imports: [ReactiveFormsModule, Select, CommonModule],
+  imports: [ReactiveFormsModule, Select, CommonModule,ButtonModule],
   templateUrl: './input-select.html',
   styleUrl: './input-select.scss',
 })

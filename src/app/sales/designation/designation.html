@@ -1,1 +1,73 @@
-<p>designation works!</p>
+<!-- Outer wrapper -->
+<div class="flex flex-col h-full w-full rounded-xl overflow-hidden gap-2 relative">
+
+    <!-- TOP DIV: Header section -->
+    <div class="w-full flex flex-col bg-[var(--bg-2)] border border-[var(--line)] px-5 py-3 rounded-[30px] items-center justify-between shrink-0">
+      <div class="flex w-full justify-between items-center">
+        <h2 class="text-base md:text-lg font-medium md:font-semibold text-gray-800">Sales Designations</h2>
+        <div class="flex gap-2">
+          @if (!isOpen) {
+            <button (click)="openForm()" class="hover:cursor-pointer" title="Add Designation">
+              <i class="pi pi-plus-circle" style="font-size: 1.6rem; color:#245501; font-weight: 500;"></i>
+            </button>
+          } @else {
+            <button (click)="closeForm()" class="hover:cursor-pointer" title="Close Form">
+              <i class="pi pi-times-circle" style="font-size: 1.6rem; color:red; font-weight: 500;"></i>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  
+    <!-- EXPANDABLE FORM SECTION -->
+    @if (isOpen) {
+      <!-- Backdrop overlay for mobile -->
+      <div class="fixed inset-0 bg-black/40 z-40 md:hidden" (click)="closeForm()"></div>
+  
+      <!-- Form Container -->
+      <div class="fixed inset-x-4 top-20 z-50 max-h-[85vh] overflow-y-auto bg-white border border-[var(--line)] p-4 rounded-xl shadow-xl shrink-0 transition-all md:static md:inset-auto md:max-h-none md:shadow-sm">
+        
+        <h3 class="text-sm font-semibold text-gray-700 mb-4 border-b border-gray-100 pb-2">Designation Configuration</h3>
+        
+        <!-- Main Details Form -->
+        <form class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2" [formGroup]="designationForm">
+          <app-input-text 
+              class="w-full block" 
+              [control]="designationForm.controls.designationName" 
+              label="Designation Title"
+              placeholder="e.g. Area Sales Manager">
+          </app-input-text>
+          
+          <app-input-select 
+              class="w-full block" 
+              [control]="designationForm.controls.reportingDesignationId" 
+              [items]="reportingOptions" 
+              label="Reports To (Manager)" 
+              placeholder="Select manager designation">
+          </app-input-select>
+        </form>
+  
+        <!-- Form Actions Bar -->
+        <div class="flex justify-end gap-2 pt-5 mt-2 border-t border-gray-100">
+          <span class="text-red-600 text-sm italic mr-auto self-center">{{formErrors[0]}}</span>
+          <p-button label="Cancel" [outlined]="true" severity="secondary" styleClass="!text-sm" (onClick)="closeForm()" />
+          <p-button label="Save Designation" severity="success" styleClass="!text-sm" (onClick)="saveDesignation()" [disabled]="designationForm.invalid" [loading]="isSaving" />
+        </div>
+      </div>
+    }
+  
+    <!-- Data Table -->
+    <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 p-4 rounded-xl border border-[var(--line)] min-h-0">
+      <app-table-list
+        (edit)="editRow($event)"
+        (delete)="deleteRow($event)"
+        deleteNameKey="designationName"
+        class="flex-1 flex flex-col h-full overflow-hidden"
+        [columns]="tableColumns"
+        [data]="tableData"
+        [loading]="isLoading"
+        [rows]="10">
+      </app-table-list>    
+    </div>  
+  
+  </div>

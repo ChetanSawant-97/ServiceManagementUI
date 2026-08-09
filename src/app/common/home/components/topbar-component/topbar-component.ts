@@ -2,11 +2,11 @@ import { Component, inject } from '@angular/core';
 import { Menu } from 'primeng/menu';
 import { Avatar } from 'primeng/avatar';
 import { MenuItem } from 'primeng/api';
-import { AuthService } from '../../../auth/services/Authentication.service';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-topbar-component',
-  imports: [Menu, Avatar],
+  imports: [Menu, Avatar,ButtonModule],
   templateUrl: './topbar-component.html',
   styleUrl: './topbar-component.scss',
 })

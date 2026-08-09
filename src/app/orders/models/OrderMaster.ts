@@ -1,22 +1,25 @@
 export interface OrderMaster {
-    orderId: number;
-    customerName: string;
-    customerNumber: string;
-    productName: string;
-    productSerialNumber: string;
-    billDate: string; // or Date
-    dealerId: number;
-    dealerName: string;
-    photoId: number;
-    photoPath: string;
-  }
+  orderId: number;
+  customerName: string;
+  customerNumber: string;
+  productId: number;
+  productCode: string;
+  productName: string;
+  productSerialNumber: string;
+  billDate: string;
+  dealerId: number;
+  dealerName: string;
+  billPhotoId: number;
+  billPhotoPath: string;
+  billPhotoBase64: string;
+}
 
-  export interface OrderPayload {
-    customerName: string;
-    customerNumber: string;
-    productName: string;
-    productSerialNumber: string;
-    billDate: string;
-    dealerId: number;
-    photoBase64 : string;
-  }
+export interface OrderPayload {
+  customerName: string;
+  customerNumber: string;
+  productId: number;
+  productSerialNumber: string;
+  billDate: string;
+  dealerId: number;
+  billPhotoBase64: string;
+}
