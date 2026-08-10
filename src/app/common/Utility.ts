@@ -9,8 +9,6 @@ export const getFormErrorMessages = (
   Object.keys(form.controls).forEach((key) => {
     const control = form.get(key);
     
-    // 1. Auto-format camelCase to Title Case (e.g., 'emailId' -> 'Email Id')
-    // 2. If a custom label is provided in the optional dictionary, use that instead.
     const autoFormattedName = key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
     const fieldName = customLabels?.[key] || autoFormattedName;
 
@@ -26,30 +24,31 @@ export const getFormErrorMessages = (
         const requiredLength = control.errors['maxlength'].requiredLength;
         errorMessages.push(`${fieldName} cannot exceed ${requiredLength} characters.`);
       }
-      
-      // NEW: Handle Email errors
       if (control.errors['email']) {
         errorMessages.push(`${fieldName} must be a valid email address.`);
       }
-      
-      // NEW: Handle Regex/Pattern errors
       if (control.errors['pattern']) {
         errorMessages.push(`${fieldName} format is invalid.`);
       }
-      
-      // NEW: Handle Min/Max number values
       if (control.errors['min']) {
         errorMessages.push(`${fieldName} must be at least ${control.errors['min'].min}.`);
       }
       if (control.errors['max']) {
         errorMessages.push(`${fieldName} cannot be more than ${control.errors['max'].max}.`);
       }
+      
+      // --- NEW: Custom Password Component Errors ---
+      if (control.errors['confirmRequired']) {
+        errorMessages.push(`Confirm Password is strictly required.`);
+      }
+      if (control.errors['passwordMismatch']) {
+        errorMessages.push(`Passwords do not match.`);
+      }
     }
   });
 
   return errorMessages;
 };
-
 
 export interface CityOrLocality {
   name: string;

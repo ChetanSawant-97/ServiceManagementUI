@@ -1,7 +1,7 @@
 import { Component, input, OnInit, OnDestroy } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, ValidatorFn, AbstractControl } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
-import { merge, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-input-password',
@@ -13,7 +13,6 @@ import { merge, Subscription } from 'rxjs';
 export class InputPasswordComponent implements OnInit, OnDestroy {
   control = input.required<FormControl>();
   
-  // Flag to toggle the second confirm field
   requireConfirm = input<boolean>(false);
   showFeedback = input<boolean>(false);
   label = input<string>('Password');
@@ -24,36 +23,46 @@ export class InputPasswordComponent implements OnInit, OnDestroy {
   inputId = input<string>(`vtx-pwd-${crypto.randomUUID().substring(0, 8)}`);
   confirmInputId = `vtx-pwd-conf-${crypto.randomUUID().substring(0, 8)}`;
 
-  // Local control for the confirm field
   confirmControl = new FormControl('');
   private valueSub?: Subscription;
 
   ngOnInit() {
     if (this.requireConfirm()) {
-      // Listen to changes on BOTH fields to check for matches
-      this.valueSub = merge(
-        this.control().valueChanges,
-        this.confirmControl.valueChanges
-      ).subscribe(() => this.validateMatch());
+      // 1. Attach our custom validator directly to the parent's control
+      this.control().addValidators(this.customMatchValidator);
+
+      // 2. When the user types in the confirm box, force the primary control to re-validate.
+      // This automatically triggers valueChanges, which bubbles up to your dealerForm!
+      this.valueSub = this.confirmControl.valueChanges.subscribe(() => {
+        this.control().updateValueAndValidity({ emitEvent: true });
+      });
     }
   }
 
-  private validateMatch() {
-    const primary = this.control().value;
+  // The custom validator function
+  private customMatchValidator: ValidatorFn = (control: AbstractControl) => {
+    const primary = control.value;
     const confirm = this.confirmControl.value;
-    const currentErrors = this.control().errors || {};
 
-    if (primary !== confirm) {
-      // Push custom error to the parent's control
-      this.control().setErrors({ ...currentErrors, passwordMismatch: true });
-    } else {
-      // Remove only our custom error if they match
-      delete currentErrors['passwordMismatch'];
-      this.control().setErrors(Object.keys(currentErrors).length ? currentErrors : null);
+    if (primary) {
+      if (!confirm) {
+        return { confirmRequired: true };
+      }
+      if (primary !== confirm) {
+        return { passwordMismatch: true };
+      }
     }
-  }
+    
+    return null; // Null means valid!
+  };
 
   ngOnDestroy() {
     this.valueSub?.unsubscribe();
+    
+    // Clean up the validator when the component is destroyed
+    if (this.requireConfirm()) {
+      this.control().removeValidators(this.customMatchValidator);
+      this.control().updateValueAndValidity({ emitEvent: false });
+    }
   }
 }
