@@ -7,6 +7,7 @@ export interface OrderMaster {
   productName: string;
   productSerialNumber: string;
   billDate: string;
+  expiryDate: string;
   dealerId: number;
   dealerName: string;
   billPhotoId: number;

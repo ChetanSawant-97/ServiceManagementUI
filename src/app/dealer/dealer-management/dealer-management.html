@@ -58,8 +58,8 @@
               <!-- Row 2: Tax & ID Info -->
               <div class="flex flex-col md:flex-row gap-3 mt-2 border-t border-gray-100 pt-3">
                 <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.adharCard" [maxLength]="12" [type]="'number'" label="Aadhar Card"></app-input-text>
-                <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.panCard" [type]="'alphanumeric'" label="PAN Card"></app-input-text>
-                <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.gst" label="GST Number"></app-input-text>
+                <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.panCard" [maxLength]="10" [type]="'alphanumeric'" label="PAN Card"></app-input-text>
+                <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.gst" [type]="'alphanumeric'" label="GST Number"></app-input-text>
               </div>
             </form>
           </p-tabpanel>
@@ -89,7 +89,7 @@
 
       <!-- STICKY MOBILE FORM ACTIONS -->
       <div class="sticky bottom-0 z-20 flex justify-end gap-2 p-3 border-t border-gray-100 bg-white mt-auto md:static md:px-0 md:pb-0 md:bg-transparent">
-        <span class="text-red-600 text-sm italic mr-auto self-center">{{formErrors[0]}}</span>
+        <span class="text-red-600 text-xs md:text-sm italic mr-auto self-center">{{formErrors[0]}}</span>
         <p-button label="Cancel" [outlined]="true" severity="secondary" styleClass="!text-sm" (onClick)="closeForm()" />
         <p-button label="Save" severity="success" styleClass="!text-sm" (onClick)="saveDealer()" [disabled]="dealerForm.invalid" [loading]="isSaving" />
       </div>

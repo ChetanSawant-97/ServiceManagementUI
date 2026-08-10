@@ -87,7 +87,7 @@
 
       <!-- Form Actions Bar -->
       <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-gray-100">
-        <span class="text-red-600 text-sm italic mr-auto self-center">{{formErrors[0]}}</span>
+        <span class="text-red-600 text-xs md:text-sm italic mr-auto self-center">{{formErrors[0]}}</span>
         <p-button label="Cancel" [outlined]="true" severity="secondary" styleClass="!text-sm" (onClick)="closeForm()" />
         <p-button label="Save Order" severity="success" styleClass="!text-sm" (onClick)="saveOrder()" [disabled]="orderForm.invalid" [loading]="isSaving" />
       </div>

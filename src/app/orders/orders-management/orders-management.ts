@@ -55,8 +55,9 @@ export class OrdersManagement implements OnInit {
     { field: 'customerName', header: 'Customer Name', width: '20%' },
     { field: 'customerNumber', header: 'Mobile No.', width: '15%' },
     { field: 'productName', header: 'Product', width: '20%' }, // Displaying productName in table
-    { field: 'productSerialNumber', header: 'Serial Number', width: '20%' },
-    { field: 'billDate', header: 'Bill Date', width: '15%' },
+    { field: 'productSerialNumber', header: 'Serial Number', width: '15%' },
+    { field: 'billDate', header: 'Bill Date', width: '10%' },
+    { field: 'expiryDate', header: 'Warranty Expiry', width: '10%' },
   ];
 
   tableData: OrderMaster[] = [];
@@ -225,7 +226,15 @@ export class OrdersManagement implements OnInit {
   }
 
   computeAllError() {
-    this.formErrors = getFormErrorMessages(this.orderForm);
+    this.formErrors = getFormErrorMessages(this.orderForm, {
+      dealerId: 'Dealer',
+      customerName: 'Customer Name',
+      customerNumber: 'Customer Number',
+      productId: 'Product',
+      productSerialNumber: 'Product Serial Number',
+      billDate: 'Bill Date',
+      billPhotoBase64: 'Bill Photo'
+    });
   }
 
   private resetFormToDefault() {

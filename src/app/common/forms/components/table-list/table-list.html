@@ -31,7 +31,7 @@
                     @if(rowData[col.field] == true){
                         <span class="pi pi-check text-green-700 !font-bold"></span>
                     } @else {
-                        {{ rowData[col.field] }}
+                        {{ rowData[col.field] | formatDate}}
                     }
                 </td>
                 

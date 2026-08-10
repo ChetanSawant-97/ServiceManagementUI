@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 // Adjust this path to wherever your service actually lives relative to the table component
 import { UiFeedbackService } from '../../../UiFeedbackService.service'; 
+import { FormatDatePipe } from '../../pipes/format-date.pipe';
 
 export interface TableColumn {
   field: string;
@@ -15,7 +16,7 @@ export interface TableColumn {
 @Component({
   selector: 'app-table-list',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule],
+  imports: [CommonModule, TableModule, ButtonModule,FormatDatePipe],
   templateUrl: './table-list.html',
   styleUrl: './table-list.scss',
 })

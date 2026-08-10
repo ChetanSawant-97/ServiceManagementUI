@@ -9,7 +9,7 @@ import { InputText } from '../../common/forms/components/input-text/input-text';
 import { TableColumn, TableList } from '../../common/forms/components/table-list/table-list';
 import { AddressComponent } from '../../common/forms/components/address-component/address-component';
 import { InputCheckBox } from '../../common/forms/components/input-check-box/input-check-box';
-import { getFormErrorMessages } from '../../common/Utility';
+import { getFormErrorMessages, GST_REGEX, PAN_REGEX } from '../../common/Utility';
 import { DealerService } from '../dealer.service';
 import { DealerMaster, DealerCreatePayload, DealerUpdatePayload } from '../models/DealerMaster';
 import { InputPasswordComponent } from '../../common/forms/components/input-password/input-password-component';
@@ -37,6 +37,7 @@ export class DealerManagement implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private uiFeedbackService = inject(UiFeedbackService);
 
+  
   isOpen = false;
   isLoading = false;
   isSaving = false;
@@ -68,8 +69,8 @@ export class DealerManagement implements OnInit {
     
     // NEW FIELDS
     adharCard: new FormControl('', [Validators.required]),
-    panCard: new FormControl('', [Validators.required]),
-    gst: new FormControl('', [Validators.required]),
+    panCard: new FormControl('', [Validators.required,Validators.pattern(PAN_REGEX)]),
+    gst: new FormControl('', [Validators.required,Validators.pattern(GST_REGEX)]),
     
     isActive: new FormControl(true),
     
@@ -232,7 +233,34 @@ export class DealerManagement implements OnInit {
   }
 
   computeAllError() {
-    this.formErrors = getFormErrorMessages(this.dealerForm);
+      this.formErrors = getFormErrorMessages(this.dealerForm, {
+        // Basic Info
+        dealerName: 'Dealer Name',
+        branchCode: 'Branch Code',
+        emailId: 'Email Address',
+        mobileNo: 'Mobile Number',
+        isActive: 'Active Status',
+  
+        // Tax & ID Info
+        adharCard: 'Aadhaar ID',
+        panCard: 'PAN Card Number',
+        gst: 'GST Number',
+  
+        // Address Fields
+        addressLine1: 'Address Line 1',
+        addressLine2: 'Address Line 2',
+        landmark: 'Landmark',
+        area: 'Area',
+        city: 'City',
+        state: 'State',
+        pinCode: 'PIN Code',
+        country: 'Country',
+  
+        // Credentials
+        username: 'Login Username',
+        password: 'Login Password'
+      });
+    console.warn('Current Form Errors:', this.formErrors); // Debugging line
   }
 
   private resetFormToDefault() {

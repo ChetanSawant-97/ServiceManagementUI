@@ -1,17 +1,22 @@
 import { FormGroup } from '@angular/forms';
 
-export const getFormErrorMessages = (form: FormGroup): string[] => {
+export const getFormErrorMessages = (
+  form: FormGroup, 
+  customLabels?: Record<string, string>
+): string[] => {
   const errorMessages: string[] = [];
 
   Object.keys(form.controls).forEach((key) => {
     const control = form.get(key);
     
-    // Capitalize the field name (e.g., 'username' -> 'Username')
-    const fieldName = key.charAt(0).toUpperCase() + key.slice(1);
+    // 1. Auto-format camelCase to Title Case (e.g., 'emailId' -> 'Email Id')
+    // 2. If a custom label is provided in the optional dictionary, use that instead.
+    const autoFormattedName = key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+    const fieldName = customLabels?.[key] || autoFormattedName;
 
     if (control?.errors) {
       if (control.errors['required']) {
-        errorMessages.push(`${fieldName} field is strictly required.`);
+        errorMessages.push(`${fieldName} is strictly required.`);
       }
       if (control.errors['minlength']) {
         const requiredLength = control.errors['minlength'].requiredLength;
@@ -20,6 +25,24 @@ export const getFormErrorMessages = (form: FormGroup): string[] => {
       if (control.errors['maxlength']) {
         const requiredLength = control.errors['maxlength'].requiredLength;
         errorMessages.push(`${fieldName} cannot exceed ${requiredLength} characters.`);
+      }
+      
+      // NEW: Handle Email errors
+      if (control.errors['email']) {
+        errorMessages.push(`${fieldName} must be a valid email address.`);
+      }
+      
+      // NEW: Handle Regex/Pattern errors
+      if (control.errors['pattern']) {
+        errorMessages.push(`${fieldName} format is invalid.`);
+      }
+      
+      // NEW: Handle Min/Max number values
+      if (control.errors['min']) {
+        errorMessages.push(`${fieldName} must be at least ${control.errors['min'].min}.`);
+      }
+      if (control.errors['max']) {
+        errorMessages.push(`${fieldName} cannot be more than ${control.errors['max'].max}.`);
       }
     }
   });
@@ -244,3 +267,8 @@ export const INDIA_LOCATIONS_DATA: StateData[] = [
     ]
   }
 ];
+
+
+export const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+export const GST_REGEX = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+
