@@ -79,6 +79,7 @@ export class Sidebar implements OnInit {
             { name: 'Designation', route: '/sales/designation', icon : 'pi pi-id-card', roles: ['admin', 'sales'] }
           ]
         },
+        { name: 'Track Sales', route: '/trackSales', icon: 'pi pi-map-marker', roles: ['admin'] },
         { name: 'Dealer', route: '/dealer', icon: 'pi pi-shop', roles: ['admin', 'sales'] },
         { name: 'Orders', route: '/orders', icon: 'pi pi-box', roles: ['admin', 'sales', 'dealer'] }
       ]
