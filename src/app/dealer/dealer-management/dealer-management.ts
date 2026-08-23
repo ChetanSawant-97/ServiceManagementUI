@@ -51,10 +51,10 @@ export class DealerManagement implements OnInit {
   ];
   
   tableColumns: TableColumn[] = [
-    { field: 'dealerName', header: 'Dealer Name', width: '25%' },
+    { field: 'dealerName', header: 'Dealer Name', width: '25%', filterable:true },
     { field: 'branchCode', header: 'Branch Code', width: '15%' },
     { field: 'emailId', header: 'Email Id', width: '25%' },
-    { field: 'mobileNo', header: 'Mobile Number', width: '20%' },
+    { field: 'mobileNo', header: 'Mobile Number', width: '20%', filterable:true },
     { field: 'isActive', header: 'Active', width: '10%' },
   ];
 
@@ -273,5 +273,9 @@ export class DealerManagement implements OnInit {
       isActive: true,
       country: 'India'
     });
+  }
+
+  onTableFilter(event: { field: string, value: any }) {
+    console.log(`User searched for ${event.value} in column ${event.field}`);
   }
 }

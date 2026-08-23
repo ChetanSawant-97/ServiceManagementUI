@@ -1,22 +1,24 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
-import { TableModule } from 'primeng/table';
+import { ColumnFilter, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-// Adjust this path to wherever your service actually lives relative to the table component
 import { UiFeedbackService } from '../../../UiFeedbackService.service'; 
 import { FormatDatePipe } from '../../pipes/format-date.pipe';
+import { FormsModule } from '@angular/forms'; // <-- Add this
 
 export interface TableColumn {
   field: string;
   header: string;
   sortable?: boolean;
   width?: string;
+  type?: 'text' | 'date' | 'boolean';
+  filterable?: boolean;
 }
 
 @Component({
   selector: 'app-table-list',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule,FormatDatePipe],
+  imports: [CommonModule, TableModule, ButtonModule,FormsModule,FormatDatePipe],
   templateUrl: './table-list.html',
   styleUrl: './table-list.scss',
 })
@@ -34,9 +36,11 @@ export class TableList {
   
   // NEW: Let the parent tell the table which field to use for the delete warning (e.g., 'dealerName')
   @Input() deleteNameKey?: string;
-
+  @Input() enableFilterToggle: boolean = true; // Turn the feature on/off
+  showInlineFilters: boolean = false;          // Tracks if they are currently visible
   @Output() rowClick = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
+  @Output() filter = new EventEmitter<{ field: string, value: any }>();
   
   // Now, this event ONLY fires if the user clicks "Yes" in the confirmation box!
   @Output() delete = new EventEmitter<any>();
@@ -61,5 +65,9 @@ export class TableList {
       // Only emit to the parent if they confirmed!
       this.delete.emit(item);
     });
+  }
+
+  onColumnFilter(value: any, field: string) {
+    this.filter.emit({ field, value });
   }
 }

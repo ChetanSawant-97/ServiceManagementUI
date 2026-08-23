@@ -1,0 +1,26 @@
+<!-- Outer wrapper -->
+<div class="flex flex-col h-full w-full rounded-xl overflow-hidden gap-2 relative">
+
+    <!-- TOP DIV: Header section -->
+    <div class="w-full flex flex-col bg-[var(--bg-2)] border border-[var(--line)] px-5 py-3 rounded-[30px] items-center justify-between shrink-0">
+      <div class="flex w-full justify-between items-center">
+        <h2 class="text-base md:text-lg font-medium md:font-semibold text-gray-800">Live Tracking</h2>
+        <div class="flex gap-2 items-center">
+          <!-- Person Dropdown -->
+          <app-input-select
+            class="w-48 md:w-64 block"
+            [control]="selectedPersonControl"
+            [items]="personOptions"
+            label=""
+            placeholder="Select Person">
+          </app-input-select>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Map Area -->
+    <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 rounded-xl border border-[var(--line)] min-h-0">
+      
+    </div>
+  
+  </div>

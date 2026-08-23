@@ -24,6 +24,10 @@ export const routes: Routes = [
                 loadChildren: () => import('./sales/sales.routes').then(m => m.salesRoutes)
             },
             {
+                path : 'trackSales',
+                loadComponent: () => import('./TrackSales/components/track-sales/track-sales').then(m => m.TrackSales)
+            },
+            {
                 path : 'orders',
                 loadComponent: () => import('./orders/orders-management/orders-management').then(m => m.OrdersManagement)
             },

@@ -105,7 +105,9 @@
       class="flex-1 flex flex-col h-full overflow-hidden"
       [columns]="tableColumns"
       [data]="tableData"
+      [enableFilterToggle]="true" 
       [loading]="isLoading"
+      (filter)="onTableFilter($event)"
       [rows]="10">
     </app-table-list>    
   </div>  
