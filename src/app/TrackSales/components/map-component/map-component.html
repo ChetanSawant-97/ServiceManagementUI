@@ -1,25 +1,58 @@
-<!-- <mgl-map [style]="'https://demotiles.maplibre.org/style.json'" [zoom]="12" [center]="[79.0882, 21.1458]">
-      
-    <!-- 1. Provide the GPS coordinates as GeoJSON -->
-    <!-- <mgl-geojson-source 
-      id="user-route" 
-      [data]="routeData">
-    </mgl-geojson-source>
+<!-- Notice we use [center] OR [bounds] based on the computed signals -->
+<mgl-map 
+  [mapStyle]="mapStyle" 
+  [zoom]="14" 
+  [center]="mapCenter()"
+  [bounds]="mapBounds()"
+  [fitBoundsOptions]="{ padding: 50, duration: 1000 }">
 
-    <!-- 2. Draw the line on the map -->
-    <!-- <mgl-layer
-      id="route-line"
+  <!-- ===============================
+       HISTORY MODE: Draw the full path
+       =============================== -->
+  @if (viewMode() === 'history') {
+    <mgl-geojson-source id="history-source" [data]="routeData()"></mgl-geojson-source>
+    
+    <mgl-layer
+      id="history-line"
       type="line"
-      source="user-route"
-      [layout]="{
-        'line-join': 'round',
-        'line-cap': 'round'
-      }"
+      source="history-source"
+      [layout]="{ 'line-join': 'round', 'line-cap': 'round' }"
+      [paint]="{ 'line-color': '#10b981', 'line-width': 5 }">
+    </mgl-layer>
+  }
+
+  <!-- ===============================
+       LIVE MODE: Draw pulsating marker
+       =============================== -->
+  @if (viewMode() === 'live' && livePointData()) {
+    <mgl-geojson-source id="live-source" [data]="livePointData()!"></mgl-geojson-source>
+
+    <!-- Pulsating Halo -->
+    <mgl-layer
+      id="live-halo"
+      type="circle"
+      source="live-source"
       [paint]="{
-        'line-color': '#3b82f6', /* Tailwind blue-500 */
-        'line-width': 6,
-        'line-opacity': 0.8
+        'circle-radius': 14,
+        'circle-color': '#3b82f6',
+        'circle-opacity': 0.3,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#2563eb'
       }">
     </mgl-layer>
 
-  </mgl-map>   -->
+    <!-- Solid Core Dot -->
+    <mgl-layer
+      id="live-core"
+      type="circle"
+      source="live-source"
+      [paint]="{
+        'circle-radius': 6,
+        'circle-color': '#1d4ed8',
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#ffffff'
+      }">
+    </mgl-layer>
+  }
+
+</mgl-map>

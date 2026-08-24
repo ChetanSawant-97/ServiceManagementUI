@@ -23,7 +23,6 @@ export interface DealerMaster {
 
 export interface DealerUpdatePayload {
   dealerName: string;
-  branchCode: string;
   mobileNo: string;
   emailId: string;
   adharCard: string;

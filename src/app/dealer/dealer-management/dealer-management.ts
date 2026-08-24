@@ -9,7 +9,7 @@ import { InputText } from '../../common/forms/components/input-text/input-text';
 import { TableColumn, TableList } from '../../common/forms/components/table-list/table-list';
 import { AddressComponent } from '../../common/forms/components/address-component/address-component';
 import { InputCheckBox } from '../../common/forms/components/input-check-box/input-check-box';
-import { getFormErrorMessages, GST_REGEX, PAN_REGEX } from '../../common/Utility';
+import { AADHAAR_REGEX, getFormErrorMessages, GST_REGEX, PAN_REGEX } from '../../common/Utility';
 import { DealerService } from '../dealer.service';
 import { DealerMaster, DealerCreatePayload, DealerUpdatePayload } from '../models/DealerMaster';
 import { InputPasswordComponent } from '../../common/forms/components/input-password/input-password-component';
@@ -63,12 +63,11 @@ export class DealerManagement implements OnInit {
   public dealerForm = new FormGroup({
     dealerId: new FormControl(0), 
     dealerName: new FormControl('', [Validators.required]),
-    branchCode: new FormControl('', [Validators.required]),
     emailId: new FormControl('', [Validators.email, Validators.required]),
     mobileNo: new FormControl('', [Validators.required, Validators.minLength(10)]),
     
     // NEW FIELDS
-    adharCard: new FormControl('', [Validators.required]),
+    adharCard: new FormControl('', [Validators.required,Validators.pattern(AADHAAR_REGEX)]),
     panCard: new FormControl('', [Validators.required,Validators.pattern(PAN_REGEX)]),
     gst: new FormControl('', [Validators.required,Validators.pattern(GST_REGEX)]),
     
@@ -131,7 +130,6 @@ export class DealerManagement implements OnInit {
     // Strict payload mapping based on Swagger contract
     const basePayload: DealerUpdatePayload = {
       dealerName: formValues.dealerName ?? '',
-      branchCode: formValues.branchCode ?? '',
       mobileNo: formValues.mobileNo ?? '',
       emailId: formValues.emailId ?? '',
       adharCard: formValues.adharCard ?? '',

@@ -7,7 +7,6 @@ import { CommonModule } from '@angular/common';
 
 import { InputText as PrimeInputText } from 'primeng/inputtext';
 
-// 1. Define the allowed input types strictly
 export type InputFieldType = 
   | 'text' 
   | 'email' 
@@ -28,11 +27,14 @@ export class InputText {
   private readonly bp = inject(BreakpointObserver);
 
   control = input.required<FormControl>();
+  
+  // NEW: Flag to control autofill (Defaults to false)
+  allowAutofill = input<boolean>(false);
+
   label = input<string>('');
   labelStyleClasses = input<string>('');
   placeholder = input<string>('');
   
-  // 2. Apply the interface to the type input
   type = input<InputFieldType>('text');
   
   inputMode = input<string>('');
@@ -55,7 +57,6 @@ export class InputText {
     const t = this.type().toLowerCase();
     if (t === 'mobile' || t === 'phone') return 'tel';
     
-    // Fallbacks to standard 'text' so maxLength and custom filtering works natively
     if (t === 'number' || t === 'alphanumeric') return 'text'; 
     
     return t;
@@ -73,13 +74,22 @@ export class InputText {
   });
 
   protected readonly resolvedAutocomplete = computed(() => {
+    // 1. If autofill is disabled by the developer, firmly turn it off
+    if (!this.allowAutofill()) {
+      return 'off'; 
+    }
+
+    // 2. If enabled and a specific type was requested, use it
     if (this.autoComplete()) return this.autoComplete();
-    const t = this.type().toLowerCase();
     
+    // 3. Otherwise gracefully resolve based on input type
+    const t = this.type().toLowerCase();
     if (t === 'email') return 'email';
     if (t === 'tel' || t === 'mobile' || t === 'phone') return 'tel';
     
-    return 'off';
+    // If it's a standard text input with autofill enabled, the browser will likely 
+    // treat it as the username field on a login page.
+    return 'username';
   });
 
   protected onInput(event: Event) {

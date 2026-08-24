@@ -13,6 +13,9 @@ import { Subscription } from 'rxjs';
 export class InputPasswordComponent implements OnInit, OnDestroy {
   control = input.required<FormControl>();
   
+  // NEW: Flag to control autofill (Defaults to false for create/register pages)
+  allowAutofill = input<boolean>(false); 
+
   requireConfirm = input<boolean>(false);
   showFeedback = input<boolean>(false);
   label = input<string>('Password');
@@ -28,18 +31,14 @@ export class InputPasswordComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.requireConfirm()) {
-      // 1. Attach our custom validator directly to the parent's control
       this.control().addValidators(this.customMatchValidator);
 
-      // 2. When the user types in the confirm box, force the primary control to re-validate.
-      // This automatically triggers valueChanges, which bubbles up to your dealerForm!
       this.valueSub = this.confirmControl.valueChanges.subscribe(() => {
         this.control().updateValueAndValidity({ emitEvent: true });
       });
     }
   }
 
-  // The custom validator function
   private customMatchValidator: ValidatorFn = (control: AbstractControl) => {
     const primary = control.value;
     const confirm = this.confirmControl.value;
@@ -53,13 +52,12 @@ export class InputPasswordComponent implements OnInit, OnDestroy {
       }
     }
     
-    return null; // Null means valid!
+    return null;
   };
 
   ngOnDestroy() {
     this.valueSub?.unsubscribe();
     
-    // Clean up the validator when the component is destroyed
     if (this.requireConfirm()) {
       this.control().removeValidators(this.customMatchValidator);
       this.control().updateValueAndValidity({ emitEvent: false });

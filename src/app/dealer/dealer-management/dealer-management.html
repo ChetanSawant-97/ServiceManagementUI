@@ -49,7 +49,6 @@
               <!-- Row 1: Basic Info -->
               <div class="flex flex-col md:flex-row gap-3">
                 <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.dealerName" label="Dealer Name"></app-input-text>
-                <app-input-text class="w-full md:w-[15%] block" [control]="dealerForm.controls.branchCode" label="Branch Code"></app-input-text>
                 <app-input-text class="w-full md:w-[25%] block" [type]="'email'" [control]="dealerForm.controls.emailId" label="Email"></app-input-text>
                 <app-input-text class="w-full md:w-[20%] block" [type]="'mobile'" [control]="dealerForm.controls.mobileNo" label="Mobile Number" [maxLength]="10"></app-input-text>
                 <app-input-check-box class="w-auto block my-auto mt-6" [control]="dealerForm.controls.isActive" label="Is Active"></app-input-check-box>
