@@ -16,7 +16,7 @@ export interface DealerMaster {
   state: string;
   pinCode: string;
   country: string;
-  isActive?: boolean;
+  salesPersonId?: number;
   isDeleted?: boolean;
   username?: string;
 }
@@ -36,6 +36,7 @@ export interface DealerUpdatePayload {
   state: string;
   pinCode: string;
   country: string;
+  salesPersonId?: number;
 }
 
 // Extends the update payload to include auth fields required only during creation

@@ -51,7 +51,13 @@
                 <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.dealerName" label="Dealer Name"></app-input-text>
                 <app-input-text class="w-full md:w-[25%] block" [type]="'email'" [control]="dealerForm.controls.emailId" label="Email"></app-input-text>
                 <app-input-text class="w-full md:w-[20%] block" [type]="'mobile'" [control]="dealerForm.controls.mobileNo" label="Mobile Number" [maxLength]="10"></app-input-text>
-                <app-input-check-box class="w-auto block my-auto mt-6" [control]="dealerForm.controls.isActive" label="Is Active"></app-input-check-box>
+                <!-- FIX: Added [items]="salesSelectList" -->
+                <app-input-select 
+                    class="w-full md:w-[20%] block" 
+                    [control]="dealerForm.controls.salesPersonId" 
+                    [items]="salesSelectList" 
+                    label="Sales Person">
+                </app-input-select>
               </div>
 
               <!-- Row 2: Tax & ID Info -->
@@ -80,7 +86,12 @@
           <!-- Credentials Tab -->
           <p-tabpanel [value]="2" class="gap-2 flex flex-col">
             <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.username" label="Login Username"></app-input-text>
-            <app-input-password class="w-full md:w-[30%] block" [requireConfirm]="true" [control]="dealerForm.controls.password" label="Login Password"></app-input-password>
+            <app-input-password 
+                class="w-full md:w-[30%] block" 
+                [requireConfirm]="(dealerForm.controls.dealerId.value || 0) === 0" 
+                [control]="dealerForm.controls.password" 
+                label="Login Password">
+            </app-input-password>
           </p-tabpanel>
 
         </p-tabpanels>

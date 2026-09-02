@@ -8,12 +8,13 @@ import { TabsModule } from 'primeng/tabs';
 import { InputText } from '../../common/forms/components/input-text/input-text';
 import { TableColumn, TableList } from '../../common/forms/components/table-list/table-list';
 import { AddressComponent } from '../../common/forms/components/address-component/address-component';
-import { InputCheckBox } from '../../common/forms/components/input-check-box/input-check-box';
 import { AADHAAR_REGEX, getFormErrorMessages, GST_REGEX, PAN_REGEX } from '../../common/Utility';
 import { DealerService } from '../dealer.service';
 import { DealerMaster, DealerCreatePayload, DealerUpdatePayload } from '../models/DealerMaster';
 import { InputPasswordComponent } from '../../common/forms/components/input-password/input-password-component';
-import { UiFeedbackService } from '../../common/UiFeedbackService.service';
+import { SalesPersonService } from '../../sales/services/SalesPerson.service';
+import { map } from 'rxjs';
+import { SelectComponent } from '../../common/forms/components/input-select/input-select';
 
 export interface TabItem {
   label: string;
@@ -27,7 +28,7 @@ export interface TabItem {
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, DialogModule, ButtonModule, 
-    TableList, InputText, TabsModule, AddressComponent, InputCheckBox, InputPasswordComponent 
+    TableList, InputText, TabsModule,SelectComponent, AddressComponent, InputPasswordComponent 
   ],
   templateUrl: './dealer-management.html',
   styleUrl: './dealer-management.scss',
@@ -35,14 +36,14 @@ export interface TabItem {
 export class DealerManagement implements OnInit {
   private dealerService = inject(DealerService);
   private cdr = inject(ChangeDetectorRef);
-  private uiFeedbackService = inject(UiFeedbackService);
-
+  private salesService = inject(SalesPersonService);
   
   isOpen = false;
   isLoading = false;
   isSaving = false;
   currentTab = signal<string | number>(0);
   formErrors: string[] = [];
+  salesSelectList: { label: string; value: number }[] = [];
 
   dealerTabs: TabItem[] = [
     { label: 'Info', value: 0, icon: 'pi pi-user' },
@@ -51,11 +52,12 @@ export class DealerManagement implements OnInit {
   ];
   
   tableColumns: TableColumn[] = [
-    { field: 'dealerName', header: 'Dealer Name', width: '25%', filterable:true },
-    { field: 'branchCode', header: 'Branch Code', width: '15%' },
-    { field: 'emailId', header: 'Email Id', width: '25%' },
-    { field: 'mobileNo', header: 'Mobile Number', width: '20%', filterable:true },
-    { field: 'isActive', header: 'Active', width: '10%' },
+    { field: 'dealerName', header: 'Dealer Name', width: '18%', filterable:true },
+    { field: 'emailId', header: 'Email Id', width: '18%' },
+    { field: 'adharCard', header: 'Aadhaar Card', width: '15%' },
+    { field: 'panCard', header: 'PAN Card', width: '15%' },
+    { field: 'gst', header: 'GST Number', width: '15%' },
+    { field: 'mobileNo', header: 'Mobile Number', width: '20%', filterable:true }
   ];
 
   tableData: DealerMaster[] = [];
@@ -71,7 +73,7 @@ export class DealerManagement implements OnInit {
     panCard: new FormControl('', [Validators.required,Validators.pattern(PAN_REGEX)]),
     gst: new FormControl('', [Validators.required,Validators.pattern(GST_REGEX)]),
     
-    isActive: new FormControl(true),
+    salesPersonId: new FormControl(0),
     
     // Address fields
     addressId: new FormControl(0),
@@ -95,6 +97,21 @@ export class DealerManagement implements OnInit {
     this.dealerForm.valueChanges.subscribe(() => {
       this.computeAllError();
     });  
+
+    this.dealerForm.statusChanges.subscribe(() => {
+      this.computeAllError();
+    });
+
+    this.salesService.getAllSalesPersons().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.salesSelectList = response.data.map(salesPerson => ({
+            label: salesPerson.fullName,
+            value: salesPerson.salesPersonId
+          }));
+        }
+      }
+    });
   }
 
   fetchDealers() {
@@ -130,6 +147,7 @@ export class DealerManagement implements OnInit {
     // Strict payload mapping based on Swagger contract
     const basePayload: DealerUpdatePayload = {
       dealerName: formValues.dealerName ?? '',
+      salesPersonId: formValues.salesPersonId ?? 0,
       mobileNo: formValues.mobileNo ?? '',
       emailId: formValues.emailId ?? '',
       adharCard: formValues.adharCard ?? '',
@@ -209,18 +227,12 @@ export class DealerManagement implements OnInit {
       next: (res) => {
         if (res.success && res.data) {
           this.dealerForm.patchValue(res.data);
-          
-          // Optional: clear password field on edit so it doesn't show old hashed passwords
-          this.dealerForm.controls.password.setValue('');
+          this.computeAllError(); 
         }
         this.isLoading = false;
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.isLoading = false;
-        this.closeForm(); 
-        this.cdr.detectChanges();
-      }
+      // ...
     });
   }
 
@@ -237,7 +249,7 @@ export class DealerManagement implements OnInit {
         branchCode: 'Branch Code',
         emailId: 'Email Address',
         mobileNo: 'Mobile Number',
-        isActive: 'Active Status',
+        salesPersonId: 'Sales Person',
   
         // Tax & ID Info
         adharCard: 'Aadhaar ID',
@@ -268,7 +280,7 @@ export class DealerManagement implements OnInit {
       adharCard: '',
       panCard: '',
       gst: '',
-      isActive: true,
+      salesPersonId: 0,
       country: 'India'
     });
   }

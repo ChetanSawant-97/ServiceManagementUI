@@ -1,4 +1,4 @@
-import { Component, input, OnInit, OnDestroy } from '@angular/core';
+import { Component, input, OnDestroy, effect, untracked } from '@angular/core';
 import { FormControl, ReactiveFormsModule, ValidatorFn, AbstractControl } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
 import { Subscription } from 'rxjs';
@@ -10,16 +10,17 @@ import { Subscription } from 'rxjs';
   templateUrl: './input-password-component.html',
   styleUrl: './input-password-component.scss',
 })
-export class InputPasswordComponent implements OnInit, OnDestroy {
+export class InputPasswordComponent implements OnDestroy {
   control = input.required<FormControl>();
   
-  // NEW: Flag to control autofill (Defaults to false for create/register pages)
   allowAutofill = input<boolean>(false); 
-
   requireConfirm = input<boolean>(false);
   showFeedback = input<boolean>(false);
   label = input<string>('Password');
-  placeholder = input<string>('••••••••');
+  
+  // FIX 2: Changed from literal dots to standard text to prevent the "grey dot" visual glitch
+  placeholder = input<string>('Enter password');
+  
   iconStart = input<string>('');
   size = input<'s' | 'm' | 'l'>('s');
   
@@ -29,17 +30,35 @@ export class InputPasswordComponent implements OnInit, OnDestroy {
   confirmControl = new FormControl('');
   private valueSub?: Subscription;
 
-  ngOnInit() {
-    if (this.requireConfirm()) {
-      this.control().addValidators(this.customMatchValidator);
+  constructor() {
+    effect(() => {
+      const isRequired = this.requireConfirm();
+      const parentControl = this.control();
 
-      this.valueSub = this.confirmControl.valueChanges.subscribe(() => {
-        this.control().updateValueAndValidity({ emitEvent: true });
+      untracked(() => {
+        if (isRequired) {
+          parentControl.addValidators(this.customMatchValidator);
+          
+          this.valueSub = this.confirmControl.valueChanges.subscribe(() => {
+            parentControl.updateValueAndValidity({ emitEvent: true });
+          });
+        } else {
+          parentControl.removeValidators(this.customMatchValidator);
+          // FIX 1B: Emit event is TRUE so the parent form's valueChanges fires and clears the error array!
+          parentControl.updateValueAndValidity({ emitEvent: true }); 
+          this.valueSub?.unsubscribe();
+        }
       });
-    }
+    });
   }
 
   private customMatchValidator: ValidatorFn = (control: AbstractControl) => {
+    // FIX 1A: Absolute safeguard. If the signal says false, immediately pass validation.
+    // This prevents race conditions during patchValue.
+    if (!this.requireConfirm()) {
+      return null;
+    }
+
     const primary = control.value;
     const confirm = this.confirmControl.value;
 
@@ -57,10 +76,7 @@ export class InputPasswordComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.valueSub?.unsubscribe();
-    
-    if (this.requireConfirm()) {
-      this.control().removeValidators(this.customMatchValidator);
-      this.control().updateValueAndValidity({ emitEvent: false });
-    }
+    this.control().removeValidators(this.customMatchValidator);
+    this.control().updateValueAndValidity({ emitEvent: false });
   }
 }

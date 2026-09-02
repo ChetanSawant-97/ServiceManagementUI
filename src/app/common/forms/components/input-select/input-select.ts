@@ -9,7 +9,8 @@ import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-input-select',
-  imports: [ReactiveFormsModule, Select, CommonModule,ButtonModule],
+  standalone: true,
+  imports: [ReactiveFormsModule, Select, CommonModule, ButtonModule],
   templateUrl: './input-select.html',
   styleUrl: './input-select.scss',
 })
@@ -23,6 +24,10 @@ export class SelectComponent {
   placeholder = input<string>('');
   size = input<'s' | 'm' | 'l'>('s'); 
   
+  // NEW: Tell PrimeNG which object keys to use. Defaults to 'label' and 'value'.
+  optionLabel = input<string>('label');
+  optionValue = input<string>('value');
+  
   selectId = input<string>(`vtx-select-${crypto.randomUUID().substring(0, 8)}`);
 
   protected readonly isMobile = toSignal(
@@ -30,7 +35,6 @@ export class SelectComponent {
     { initialValue: typeof window !== 'undefined' ? window.innerWidth < 640 : false }
   );
 
-  // Maps your 's' size or mobile state directly to PrimeNG's native "small" size variant
   protected readonly primeSize = computed(() => {
     if (this.isMobile() || this.size() === 's') return 'small';
     if (this.size() === 'l') return 'large';
