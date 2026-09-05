@@ -76,3 +76,12 @@ export const SalesPersonEndpoints = {
   UPDATE_SALES_PERSON:    { url: '/api/sales-persons/{userId}', method: 'PUT' },
   DELETE_SALES_PERSON:    { url: '/api/sales-persons/{userId}', method: 'DELETE' }
 } as const;
+
+
+export const TripEndpoints = {
+
+  GET_ALL_TRIPS:             { url: '/api/trips', method: 'GET' },
+  GET_TRIPS_BY_SALES_PERSON: { url: '/api/trips?salesPersonId={salesPersonId}', method: 'GET' },
+
+  GET_TRIP_PINGS:            { url: '/api/trips/{tripId}/pings', method: 'GET' }
+} as const;

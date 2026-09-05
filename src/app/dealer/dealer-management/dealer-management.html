@@ -1,125 +1,125 @@
-<!-- Outer wrapper -->
-<div class="flex flex-col h-full w-full rounded-xl overflow-hidden gap-2 relative">
+  <!-- Outer wrapper -->
+  <div class="flex flex-col h-full w-full rounded-xl overflow-hidden gap-2 relative">
 
-  <!-- TOP DIV: Header section -->
-  <div class="w-full flex flex-col bg-[var(--bg-2)] border border-[var(--line)] px-5 py-3 rounded-[30px] items-center justify-between shrink-0">
-    <div class="flex w-full justify-between items-center">
-      <h2 class="text-base md:text-lg font-medium md:font-semibold text-gray-800">Dealer Management</h2>
-      <div class="flex gap-2">
-        @if (!isOpen) {
-          <button (click)="openForm()" class="hover:cursor-pointer" title="Add Dealer">
-            <i class="pi pi-plus-circle" style="font-size: 1.6rem; color:#245501; font-weight: 500;"></i>
-          </button>
-        } @else {
-          <button (click)="closeForm()" class="hover:cursor-pointer" title="Close Form">
-            <i class="pi pi-times-circle" style="font-size: 1.6rem; color:red; font-weight: 500;"></i>
-          </button>
-        }
-      </div>
-    </div>
-  </div>
-
-  <!-- EXPANDABLE FORM SECTION -->
-  @if (isOpen) {
-    <!-- Backdrop overlay for mobile -->
-    <div class="fixed inset-0 bg-black/40 z-40 md:hidden" (click)="closeForm()"></div>
-
-    <!-- Form Container -->
-    <!-- Removed p-3 on mobile to allow edge-to-edge sticky headers. Restored p-3 on md -->
-    <div class="fixed inset-x-4 top-20 z-50 max-h-[85vh] overflow-y-auto bg-white border border-[var(--line)] rounded-xl shadow-xl shrink-0 transition-all md:static md:inset-auto md:max-h-none md:shadow-sm md:overflow-visible md:p-3">
-      <p-tabs [value]="currentTab()" (valueChange)="onTabChange($event)">
-        
-        <!-- STICKY MOBILE TAB HEADER -->
-        <p-tablist class="block sticky top-0 z-20 bg-white pt-3 px-3 pb-1 md:static md:p-0 md:bg-transparent">
-          @for (tab of dealerTabs; track tab.value) {
-            <p-tab [value]="tab.value">
-              <!-- FIX: Added 'hidden md:inline-block' to hide the icon on mobile screens -->
-              @if (tab.icon) { <i [class]="tab.icon + ' hidden md:inline-block mr-2'"></i> }
-              <span class="text-sm md:text-base">{{ tab.label }}</span>
-            </p-tab>
+    <!-- TOP DIV: Header section -->
+    <div class="w-full flex flex-col bg-[var(--bg-2)] border border-[var(--line)] px-5 py-3 rounded-[30px] items-center justify-between shrink-0">
+      <div class="flex w-full justify-between items-center">
+        <h2 class="text-base md:text-lg font-medium md:font-semibold text-gray-800">Dealer Management</h2>
+        <div class="flex gap-2">
+          @if (!isOpen) {
+            <button (click)="openForm()" class="hover:cursor-pointer" title="Add Dealer">
+              <i class="pi pi-plus-circle" style="font-size: 1.6rem; color:#245501; font-weight: 500;"></i>
+            </button>
+          } @else {
+            <button (click)="closeForm()" class="hover:cursor-pointer" title="Close Form">
+              <i class="pi pi-times-circle" style="font-size: 1.6rem; color:red; font-weight: 500;"></i>
+            </button>
           }
-        </p-tablist>
-        
-        <!-- SCROLLABLE MOBILE CONTENT -->
-        <p-tabpanels class="block px-3 pb-3 md:p-0">
-          
-          <!-- Main Details -->
-          <p-tabpanel [value]="0">
-            <form class="flex flex-col gap-3 pt-2 my-auto" [formGroup]="dealerForm">
-              <!-- Row 1: Basic Info -->
-              <div class="flex flex-col md:flex-row gap-3">
-                <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.dealerName" label="Dealer Name"></app-input-text>
-                <app-input-text class="w-full md:w-[25%] block" [type]="'email'" [control]="dealerForm.controls.emailId" label="Email"></app-input-text>
-                <app-input-text class="w-full md:w-[20%] block" [type]="'mobile'" [control]="dealerForm.controls.mobileNo" label="Mobile Number" [maxLength]="10"></app-input-text>
-                <!-- FIX: Added [items]="salesSelectList" -->
-                <app-input-select 
-                    class="w-full md:w-[20%] block" 
-                    [control]="dealerForm.controls.salesPersonId" 
-                    [items]="salesSelectList" 
-                    label="Sales Person">
-                </app-input-select>
-              </div>
-
-              <!-- Row 2: Tax & ID Info -->
-              <div class="flex flex-col md:flex-row gap-3 mt-2 border-t border-gray-100 pt-3">
-                <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.adharCard" [maxLength]="12" [type]="'number'" label="Aadhar Card"></app-input-text>
-                <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.panCard" [maxLength]="10" [type]="'alphanumeric'" label="PAN Card"></app-input-text>
-                <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.gst" [type]="'alphanumeric'" label="GST Number"></app-input-text>
-              </div>
-            </form>
-          </p-tabpanel>
-          
-          <!-- Address Tab -->
-          <p-tabpanel [value]="1">
-            <app-address-component 
-                class="pt-2 block" 
-                [firstLine]="dealerForm.controls.addressLine1"
-                [secondLine]="dealerForm.controls.addressLine2"
-                [landMark]="dealerForm.controls.landmark"
-                [area]="dealerForm.controls.area"
-                [city]="dealerForm.controls.city"
-                [state]="dealerForm.controls.state"
-                [pincode]="dealerForm.controls.pinCode">
-            </app-address-component>
-          </p-tabpanel>
-
-          <!-- Credentials Tab -->
-          <p-tabpanel [value]="2" class="gap-2 flex flex-col">
-            <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.username" label="Login Username"></app-input-text>
-            <app-input-password 
-                class="w-full md:w-[30%] block" 
-                [requireConfirm]="(dealerForm.controls.dealerId.value || 0) === 0" 
-                [control]="dealerForm.controls.password" 
-                label="Login Password">
-            </app-input-password>
-          </p-tabpanel>
-
-        </p-tabpanels>
-      </p-tabs>
-
-      <!-- STICKY MOBILE FORM ACTIONS -->
-      <div class="sticky bottom-0 z-20 flex justify-end gap-2 p-3 border-t border-gray-100 bg-white mt-auto md:static md:px-0 md:pb-0 md:bg-transparent">
-        <span class="text-red-600 text-xs md:text-sm italic mr-auto self-center">{{formErrors[0]}}</span>
-        <p-button label="Cancel" [outlined]="true" severity="secondary" styleClass="!text-sm" (onClick)="closeForm()" />
-        <p-button label="Save" severity="success" styleClass="!text-sm" (onClick)="saveDealer()" [disabled]="dealerForm.invalid" [loading]="isSaving" />
+        </div>
       </div>
     </div>
-  }
 
-  <!-- Data Table -->
-  <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 p-4 rounded-xl border border-[var(--line)] min-h-0">
-    <app-table-list
-      (edit)="editRow($event)"
-      (delete)="deleteRow($event)"
-      deleteNameKey="dealerName"
-      class="flex-1 flex flex-col h-full overflow-hidden"
-      [columns]="tableColumns"
-      [data]="tableData"
-      [enableFilterToggle]="true" 
-      [loading]="isLoading"
-      (filter)="onTableFilter($event)"
-      [rows]="10">
-    </app-table-list>    
-  </div>  
+    <!-- EXPANDABLE FORM SECTION -->
+    @if (isOpen) {
+      <!-- Backdrop overlay for mobile -->
+      <div class="fixed inset-0 bg-black/40 z-40 md:hidden" (click)="closeForm()"></div>
 
-</div>
+      <!-- Form Container -->
+      <!-- Removed p-3 on mobile to allow edge-to-edge sticky headers. Restored p-3 on md -->
+      <div class="fixed inset-x-4 top-20 z-50 max-h-[85vh] overflow-y-auto bg-white border border-[var(--line)] rounded-xl shadow-xl shrink-0 transition-all md:static md:inset-auto md:max-h-none md:shadow-sm md:overflow-visible md:p-3">
+        <p-tabs [value]="currentTab()" (valueChange)="onTabChange($event)">
+          
+          <!-- STICKY MOBILE TAB HEADER -->
+          <p-tablist class="block sticky top-0 z-20 bg-white pt-3 px-3 pb-1 md:static md:p-0 md:bg-transparent">
+            @for (tab of dealerTabs; track tab.value) {
+              <p-tab [value]="tab.value">
+                <!-- FIX: Added 'hidden md:inline-block' to hide the icon on mobile screens -->
+                @if (tab.icon) { <i [class]="tab.icon + ' hidden md:inline-block mr-2'"></i> }
+                <span class="text-sm md:text-base">{{ tab.label }}</span>
+              </p-tab>
+            }
+          </p-tablist>
+          
+          <!-- SCROLLABLE MOBILE CONTENT -->
+          <p-tabpanels class="block px-3 pb-3 md:p-0">
+            
+            <!-- Main Details -->
+            <p-tabpanel [value]="0">
+              <form class="flex flex-col gap-3 pt-2 my-auto" [formGroup]="dealerForm">
+                <!-- Row 1: Basic Info -->
+                <div class="flex flex-col md:flex-row gap-3">
+                  <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.dealerName" label="Dealer Name"></app-input-text>
+                  <app-input-text class="w-full md:w-[25%] block" [type]="'email'" [control]="dealerForm.controls.emailId" label="Email"></app-input-text>
+                  <app-input-text class="w-full md:w-[20%] block" [type]="'mobile'" [control]="dealerForm.controls.mobileNo" label="Mobile Number" [maxLength]="10"></app-input-text>
+                  <!-- FIX: Added [items]="salesSelectList" -->
+                  <app-input-select 
+                      class="w-full md:w-[20%] block" 
+                      [control]="dealerForm.controls.salesPersonId" 
+                      [items]="salesSelectList" 
+                      label="Sales Person">
+                  </app-input-select>
+                </div>
+
+                <!-- Row 2: Tax & ID Info -->
+                <div class="flex flex-col md:flex-row gap-3 mt-2 border-t border-gray-100 pt-3">
+                  <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.adharCard" [maxLength]="12" [type]="'number'" label="Aadhar Card"></app-input-text>
+                  <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.panCard" [maxLength]="10" [type]="'alphanumeric'" label="PAN Card"></app-input-text>
+                  <app-input-text class="w-full md:w-[33%] block" [control]="dealerForm.controls.gst" [type]="'alphanumeric'" label="GST Number"></app-input-text>
+                </div>
+              </form>
+            </p-tabpanel>
+            
+            <!-- Address Tab -->
+            <p-tabpanel [value]="1">
+              <app-address-component 
+                  class="pt-2 block" 
+                  [firstLine]="dealerForm.controls.addressLine1"
+                  [secondLine]="dealerForm.controls.addressLine2"
+                  [landMark]="dealerForm.controls.landmark"
+                  [area]="dealerForm.controls.area"
+                  [city]="dealerForm.controls.city"
+                  [state]="dealerForm.controls.state"
+                  [pincode]="dealerForm.controls.pinCode">
+              </app-address-component>
+            </p-tabpanel>
+
+            <!-- Credentials Tab -->
+            <p-tabpanel [value]="2" class="gap-2 flex flex-col">
+              <app-input-text class="w-full md:w-[30%] block" [control]="dealerForm.controls.username" label="Login Username"></app-input-text>
+              <app-input-password 
+                  class="w-full md:w-[30%] block" 
+                  [requireConfirm]="(dealerForm.controls.dealerId.value || 0) === 0" 
+                  [control]="dealerForm.controls.password" 
+                  label="Login Password">
+              </app-input-password>
+            </p-tabpanel>
+
+          </p-tabpanels>
+        </p-tabs>
+
+        <!-- STICKY MOBILE FORM ACTIONS -->
+        <div class="sticky bottom-0 z-20 flex justify-end gap-2 p-3 border-t border-gray-100 bg-white mt-auto md:static md:px-0 md:pb-0 md:bg-transparent">
+          <span class="text-red-600 text-xs md:text-sm italic mr-auto self-center">{{formErrors[0]}}</span>
+          <p-button label="Cancel" [outlined]="true" severity="secondary" styleClass="!text-sm" (onClick)="closeForm()" />
+          <p-button label="Save" severity="success" styleClass="!text-sm" (onClick)="saveDealer()" [disabled]="dealerForm.invalid" [loading]="isSaving" />
+        </div>
+      </div>
+    }
+
+    <!-- Data Table -->
+    <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 p-4 rounded-xl border border-[var(--line)] min-h-0">
+      <app-table-list
+        (edit)="editRow($event)"
+        (delete)="deleteRow($event)"
+        deleteNameKey="dealerName"
+        class="flex-1 flex flex-col h-full overflow-hidden"
+        [columns]="tableColumns"
+        [data]="tableData"
+        [enableFilterToggle]="true" 
+        [loading]="isLoading"
+        (filter)="onTableFilter($event)"
+        [rows]="10">
+      </app-table-list>    
+    </div>  
+
+  </div>

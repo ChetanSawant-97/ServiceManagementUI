@@ -1,7 +1,7 @@
 @use 'tailwindcss';
 @use './font.scss';
 @import "primeicons/primeicons.css";
-
+@import 'maplibre-gl/dist/maplibre-gl.css';
 
 @layer base {
   /* Disable text selection globally */

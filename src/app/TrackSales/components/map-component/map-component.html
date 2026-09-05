@@ -1,58 +1,35 @@
-<!-- Notice we use [center] OR [bounds] based on the computed signals -->
 <mgl-map 
   [mapStyle]="mapStyle" 
-  [zoom]="14" 
+  [zoom]="mapZoom()"
   [center]="mapCenter()"
   [bounds]="mapBounds()"
   [fitBoundsOptions]="{ padding: 50, duration: 1000 }">
 
-  <!-- ===============================
-       HISTORY MODE: Draw the full path
-       =============================== -->
-  @if (viewMode() === 'history') {
-    <mgl-geojson-source id="history-source" [data]="routeData()"></mgl-geojson-source>
-    
-    <mgl-layer
-      id="history-line"
-      type="line"
-      source="history-source"
-      [layout]="{ 'line-join': 'round', 'line-cap': 'round' }"
-      [paint]="{ 'line-color': '#10b981', 'line-width': 5 }">
-    </mgl-layer>
-  }
+  <!-- Always present now, never conditionally created -->
+  <mgl-geojson-source id="history-source" [data]="routeData()"></mgl-geojson-source>
+  <mgl-layer
+    id="history-line"
+    type="line"
+    source="history-source"
+    [layout]="{ 'line-join': 'round', 'line-cap': 'round', 'visibility': viewMode() === 'history' ? 'visible' : 'none' }"
+    [paint]="{ 'line-color': '#10b981', 'line-width': 5 }">
+  </mgl-layer>
 
-  <!-- ===============================
-       LIVE MODE: Draw pulsating marker
-       =============================== -->
-  @if (viewMode() === 'live' && livePointData()) {
-    <mgl-geojson-source id="live-source" [data]="livePointData()!"></mgl-geojson-source>
+  <mgl-geojson-source id="live-source" [data]="livePointData() ?? emptyPoint"></mgl-geojson-source>
+  <mgl-layer
+    id="live-halo"
+    type="circle"
+    source="live-source"
+    [layout]="{ 'visibility': viewMode() === 'live' && livePointData() ? 'visible' : 'none' }"
+    [paint]="{ 'circle-radius': 14, 'circle-color': '#3b82f6', 'circle-opacity': 0.3, 'circle-stroke-width': 2, 'circle-stroke-color': '#2563eb' }">
+  </mgl-layer>
 
-    <!-- Pulsating Halo -->
-    <mgl-layer
-      id="live-halo"
-      type="circle"
-      source="live-source"
-      [paint]="{
-        'circle-radius': 14,
-        'circle-color': '#3b82f6',
-        'circle-opacity': 0.3,
-        'circle-stroke-width': 2,
-        'circle-stroke-color': '#2563eb'
-      }">
-    </mgl-layer>
-
-    <!-- Solid Core Dot -->
-    <mgl-layer
-      id="live-core"
-      type="circle"
-      source="live-source"
-      [paint]="{
-        'circle-radius': 6,
-        'circle-color': '#1d4ed8',
-        'circle-stroke-width': 2,
-        'circle-stroke-color': '#ffffff'
-      }">
-    </mgl-layer>
-  }
+  <mgl-layer
+    id="live-core"
+    type="circle"
+    source="live-source"
+    [layout]="{ 'visibility': viewMode() === 'live' && livePointData() ? 'visible' : 'none' }"
+    [paint]="{ 'circle-radius': 6, 'circle-color': '#1d4ed8', 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff' }">
+  </mgl-layer>
 
 </mgl-map>

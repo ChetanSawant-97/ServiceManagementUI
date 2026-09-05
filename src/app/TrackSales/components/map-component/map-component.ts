@@ -35,22 +35,32 @@ export class MapComponent implements OnInit {
   // --- STATE CONTROL ---
 
   // 1. Center camera on the moving dot (Only works in Live Mode)
-  readonly mapCenter = computed<LngLat>(() => {
-    if (this.viewMode() === 'live' && this.liveLocation()) {
-      return this.liveLocation()!;
+  readonly mapCenter = computed<LngLat | undefined>(() => {
+    if (this.viewMode() === 'live') {
+      return this.liveLocation() ?? [79.0882, 21.1458];
     }
-    // Default fallback to Nagpur
-    return [79.0882, 21.1458];
+    return undefined; // don't fight fitBounds in history mode
+  });
+  
+  readonly mapZoom = computed<number | undefined>(() => {
+    return this.viewMode() === 'live' ? 14 : undefined;
   });
 
   // 2. Zoom out to fit the whole route (Only works in History Mode)
   readonly mapBounds = computed<[number, number, number, number] | undefined>(() => {
     if (this.viewMode() === 'history' && this.travelHistory().length > 1) {
-      // Turf calculates [minLng, minLat, maxLng, maxLat]
-      return bbox(lineString(this.travelHistory())) as [number, number, number, number];
+      const b = bbox(lineString(this.travelHistory())) as [number, number, number, number];
+      console.warn  ('computed bounds:', b, 'from', this.travelHistory().length, 'points');
+      return b;
     }
     return undefined;
   });
+
+  public readonly emptyPoint: Feature<Point> = {
+    type: 'Feature',
+    properties: {},
+    geometry: { type: 'Point', coordinates: [0, 0] }
+  };
 
   // --- DATA SOURCES ---
 
