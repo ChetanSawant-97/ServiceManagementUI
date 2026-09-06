@@ -3,33 +3,57 @@
   [zoom]="mapZoom()"
   [center]="mapCenter()"
   [bounds]="mapBounds()"
-  [fitBoundsOptions]="{ padding: 50, duration: 1000 }">
+  [fitBoundsOptions]="{ padding: 60, duration: 1000 }"
+  [style]="{ 'width': '100%', 'height': '100%', 'display': 'block', 'min-height': '400px' }"> <!-- FIX: Added this line -->
 
-  <!-- Always present now, never conditionally created -->
+  <!-- Route source/layers always present; visibility toggled, never conditionally created -->
   <mgl-geojson-source id="history-source" [data]="routeData()"></mgl-geojson-source>
+
+  <!-- Casing: darker, wider, drawn underneath -->
+  <mgl-layer
+    id="history-line-casing"
+    type="line"
+    source="history-source"
+    [layout]="{ 'line-join': 'round', 'line-cap': 'round', 'visibility': viewMode() === 'history' ? 'visible' : 'none' }"
+    [paint]="{ 'line-color': '#0d9668', 'line-width': 8 }">
+  </mgl-layer>
+
+  <!-- Main line: brighter, narrower, drawn on top -->
   <mgl-layer
     id="history-line"
     type="line"
     source="history-source"
     [layout]="{ 'line-join': 'round', 'line-cap': 'round', 'visibility': viewMode() === 'history' ? 'visible' : 'none' }"
-    [paint]="{ 'line-color': '#10b981', 'line-width': 5 }">
+    [paint]="{ 'line-color': '#34d399', 'line-width': 5 }">
   </mgl-layer>
 
   <mgl-geojson-source id="live-source" [data]="livePointData() ?? emptyPoint"></mgl-geojson-source>
+
   <mgl-layer
     id="live-halo"
     type="circle"
     source="live-source"
-    [layout]="{ 'visibility': viewMode() === 'live' && livePointData() ? 'visible' : 'none' }"
-    [paint]="{ 'circle-radius': 14, 'circle-color': '#3b82f6', 'circle-opacity': 0.3, 'circle-stroke-width': 2, 'circle-stroke-color': '#2563eb' }">
+    [layout]="{ 'visibility': (viewMode() === 'live' && livePointData()) ? 'visible' : 'none' }"
+    [paint]="{
+      'circle-radius': 14,
+      'circle-color': '#3b82f6',
+      'circle-opacity': 0.3,
+      'circle-stroke-width': 2,
+      'circle-stroke-color': '#2563eb'
+    }">
   </mgl-layer>
 
   <mgl-layer
     id="live-core"
     type="circle"
     source="live-source"
-    [layout]="{ 'visibility': viewMode() === 'live' && livePointData() ? 'visible' : 'none' }"
-    [paint]="{ 'circle-radius': 6, 'circle-color': '#1d4ed8', 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff' }">
+    [layout]="{ 'visibility': (viewMode() === 'live' && livePointData()) ? 'visible' : 'none' }"
+    [paint]="{
+      'circle-radius': 6,
+      'circle-color': '#1d4ed8',
+      'circle-stroke-width': 2,
+      'circle-stroke-color': '#ffffff'
+    }">
   </mgl-layer>
 
 </mgl-map>

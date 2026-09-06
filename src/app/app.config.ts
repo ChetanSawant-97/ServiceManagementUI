@@ -7,6 +7,7 @@ import { definePreset } from '@primeng/themes';
 import { ConfirmationService, MessageService } from 'primeng/api'; // <-- Import MessageService
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AuthInterceptor } from './common/auth/Auth.interceptor';
+import { provideMaplibreWorker } from '@maplibre/ngx-maplibre-gl/config';
 
 const VortrixPreset = definePreset(Aura, {
     semantic: {
@@ -48,5 +49,6 @@ export const appConfig: ApplicationConfig = {
         }),
         MessageService,
         ConfirmationService,
+        provideMaplibreWorker('maplibre-gl-worker.mjs'),
     ]
 };
