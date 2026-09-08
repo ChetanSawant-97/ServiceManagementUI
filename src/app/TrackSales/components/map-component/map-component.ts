@@ -2,7 +2,6 @@ import { Component, OnInit, computed, input } from '@angular/core';
 import { NgxMapLibreGLModule } from '@maplibre/ngx-maplibre-gl';
 import type { Feature, LineString, Point } from 'geojson';
 
-// Turf.js helpers
 import bbox from '@turf/bbox';
 import { lineString } from '@turf/helpers';
 import simplify from '@turf/simplify';
@@ -49,9 +48,6 @@ export class MapComponent {
     geometry: { type: 'Point', coordinates: [0, 0] }
   };
 
-  // --- DATA SOURCES ---
-
-  // Raw route, unsimplified (kept in case you need exact GPS points elsewhere)
   private readonly rawRoute = computed<Feature<LineString>>(() => {
     const coords = this.travelHistory();
     return {
@@ -61,9 +57,6 @@ export class MapComponent {
     };
   });
 
-  // Smoothed route — this is what actually gets drawn.
-  // tolerance is in degrees; ~0.00005 ≈ 5m at this latitude. Increase for a
-  // straighter/cleaner line, decrease to hug the raw GPS points more closely.
   readonly routeData = computed<Feature<LineString>>(() => {
     const raw = this.rawRoute();
     if (raw.geometry.coordinates.length < 3) return raw;
@@ -72,7 +65,6 @@ export class MapComponent {
       const simplified = simplify(raw, { tolerance: 0.00008, highQuality: true });
       return simplified as Feature<LineString>;
     } catch {
-      // simplify can throw on degenerate input (e.g. all-identical points) — fall back safely
       return raw;
     }
   });
