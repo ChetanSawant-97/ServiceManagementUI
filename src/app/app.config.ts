@@ -49,6 +49,6 @@ export const appConfig: ApplicationConfig = {
         }),
         MessageService,
         ConfirmationService,
-        provideMaplibreWorker('https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl-worker.js'),
+        provideMaplibreWorker('maplibre-gl-worker.mjs'),
     ]
 };
