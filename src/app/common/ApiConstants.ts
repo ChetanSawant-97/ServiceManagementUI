@@ -85,3 +85,11 @@ export const TripEndpoints = {
 
   GET_TRIP_PINGS:            { url: '/api/trips/{tripId}/pings', method: 'GET' }
 } as const;
+
+
+export const AreaEndpoints = {
+  GET_AREAS:   { url: '/api/areas', method: 'GET' }, // As requested
+  CREATE_AREA: { url: '/api/areas', method: 'POST' },
+  UPDATE_AREA: { url: '/api/areas/{id}', method: 'PUT' },
+  DELETE_AREA: { url: '/api/areas/{id}', method: 'DELETE' }
+} as const;

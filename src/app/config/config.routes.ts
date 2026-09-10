@@ -10,4 +10,8 @@ export const routes: Routes = [
         path: 'tripDetails',
         loadComponent: () => import('./components/trip-master/trip-master').then(m => m.TripMaster),
     },
+    {
+        path: 'areas',
+        loadComponent: () => import('./components/areas-component/areas-component').then(m => m.AreasComponent),
+    },
 ];

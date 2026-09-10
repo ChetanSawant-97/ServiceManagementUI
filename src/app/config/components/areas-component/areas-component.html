@@ -1,0 +1,61 @@
+<!-- Outer wrapper -->
+<div class="flex flex-col h-full w-full rounded-xl overflow-hidden gap-2 relative">
+
+    <!-- TOP DIV: Header section -->
+    <div class="w-full flex flex-col bg-[var(--bg-2)] border border-[var(--line)] px-5 py-3 rounded-[30px] items-center justify-between shrink-0">
+      <div class="flex w-full justify-between items-center">
+        <h2 class="text-base md:text-lg font-medium md:font-semibold text-gray-800">Area Management</h2>
+        <div class="flex gap-2">
+          @if (!isOpen) {
+            <button (click)="openForm()" class="hover:cursor-pointer" title="Add Area">
+              <i class="pi pi-plus-circle" style="font-size: 1.6rem; color:#245501; font-weight: 500;"></i>
+            </button>
+          } @else {
+            <button (click)="closeForm()" class="hover:cursor-pointer" title="Close Form">
+              <i class="pi pi-times-circle" style="font-size: 1.6rem; color:red; font-weight: 500;"></i>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  
+    <!-- EXPANDABLE FORM SECTION -->
+    @if (isOpen) {
+      <!-- Backdrop overlay for mobile -->
+      <div class="fixed inset-0 bg-black/40 z-40 md:hidden" (click)="closeForm()"></div>
+  
+      <!-- Form Container -->
+      <div class="fixed inset-x-4 top-20 z-50 max-h-[85vh] overflow-y-auto bg-white border border-[var(--line)] rounded-xl shadow-xl shrink-0 transition-all md:static md:inset-auto md:max-h-none md:shadow-sm md:overflow-visible md:p-3">
+        
+        <form class="flex flex-col gap-3 p-3 md:p-0 my-auto" [formGroup]="areaForm">
+          <!-- Row 1: Area Info -->
+          <div class="flex flex-col md:flex-row gap-3">
+            <app-input-text class="w-full md:w-[50%] block" [control]="areaForm.controls.areaName" label="Area Name"></app-input-text>
+            <app-input-text class="w-full md:w-[50%] block" [control]="areaForm.controls.city" label="City"></app-input-text>
+          </div>
+        </form>
+  
+        <!-- STICKY MOBILE FORM ACTIONS -->
+        <div class="sticky bottom-0 z-20 flex justify-end gap-2 p-3 border-t border-gray-100 bg-white mt-auto md:static md:px-0 md:pb-0 md:border-none md:bg-transparent md:mt-3">
+          <p-button label="Cancel" [outlined]="true" severity="secondary" styleClass="!text-sm" (onClick)="closeForm()" />
+          <p-button label="Save" severity="success" styleClass="!text-sm" (onClick)="saveArea()" [disabled]="areaForm.invalid" [loading]="isSaving" />
+        </div>
+      </div>
+    }
+  
+    <!-- Data Table -->
+    <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 p-4 rounded-xl border border-[var(--line)] min-h-0">
+      <app-table-list
+        (edit)="editRow($event)"
+        (delete)="deleteRow($event)"
+        deleteNameKey="areaName"
+        class="flex-1 flex flex-col h-full overflow-hidden"
+        [columns]="tableColumns"
+        [data]="tableData"
+        [enableFilterToggle]="true" 
+        [loading]="isLoading"
+        [rows]="10">
+      </app-table-list>    
+    </div>  
+  
+  </div>
