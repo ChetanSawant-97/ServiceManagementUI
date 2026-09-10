@@ -4,7 +4,7 @@ import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { definePreset } from '@primeng/themes';
-import { ConfirmationService, MessageService } from 'primeng/api'; // <-- Import MessageService
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AuthInterceptor } from './common/auth/Auth.interceptor';
 import { provideMaplibreWorker } from '@maplibre/ngx-maplibre-gl/config';
@@ -49,6 +49,6 @@ export const appConfig: ApplicationConfig = {
         }),
         MessageService,
         ConfirmationService,
-        provideMaplibreWorker('maplibre-gl-worker.mjs'),
+        provideMaplibreWorker('https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl-worker.js'),
     ]
 };
