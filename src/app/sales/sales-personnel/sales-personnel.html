@@ -27,7 +27,6 @@
     <!-- Form Container -->
     <div class="fixed inset-x-4 top-20 z-50 max-h-[85vh] overflow-y-auto bg-white border border-[var(--line)] rounded-xl shadow-xl shrink-0 transition-all md:static md:inset-auto md:max-h-none md:shadow-sm md:overflow-visible md:p-3">
       
-      <!-- Removed the flex/overflow classes from p-tabs directly -->
       <p-tabs [value]="currentTab()" (valueChange)="onTabChange($event)">
         
         <!-- STICKY MOBILE TAB HEADER -->
@@ -47,61 +46,30 @@
           <p-tabpanel [value]="0">
             <form class="flex flex-col md:flex-row md:items-start gap-6 pt-4" [formGroup]="salesForm">
               
-              <!-- Left Side: Form Grid (order-2 on mobile pushes it down, order-1 on desktop pulls it left) -->
               <div class="flex-1 order-2 md:order-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 
-                <app-input-text 
-                    class="w-full block" 
-                    [control]="salesForm.controls.fullName" 
-                    label="Full Name">
-                </app-input-text>
+                <app-input-text class="w-full block" [control]="salesForm.controls.fullName" label="Full Name"></app-input-text>
+                <app-input-text class="w-full block" [control]="salesForm.controls.username" label="Login Username"></app-input-text>
     
-                <app-input-text 
-                    class="w-full block" 
-                    [control]="salesForm.controls.username" 
-                    label="Login Username">
-                </app-input-text>
-    
+                <!-- FIX: Dynamically span 2 rows only when creating a new user -->
                 <app-input-password 
                     class="w-full block" 
+                    [ngClass]="isNewUser ? 'md:row-span-2' : ''"
                     [control]="salesForm.controls.password" 
+                    [requireConfirm]="isNewUser"
                     label="Login Password">
                 </app-input-password>
     
-                <app-input-select 
-                    class="w-full block" 
-                    [control]="salesForm.controls.designationId" 
-                    [items]="designationOptions" 
-                    label="Designation" 
-                    placeholder="Select designation">
-                </app-input-select>
+                <app-input-select class="w-full block" [control]="salesForm.controls.designationId" [items]="designationOptions" label="Designation" placeholder="Select designation"></app-input-select>
+                <app-input-select class="w-full block" [control]="salesForm.controls.area" [items]="areaOptions" label="Assigned Territory" placeholder="Select territory"></app-input-select>
     
-                <app-input-text 
-                    class="w-full block" 
-                    [type]="'mobile'"
-                    [maxLength]="10"
-                    [control]="salesForm.controls.mobileNumber" 
-                    label="Mobile Number">
-                </app-input-text>
-    
-                <app-input-text 
-                    class="w-full block" 
-                    [type]="'number'"
-                    [maxLength]="12"
-                    [control]="salesForm.controls.aadharId" 
-                    label="Aadhar ID">
-                </app-input-text>
-    
-                <app-input-text 
-                    class="w-full block" 
-                    [type]="'alphanumeric'"
-                    [maxLength]="10"
-                    [control]="salesForm.controls.pancard" 
-                    label="PAN Card">
-                </app-input-text>
+                <!-- Reordered these three so they flow cleanly around the taller password block -->
+                <app-input-text class="w-full block" [type]="'number'" [maxLength]="12" [control]="salesForm.controls.aadharId" label="Aadhar ID"></app-input-text>
+                <app-input-text class="w-full block" [type]="'alphanumeric'" [maxLength]="10" [control]="salesForm.controls.pancard" label="PAN Card"></app-input-text>
+                <app-input-text class="w-full block" [type]="'mobile'" [maxLength]="10" [control]="salesForm.controls.mobileNumber" label="Mobile Number"></app-input-text>
               </div>
 
-              <!-- Right Side (Desktop) / Top Center (Mobile): Profile Upload -->
+              <!-- Right Side: Profile Upload -->
               <div class="w-full md:w-auto md:min-w-[200px] flex justify-center shrink-0 order-1 md:order-2 md:pl-4 mb-2 md:mb-0">
                   <app-profile-upload 
                       [control]="salesForm.controls.photoBase64"
@@ -119,7 +87,7 @@
                 [firstLine]="salesForm.controls.addressLine1"
                 [secondLine]="salesForm.controls.addressLine2"
                 [landMark]="salesForm.controls.landmark"
-                [area]="salesForm.controls.area"
+                [area]="salesForm.controls.personalArea" 
                 [city]="salesForm.controls.city"
                 [state]="salesForm.controls.state"
                 [pincode]="salesForm.controls.pinCode">
@@ -131,7 +99,8 @@
 
       <!-- STICKY MOBILE FORM ACTIONS -->
       <div class="sticky bottom-0 z-20 flex justify-end gap-2 p-3 mt-auto border-t border-gray-100 bg-white md:static md:px-0 md:pb-0 md:bg-transparent">
-        <span class="text-red-600 text-xs md:text-sm italic mr-auto self-center">{{formErrors[0]}}</span>
+        <span class="text-red-600 text-xs md:text-sm italic mr-auto self-center">{{ currentFormError }}</span>
+        
         <p-button label="Cancel" [outlined]="true" severity="secondary" styleClass="!text-sm" (onClick)="closeForm()" />
         <p-button label="Save" severity="success" styleClass="!text-sm" (onClick)="saveSalesPerson()" [disabled]="salesForm.invalid" [loading]="isSaving" />
       </div>

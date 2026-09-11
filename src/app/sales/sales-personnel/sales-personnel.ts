@@ -1,10 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ButtonModule } from 'primeng/button';
-import { TabsModule } from 'primeng/tabs'; // NEW IMPORT
+import { TabsModule } from 'primeng/tabs'; 
 import { InputPasswordComponent } from '../../common/forms/components/input-password/input-password-component';
 import { InputText } from '../../common/forms/components/input-text/input-text';
 import { TableColumn, TableList } from '../../common/forms/components/table-list/table-list';
@@ -16,6 +15,7 @@ import { getFormErrorMessages, PAN_REGEX } from '../../common/Utility';
 import { SalesPersonService } from '../services/SalesPerson.service';
 import { DesignationService } from '../services/Designation.service';
 import { SalesPerson, SalesPersonPayload } from '../models/SalesPersons';
+import { AreaService } from '../../config/services/areas.service';
 
 export interface TabItem {
   label: string;
@@ -37,14 +37,14 @@ export interface TabItem {
 export class SalesPersonnel implements OnInit {
   private salesPersonService = inject(SalesPersonService);
   private designationService = inject(DesignationService);
+  private areaService = inject(AreaService);
   private cdr = inject(ChangeDetectorRef);
 
   isOpen = false;
   isLoading = false;
   isSaving = false;
-  formErrors: string[] = [];
+  isNewUser = true; 
 
-  // Tab State
   currentTab = signal<string | number>(0);
   salesTabs: TabItem[] = [
     { label: 'Info', value: 0, icon: 'pi pi-user' },
@@ -52,6 +52,7 @@ export class SalesPersonnel implements OnInit {
   ];
 
   designationOptions: { label: string, value: number }[] = [];
+  areaOptions: { label: string, value: string }[] = []; 
 
   tableColumns: TableColumn[] = [
     { field: 'fullName', header: 'Full Name', width: '25%', filterable: true },
@@ -74,21 +75,33 @@ export class SalesPersonnel implements OnInit {
     pancard: new FormControl('', [Validators.required, Validators.pattern(PAN_REGEX)]),
     photoBase64: new FormControl('', [Validators.required]),
     
-    // Address fields
+    area: new FormControl('', [Validators.required]),
+    
     addressLine1: new FormControl('', [Validators.required]),
     addressLine2: new FormControl(''),
     landmark: new FormControl(''),
-    area: new FormControl('', [Validators.required]),
+    personalArea: new FormControl('', [Validators.required]), 
     city: new FormControl('', [Validators.required]),
     state: new FormControl('', [Validators.required]),
     pinCode: new FormControl('', [Validators.required]),
     country: new FormControl('India')
   });
 
-  constructor() {
-    this.salesForm.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
-      this.computeAllError();
+  // FIX: Converted into a native Angular getter. This triggers automatically 
+  // on every blur, click, and keystroke natively via change detection.
+  get currentFormError(): string {
+    const errors = getFormErrorMessages(this.salesForm, {
+      fullName: 'Full Name',
+      designationId: 'Designation',
+      aadharId: 'Aadhar ID',
+      pancard: 'PAN Card',
+      photoBase64: 'Profile Photo',
+      area: 'Assigned Territory',
+      addressLine1: 'Address Line 1',
+      personalArea: 'Personal Locality',
+      pinCode: 'PIN Code'
     });
+    return errors.length > 0 ? errors[0] : '';
   }
 
   ngOnInit(): void {
@@ -100,6 +113,12 @@ export class SalesPersonnel implements OnInit {
     this.designationService.getAllDesignations().subscribe(res => {
       if (res.success) {
         this.designationOptions = res.data.map(d => ({ label: d.designationName, value: d.designationId }));
+      }
+    });
+
+    this.areaService.getAreas().subscribe(res => {
+      if (res.success && res.data) {
+        this.areaOptions = res.data.map(a => ({ label: a.areaName, value: a.areaName }));
       }
     });
   }
@@ -126,7 +145,6 @@ export class SalesPersonnel implements OnInit {
   saveSalesPerson() {
     if (this.salesForm.invalid) {
       this.salesForm.markAllAsTouched();
-      this.computeAllError();
       return;
     }
 
@@ -146,7 +164,7 @@ export class SalesPersonnel implements OnInit {
       addressLine1: formValues.addressLine1 ?? '',
       addressLine2: formValues.addressLine2 ?? '',
       landmark: formValues.landmark ?? '',
-      area: formValues.area ?? '',
+      area: formValues.area ?? '', 
       city: formValues.city ?? '',
       state: formValues.state ?? '',
       pinCode: formValues.pinCode ?? '',
@@ -187,12 +205,12 @@ export class SalesPersonnel implements OnInit {
 
   openForm() {
     this.resetFormToDefault();
+    this.isNewUser = true; 
     this.salesForm.controls.password.setValidators([Validators.required]);
     this.salesForm.controls.password.updateValueAndValidity();
     
-    this.currentTab.set(0); // Reset to Info tab on open
+    this.currentTab.set(0); 
     this.isOpen = true;
-    this.computeAllError();
   }
 
   closeForm() {
@@ -203,6 +221,7 @@ export class SalesPersonnel implements OnInit {
 
   editRow(editedRow: SalesPerson) {
     this.openForm(); 
+    this.isNewUser = false; 
     
     this.salesForm.controls.password.clearValidators();
     this.salesForm.controls.password.updateValueAndValidity();
@@ -233,18 +252,6 @@ export class SalesPersonnel implements OnInit {
     }
   }
 
-  computeAllError() {
-    this.formErrors = getFormErrorMessages(this.salesForm, {
-      fullName: 'Full Name',
-      designationId: 'Designation',
-      aadharId: 'Aadhar ID',
-      pancard: 'PAN Card',
-      photoBase64: 'Profile Photo',
-      addressLine1: 'Address Line 1',
-      pinCode: 'PIN Code'
-    });
-  }
-
   private resetFormToDefault() {
     this.salesForm.reset({
       userId: 0,
@@ -256,10 +263,11 @@ export class SalesPersonnel implements OnInit {
       aadharId: '',
       pancard: '',
       photoBase64: '',
+      area: '',
       addressLine1: '',
       addressLine2: '',
       landmark: '',
-      area: '',
+      personalArea: '',
       city: '',
       state: '',
       pinCode: '',
