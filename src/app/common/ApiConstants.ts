@@ -82,8 +82,8 @@ export const TripEndpoints = {
 
   GET_ALL_TRIPS:             { url: '/api/trips', method: 'GET' },
   GET_TRIPS_BY_SALES_PERSON: { url: '/api/trips?salesPersonId={salesPersonId}', method: 'GET' },
-
-  GET_TRIP_PINGS:            { url: '/api/trips/{tripId}/pings', method: 'GET' }
+  GET_TRIP_PINGS:            { url: '/api/trips/{tripId}/pings', method: 'GET' },
+  GET_TRIP_REPORT: { url: '/api/trips/report', method: 'POST' }
 } as const;
 
 

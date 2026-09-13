@@ -1,11 +1,11 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { getFormErrorMessages } from '../../common/Utility';
-import { DesignationDetails, DesignationPayload } from '../models/Designation';
+import { getFormErrorMessages } from '../../../common/Utility';
+import { DesignationDetails, DesignationPayload } from '../../models/Designation';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TableColumn, TableList } from '../../common/forms/components/table-list/table-list';
-import { DesignationService } from '../services/Designation.service';
-import { InputText } from '../../common/forms/components/input-text/input-text';
-import { SelectComponent } from '../../common/forms/components/input-select/input-select';
+import { TableColumn, TableList } from '../../../common/forms/components/table-list/table-list';
+import { DesignationService } from '../../services/Designation.service';
+import { InputText } from '../../../common/forms/components/input-text/input-text';
+import { SelectComponent } from '../../../common/forms/components/input-select/input-select';
 import { ButtonModule } from 'primeng/button';
 
 @Component({

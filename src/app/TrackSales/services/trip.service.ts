@@ -4,6 +4,7 @@ import { BaseApiService } from '../../common/base-api-service';
 import { ApiResponse } from '../../common/ApiConstants';
 import { TripEndpoints } from '../../common/ApiConstants';
 import { Trip, TripPing } from '../models/trip.model';
+import { TripReportRequest, TripReportResponse } from '../models/trip-report.model';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,13 @@ export class TripService {
       TripEndpoints.GET_TRIP_PINGS,
       undefined, // No body for GET
       { pathParams: { tripId } } // BaseApi will replace {tripId} in the URL
+    );
+  }
+
+  getTripReport(payload: TripReportRequest): Observable<ApiResponse<TripReportResponse[]>> {
+    return this.baseApi.request<ApiResponse<TripReportResponse[]>, TripReportRequest>(
+      TripEndpoints.GET_TRIP_REPORT,
+      payload
     );
   }
 }

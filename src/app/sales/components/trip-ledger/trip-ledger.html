@@ -1,0 +1,79 @@
+<!-- Outer wrapper -->
+<div class="flex flex-col h-full w-full rounded-xl overflow-hidden gap-2 relative">
+
+    <!-- TOP DIV: Header & Filters section -->
+    <div class="w-full flex flex-col bg-[var(--bg-2)] border border-[var(--line)] px-5 py-4 rounded-[20px] shrink-0 gap-4">
+      
+      <!-- Title & Toggle Row -->
+      <div class="flex w-full justify-between items-center border-b border-gray-100 pb-2">
+        <h2 class="text-base md:text-lg font-medium md:font-semibold text-gray-800">Trip Ledger</h2>
+        
+        <!-- Custom Date Range Toggle -->
+        <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-600 hover:text-[var(--ink)] transition-colors">
+          <input 
+            type="checkbox" 
+            class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer" 
+            [checked]="showDateRange" 
+            (change)="toggleDateRange()">
+          <span>Custom Date Range</span>
+        </label>
+      </div>
+  
+     <!-- Filter Form (Responsive Exact-Width Layout) -->
+     <form class="flex flex-col md:flex-row md:items-end md:flex-wrap gap-4 w-full transition-all duration-300" [formGroup]="reportForm">
+        
+        <!-- Sales Person: Full width on mobile, fixed compact width on desktop -->
+        <app-input-select 
+            class="w-full md:w-[260px] shrink-0" 
+            [control]="reportForm.controls.salesPersonId" 
+            [items]="salesPersonOptions" 
+            label="Sales Person" 
+            placeholder="Select Sales Person">
+        </app-input-select>
+  
+        @if (showDateRange) {
+          <!-- Dates: Full width on mobile, exact compact width on desktop -->
+          <app-input-date 
+              class="w-full md:w-[160px] shrink-0 animate-fade-in" 
+              [control]="reportForm.controls.fromDate" 
+              label="From Date"
+              placeholder="Select from date">
+          </app-input-date>
+  
+          <app-input-date 
+              class="w-full md:w-[160px] shrink-0 animate-fade-in" 
+              [control]="reportForm.controls.toDate" 
+              label="To Date"
+              placeholder="Select to date">
+          </app-input-date>
+        }
+  
+        <!-- Action Button: Full width on mobile, auto-width + pushed to the right on desktop -->
+        <div class="w-full md:w-auto md:ml-auto shrink-0 mt-2 md:mt-0">
+          <p-button 
+              label="Reset" 
+              icon="pi pi-refresh" 
+              [outlined]="true" 
+              severity="secondary" 
+              styleClass="!text-sm w-full md:w-auto" 
+              (onClick)="clearFilters()">
+          </p-button>
+        </div>
+        
+      </form>
+      
+    </div>
+  
+    <!-- Data Table -->
+    <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 p-4 rounded-xl border border-[var(--line)] min-h-0">
+      <app-table-list
+        class="flex-1 flex flex-col h-full overflow-hidden"
+        [columns]="tableColumns"
+        [data]="tableData"
+        [loading]="isLoading"
+        [enableFilterToggle]="true"
+        [rows]="15">
+      </app-table-list>    
+    </div>  
+  
+  </div>

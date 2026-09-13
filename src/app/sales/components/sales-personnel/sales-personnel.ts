@@ -4,18 +4,18 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs'; 
-import { InputPasswordComponent } from '../../common/forms/components/input-password/input-password-component';
-import { InputText } from '../../common/forms/components/input-text/input-text';
-import { TableColumn, TableList } from '../../common/forms/components/table-list/table-list';
-import { SelectComponent } from '../../common/forms/components/input-select/input-select';
-import { ProfileUpload } from '../../common/forms/components/profile-upload/profile-upload.component';
-import { AddressComponent } from '../../common/forms/components/address-component/address-component';
+import { InputPasswordComponent } from '../../../common/forms/components/input-password/input-password-component';
+import { InputText } from '../../../common/forms/components/input-text/input-text';
+import { TableColumn, TableList } from '../../../common/forms/components/table-list/table-list';
+import { SelectComponent } from '../../../common/forms/components/input-select/input-select';
+import { ProfileUpload } from '../../../common/forms/components/profile-upload/profile-upload.component';
+import { AddressComponent } from '../../../common/forms/components/address-component/address-component';
 
-import { getFormErrorMessages, PAN_REGEX } from '../../common/Utility';
-import { SalesPersonService } from '../services/SalesPerson.service';
-import { DesignationService } from '../services/Designation.service';
-import { SalesPerson, SalesPersonPayload } from '../models/SalesPersons';
-import { AreaService } from '../../config/services/areas.service';
+import { getFormErrorMessages, PAN_REGEX } from '../../../common/Utility';
+import { SalesPersonService } from '../../services/SalesPerson.service';
+import { DesignationService } from '../../services/Designation.service';
+import { SalesPerson, SalesPersonPayload } from '../../models/SalesPersons';
+import { AreaService } from '../../../config/services/areas.service';
 
 export interface TabItem {
   label: string;

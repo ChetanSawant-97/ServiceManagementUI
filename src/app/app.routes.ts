@@ -28,6 +28,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./TrackSales/components/track-sales/track-sales').then(m => m.TrackSales)
             },
             {
+                path : 'tripLedger',
+                loadComponent: () => import('./sales/components/trip-ledger/trip-ledger').then(m => m.TripLedger)
+            },
+            {
                 path : 'orders',
                 loadComponent: () => import('./orders/orders-management/orders-management').then(m => m.OrdersManagement)
             },
