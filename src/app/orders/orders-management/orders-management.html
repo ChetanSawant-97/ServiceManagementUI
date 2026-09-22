@@ -55,7 +55,7 @@
           [maxLength]="10">
         </app-input-text>
         
-        <!-- NEW: Product Selection (Dropdown) -->
+        <!-- Product Selection (Dropdown) -->
         <app-input-select 
           class="w-full block" 
           [control]="orderForm.controls.productId" 
@@ -64,12 +64,28 @@
           placeholder="Choose a product">
         </app-input-select>
         
-        <!-- Product Serial Number -->
-        <app-input-text 
-          class="w-full block" 
-          [control]="orderForm.controls.productSerialNumber" 
-          label="Product Serial Number">
-        </app-input-text>
+        <div class="flex flex-col gap-1 w-full block">
+          <label class="text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300">
+            Product Serial Number
+          </label>
+          <p-input-group>
+            <p-inputgroup-addon 
+              style="font-family: var(--default-font-family);" 
+              class="!bg-gray-100 !text-gray-600 !font-semibold text-xs sm:text-sm whitespace-nowrap">
+              {{ currentSerialPrefix }}
+            </p-inputgroup-addon>
+            
+            <input 
+              type="text" 
+              pInputText 
+              [formControl]="orderForm.controls.serialSuffix" 
+              maxlength="6" 
+              placeholder="123456" 
+              inputmode="numeric"
+              (input)="orderForm.controls.serialSuffix.setValue($any($event.target).value.replace(/[^0-9]/g, ''))"
+              class="w-full !text-xs sm:!text-sm" />
+          </p-input-group>
+        </div>
         
         <!-- Bill Date -->
         <app-input-date
@@ -78,7 +94,7 @@
           label="Bill Date">
         </app-input-date>
           
-        <!-- Updated control target -->
+        <!-- Bill Photo Uploader -->
         <app-modal-uploader 
           [control]="orderForm.controls.billPhotoBase64">
         </app-modal-uploader>

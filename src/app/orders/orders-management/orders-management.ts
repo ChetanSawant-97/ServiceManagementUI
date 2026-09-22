@@ -1,8 +1,12 @@
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
+
 
 // Common Components
 import { InputText } from '../../common/forms/components/input-text/input-text';
@@ -22,10 +26,11 @@ import { AuthData } from '../../common/auth/services/Authentication.service';
 
 @Component({
   selector: 'app-orders-management',
+  standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, ButtonModule, 
     TableList, InputText, SelectComponent, TabsModule, InputDateComponent,
-    ModalUploaderComponent
+    ModalUploaderComponent, InputGroupModule, InputGroupAddonModule, InputTextModule
   ],
   templateUrl: './orders-management.html',
   styleUrl: './orders-management.scss',
@@ -47,20 +52,30 @@ export class OrdersManagement implements OnInit {
   isSaving = false;
   formErrors: string[] = [];
 
-  // Dropdown options
+  productList: any[] = []; // Stores raw products to look up the productCode
   dealerOptions: { label: string, value: number }[] = []; 
-  productOptions: { label: string, value: number }[] = []; // New product options
+  productOptions: { label: string, value: number }[] = []; 
 
   tableColumns: TableColumn[] = [
     { field: 'customerName', header: 'Customer Name', width: '20%' },
     { field: 'customerNumber', header: 'Mobile No.', width: '15%' },
-    { field: 'productName', header: 'Product', width: '20%' }, // Displaying productName in table
+    { field: 'productName', header: 'Product', width: '20%' }, 
     { field: 'productSerialNumber', header: 'Serial Number', width: '15%' },
     { field: 'billDate', header: 'Bill Date', width: '10%' },
     { field: 'expiryDate', header: 'Warranty Expiry', width: '10%' },
   ];
 
   tableData: OrderMaster[] = [];
+
+  // Getter to dynamically build the prefix based on selected productId
+  get currentSerialPrefix(): string {
+    const selectedProductId = this.orderForm.controls.productId.value;
+    if (!selectedProductId || !this.productList.length) return 'NBF56SP4N';
+    
+    const product = this.productList.find(p => p.productId === selectedProductId);
+    const code = product?.productCode || ''; 
+    return `${code}NBF56SP4N`;
+  }
 
   public orderForm = new FormGroup({
     orderId: new FormControl(0), 
@@ -70,15 +85,14 @@ export class OrdersManagement implements OnInit {
     ),
     customerName: new FormControl('', [Validators.required]),
     customerNumber: new FormControl('', [Validators.required, Validators.pattern('^[0-9]*$')]),
-    productId: new FormControl<number | null>(null, [Validators.required]), // Changed to productId
-    productSerialNumber: new FormControl('', [Validators.required]),
+    productId: new FormControl<number | null>(null, [Validators.required]), 
+    serialSuffix: new FormControl('', [Validators.required, Validators.maxLength(6), Validators.pattern('^[0-9]*$')]),
     billDate: new FormControl<Date | string | null>(null, [Validators.required]),
-    billPhotoBase64: new FormControl<string | null>('', [Validators.required]), // Updated key
+    billPhotoBase64: new FormControl<string | null>('', [Validators.required]), 
   });
 
   ngOnInit(): void {
     this.loadInitialData();
-    console.warn('User Data:', this.userData); // Log user data for debugging
     this.orderForm.valueChanges.subscribe(() => {
       this.computeAllError();
     });  
@@ -88,8 +102,7 @@ export class OrdersManagement implements OnInit {
     this.isLoading = true;
     this.cdr.detectChanges();
 
-    // Load Dealers
-    if(this.userData!=null && this.userData.role.toLowerCase() !== 'dealer') {
+    if(this.userData != null && this.userData.role.toLowerCase() !== 'dealer') {
       this.dealerService.getAllDealers().subscribe(res => {
         if (res.success) {
           this.dealerOptions = res.data.map(d => ({ label: d.dealerName, value: d.dealerId }));
@@ -97,10 +110,9 @@ export class OrdersManagement implements OnInit {
       });
     }
 
-    // Load Products for the dropdown
     this.productService.getAllProducts().subscribe(res => {
       if (res.success) {
-        // Assuming your product model has productName and productId
+        this.productList = res.data; 
         this.productOptions = res.data.map(p => ({ label: p.productName, value: p.productId }));
       }
     });
@@ -147,10 +159,13 @@ export class OrdersManagement implements OnInit {
       dealerId: formValues.dealerId!, 
       customerName: formValues.customerName ?? '',
       customerNumber: formValues.customerNumber ?? '',
-      productId: formValues.productId!, // Using the new ID
-      productSerialNumber: formValues.productSerialNumber ?? '',
+      productId: formValues.productId!, 
+      
+      // Combine the dynamic prefix with the user's 6-digit suffix
+      productSerialNumber: this.currentSerialPrefix + (formValues.serialSuffix ?? ''),
+      
       billDate: formValues.billDate ? new Date(formValues.billDate).toISOString().split('T')[0] : '',
-      billPhotoBase64: formValues.billPhotoBase64 ?? '', // Updated key
+      billPhotoBase64: formValues.billPhotoBase64 ?? '', 
     };
 
     const saveRequest$ = (orderId && orderId > 0)
@@ -202,17 +217,23 @@ export class OrdersManagement implements OnInit {
 
   editRow(editedRow: OrderMaster) {
     this.openForm(); 
-    
-    // FIX: Disable the Bill Date field when editing an existing record
     this.orderForm.controls.billDate.disable();
-
     this.isLoading = true; 
     this.cdr.detectChanges();
 
     this.orderService.getOrderById(editedRow.orderId).subscribe({
       next: (res) => {
         if (res.success && res.data) {
-          this.orderForm.patchValue(res.data);
+          // Extract the suffix by stripping the known prefix
+          const fullSerial = res.data.productSerialNumber || '';
+          const product = this.productList.find(p => p.productId === res.data.productId);
+          const prefix = (product?.productCode || '') + 'NBF56SP4N';
+          const suffix = fullSerial.startsWith(prefix) ? fullSerial.replace(prefix, '') : fullSerial;
+
+          this.orderForm.patchValue({
+            ...res.data,
+            serialSuffix: suffix
+          });
         }
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -231,7 +252,7 @@ export class OrdersManagement implements OnInit {
       customerName: 'Customer Name',
       customerNumber: 'Customer Number',
       productId: 'Product',
-      productSerialNumber: 'Product Serial Number',
+      serialSuffix: 'Product Serial Number', 
       billDate: 'Bill Date',
       billPhotoBase64: 'Bill Photo'
     });
@@ -246,7 +267,7 @@ export class OrdersManagement implements OnInit {
       customerName: '',
       customerNumber: '',
       productId: null, 
-      productSerialNumber: '',
+      serialSuffix: '', 
       billDate: new Date(), 
       billPhotoBase64: '' 
     });

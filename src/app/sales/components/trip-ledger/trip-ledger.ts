@@ -16,7 +16,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   selector: 'app-trip-ledger',
   imports: [
     CommonModule, ReactiveFormsModule, ButtonModule, 
-    TableList, InputText, SelectComponent,InputDateComponent
+    TableList, SelectComponent,InputDateComponent
   ],
   templateUrl: './trip-ledger.html',
   styleUrl: './trip-ledger.scss',
@@ -108,7 +108,6 @@ export class TripLedger {
     
     this.tripService.getTripReport(payload).subscribe({
       next: (res: any) => {
-        // FIX: Handle both direct arrays and wrapped responses
         if (Array.isArray(res)) {
           this.tableData = [...res]; 
         } else if (res && res.success && res.data) {
@@ -134,6 +133,5 @@ export class TripLedger {
       toDate: this.getTodayStr()
     });
     this.showDateRange = false; 
-    // `valueChanges` catches this reset and automatically clears the table for you.
   }
 }
