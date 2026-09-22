@@ -52,11 +52,10 @@ export class TripLedger {
   });
 
   constructor() {
-    // NEW: Real-time Reactive API Fetching
     this.reportForm.valueChanges
       .pipe(
-        debounceTime(300), // Waits 300ms after the last UI interaction before firing
-        takeUntilDestroyed()
+        debounceTime(300), 
+        takeUntilDestroyed  ()
       )
       .subscribe(() => {
         // Only fetch if a Sales Person is selected and dates are valid
@@ -72,7 +71,6 @@ export class TripLedger {
 
   ngOnInit(): void {
     this.loadDropdownData();
-    // Removed the fetch call from here; it stays empty until a user is picked!
   }
 
   loadDropdownData() {
@@ -80,7 +78,7 @@ export class TripLedger {
       if (res.success && res.data) {
         this.salesPersonOptions = res.data.map(sp => ({ 
           label: sp.fullName, 
-          value: sp.userId 
+          value: sp.salesPersonId 
         }));
       }
     });
@@ -88,9 +86,7 @@ export class TripLedger {
 
   toggleDateRange() {
     this.showDateRange = !this.showDateRange;
-    
-    // Instantly reset dates to today if they turn off the toggle.
-    // This will trigger `valueChanges`, automatically re-fetching the data!
+
     if (!this.showDateRange) {
       this.reportForm.patchValue({
         fromDate: this.getTodayStr(),
@@ -108,10 +104,14 @@ export class TripLedger {
       fromDate: this.reportForm.value.fromDate!,
       toDate: this.reportForm.value.toDate!
     };
-
+    console.warn('Fetching trip report with payload:', payload);
+    
     this.tripService.getTripReport(payload).subscribe({
-      next: (res) => {
-        if (res.success && res.data) {
+      next: (res: any) => {
+        // FIX: Handle both direct arrays and wrapped responses
+        if (Array.isArray(res)) {
+          this.tableData = [...res]; 
+        } else if (res && res.success && res.data) {
           this.tableData = [...res.data]; 
         } else {
           this.tableData = [];
