@@ -27,15 +27,14 @@ export interface TripPing {
   capturedAt: string; // ISO string
 }
 
-// NEW: Model for the leads returned in the pings response
 export interface TripLead {
   latitude: number;
   longitude: number;
-  leadName: string | null;
+  name: string | null;
 }
 
 // NEW: Wrapper model for the updated endpoint response
 export interface TripPingsResponse {
   pings: TripPing[];
-  leads: TripLead[];
+  waypoints: TripLead[];
 }

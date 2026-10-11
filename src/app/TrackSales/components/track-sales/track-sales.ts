@@ -136,12 +136,24 @@ export class TrackSales implements OnInit, OnDestroy {
   }
 
   private processMapData(response: any) {
-    // Navigate the response wrapper assuming it uses your BaseApiService standard (res.data)
     const payload = response?.data || response;
     const pingsArray = payload?.pings || [];
-    const leadsArray = payload?.leads || [];
+    const waypointsArray = payload?.waypoints || []; 
 
-    // 1. Process Route Pings
+    const specialTags: GeoTag[] = [];
+
+    if (waypointsArray && waypointsArray.length > 0) {
+      waypointsArray
+        .filter((wp: any) => wp.longitude != null && wp.latitude != null)
+        .forEach((wp: any) => {
+          specialTags.push({
+            title: wp.name || 'Unnamed Location', 
+            coordinates: [wp.longitude, wp.latitude] as LngLat
+          });
+        });
+    }
+
+    // 2. Process Route Pings
     if (pingsArray && pingsArray.length > 0) {
       const coordinates: LngLat[] = pingsArray
         .filter((p: any) => p.longitude != null && p.latitude != null)
@@ -150,24 +162,14 @@ export class TrackSales implements OnInit, OnDestroy {
       if (coordinates.length > 0) {
         this.userHistoryCoords.set(coordinates);
         this.currentPushedLocation.set(coordinates[coordinates.length - 1]);
+        this.tripTags.set(specialTags);
+        return;
       }
-    } else if (this.viewMode === 'history') {
-      this.clearMapData();
-      return; // Exit early if no route data
     }
 
-    // 2. Process Leads into dynamic GeoTags
-    if (leadsArray && leadsArray.length > 0) {
-      const specialTags: GeoTag[] = leadsArray
-        .filter((lead: any) => lead.longitude != null && lead.latitude != null)
-        .map((lead: any) => ({
-          title: lead.leadName || 'Unnamed Lead', // Fallback if leadName is null
-          coordinates: [lead.longitude, lead.latitude] as LngLat
-        }));
-      
-      this.tripTags.set(specialTags);
-    } else {
-      this.tripTags.set([]);
+    // Fallback if no valid route data
+    if (this.viewMode === 'history') {
+      this.clearMapData();
     }
   }
 
