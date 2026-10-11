@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from '../../common/base-api-service';
 import { ApiResponse } from '../../common/ApiConstants';
 import { TripEndpoints } from '../../common/ApiConstants';
-import { Trip, TripPing } from '../models/trip.model';
+import { Trip, TripPing, TripPingsResponse } from '../models/trip.model';
 import { TripReportRequest, TripReportResponse } from '../models/trip-report.model';
 
 @Injectable({
@@ -31,13 +31,13 @@ export class TripService {
   }
 
   /**
-   * Fetches the location pings (tracking coordinates) for a specific trip ID.
+   * Fetches the location pings and leads for a specific trip ID.
    */
-  getTripPings(tripId: number): Observable<ApiResponse<TripPing[]>> {
-    return this.baseApi.request<ApiResponse<TripPing[]>>(
+  getTripPings(tripId: number): Observable<ApiResponse<TripPingsResponse>> {
+    return this.baseApi.request<ApiResponse<TripPingsResponse>>(
       TripEndpoints.GET_TRIP_PINGS,
-      undefined, // No body for GET
-      { pathParams: { tripId } } // BaseApi will replace {tripId} in the URL
+      undefined, 
+      { pathParams: { tripId } } 
     );
   }
 

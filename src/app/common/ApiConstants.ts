@@ -19,6 +19,7 @@ export const ApiEndpoints = {
   GET_DEALER_BY_ID: { url: '/api/dealers/{dealerId}', method: 'GET' },
   UPDATE_DEALER:    { url: '/api/dealers/{dealerId}', method: 'PUT' },
   DELETE_DEALER:    { url: '/api/dealers/{dealerId}', method: 'DELETE' }
+  
 } as const;
 
 export const OrderEndpoints = {
@@ -92,4 +93,8 @@ export const AreaEndpoints = {
   CREATE_AREA: { url: '/api/areas', method: 'POST' },
   UPDATE_AREA: { url: '/api/areas/{id}', method: 'PUT' },
   DELETE_AREA: { url: '/api/areas/{id}', method: 'DELETE' }
+} as const;
+
+export const DistributorEndpoints = {
+  GET_DISTRIBUTORS: { url : '/api/distributors', method: 'GET' },  
 } as const;
