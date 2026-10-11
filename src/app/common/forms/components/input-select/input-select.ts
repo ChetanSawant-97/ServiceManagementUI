@@ -23,7 +23,7 @@ export class SelectComponent {
   labelStyleClasses = input<string>('');
   placeholder = input<string>('');
   size = input<'s' | 'm' | 'l'>('s'); 
-  
+  showClear = input<boolean>(false);
   // NEW: Tell PrimeNG which object keys to use. Defaults to 'label' and 'value'.
   optionLabel = input<string>('label');
   optionValue = input<string>('value');

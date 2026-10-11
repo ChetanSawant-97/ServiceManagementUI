@@ -38,6 +38,10 @@ export const routes: Routes = [
             {
                 path : 'dealer',
                 loadComponent: () => import('./dealer/dealer-management/dealer-management').then(m => m.DealerManagement)
+            },
+            {
+                path : 'leads',
+                loadComponent: () => import('./dealer/leads-management/leads-management').then(m => m.LeadsManagement)
             }
         ]
     },

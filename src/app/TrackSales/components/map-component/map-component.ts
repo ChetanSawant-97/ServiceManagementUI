@@ -1,13 +1,16 @@
 import { Component, OnInit, computed, input } from '@angular/core';
 import { NgxMapLibreGLModule } from '@maplibre/ngx-maplibre-gl';
-import type { Feature, LineString, Point } from 'geojson';
+import type { Feature, FeatureCollection, LineString, Point } from 'geojson';
 
 import bbox from '@turf/bbox';
 import { lineString } from '@turf/helpers';
 import simplify from '@turf/simplify';
 
 export type LngLat = [number, number];
-
+export interface GeoTag {
+  coordinates: LngLat;
+  title: string;
+}
 @Component({
   selector: 'app-map-component',
   standalone: true,
@@ -20,7 +23,19 @@ export class MapComponent {
   readonly viewMode = input<'history' | 'live'>('live');
   readonly travelHistory = input<LngLat[]>([]);
   readonly liveLocation = input<LngLat | null>(null);
+  readonly geoTags = input<GeoTag[]>([]);
 
+
+  readonly tagsGeoJson = computed<FeatureCollection<Point>>(() => {
+    return {
+      type: 'FeatureCollection',
+      features: this.geoTags().map(tag => ({
+        type: 'Feature',
+        properties: { title: tag.title }, // Pass the title into the GeoJSON properties
+        geometry: { type: 'Point', coordinates: tag.coordinates }
+      }))
+    };
+  });
 
   // --- STATE CONTROL ---
 
@@ -82,3 +97,5 @@ export class MapComponent {
   // Vector style — free, no API key, no rate limits, gives street names + POI labels
   mapStyle = 'https://api.maptiler.com/maps/streets-v2/style.json?key=bClFigFUzDBCCbTEZQCI';
 }
+
+

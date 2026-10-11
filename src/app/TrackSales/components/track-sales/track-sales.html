@@ -1,3 +1,4 @@
+
 <!-- Outer wrapper -->
 <div class="flex flex-col h-full w-full rounded-xl overflow-hidden gap-2 relative">
 
@@ -33,7 +34,8 @@
       class="w-full h-full block"
       [viewMode]="viewMode"
       [travelHistory]="userHistoryCoords()"
-      [liveLocation]="currentPushedLocation()">
+      [liveLocation]="currentPushedLocation()"
+      [geoTags]="tripTags()">
     </app-map-component>
     
   </div>
