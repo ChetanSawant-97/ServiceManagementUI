@@ -4,7 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import { UiFeedbackService } from './UiFeedbackService.service';
 import { EndpointConfig } from './ApiConstants';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment.prod';
 // Import your updated ToastService
 
 export interface RequestOptions {
