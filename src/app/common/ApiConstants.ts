@@ -98,3 +98,7 @@ export const AreaEndpoints = {
 export const DistributorEndpoints = {
   GET_DISTRIBUTORS: { url : '/api/distributors', method: 'GET' },  
 } as const;
+
+export const BranchManagerEndpoints = {
+  CREATE_BRANCH_MANAGER: { url: '/api/branch-managers', method: 'POST' }
+} as const;

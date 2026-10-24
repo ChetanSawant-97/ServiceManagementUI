@@ -153,7 +153,6 @@ export class TrackSales implements OnInit, OnDestroy {
         });
     }
 
-    // 2. Process Route Pings
     if (pingsArray && pingsArray.length > 0) {
       const coordinates: LngLat[] = pingsArray
         .filter((p: any) => p.longitude != null && p.latitude != null)

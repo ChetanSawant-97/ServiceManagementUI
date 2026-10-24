@@ -57,7 +57,7 @@ export class Sidebar implements OnInit {
   private readonly allNavigationModules: NavGroup[] = [
     {
       title: 'Workspace',
-      roles: ['admin', 'sales', 'dealer'],
+      roles: ['admin', 'sales', 'dealer','branch_manager'],
       items: [
         {
           name:"Configuration",
@@ -67,23 +67,24 @@ export class Sidebar implements OnInit {
           subpages: [
             { name: 'Product Master', route: '/config/products', icon: 'pi pi-box', roles: ['admin'] },
             { name: 'Trip Master', route: '/config/tripDetails', icon: 'pi pi-calculator', roles: ['admin'] },
-            { name: 'Area Management', route: '/config/areas', icon: 'pi pi-venus', roles: ['admin'] }
+            { name: 'Area Management', route: '/config/areas', icon: 'pi pi-venus', roles: ['admin'] },
+            { name: 'Branch Manager', route: '/config/branchManager', icon: 'pi pi-user', roles: ['admin'] }
           ]
         },
         { 
           name: 'Sales', 
           route: '/sales', 
           icon: 'pi pi-chart-line', 
-          roles: ['admin', 'sales'],
+          roles: ['admin', 'sales','branch_manager'],
           subpages: [
-            { name: 'Sales Personal', route: '/sales/personal', icon: 'pi pi-user', roles: ['admin', 'sales'] },
+            { name: 'Sales Personal', route: '/sales/personal', icon: 'pi pi-user', roles: ['admin', 'sales','branch_manager'] },
             { name: 'Designation', route: '/sales/designation', icon : 'pi pi-id-card', roles: ['admin', 'sales'] }
           ]
         },
-        { name: 'Track Sales', route: '/trackSales', icon: 'pi pi-map-marker', roles: ['admin'] },
+        { name: 'Track Sales', route: '/trackSales', icon: 'pi pi-map-marker', roles: ['admin','branch_manager'] },
         { name: 'Trip Ledger', route: '/tripLedger', icon: 'pi pi-wallet', roles: ['admin'] },
-        { name: 'Dealer', route: '/dealer', icon: 'pi pi-shop', roles: ['admin', 'sales'] },
-        { name: 'Leads', route: '/leads', icon: 'pi pi-warehouse', roles: ['admin', 'sales'] },
+        { name: 'Dealer', route: '/dealer', icon: 'pi pi-shop', roles: ['admin', 'sales','branch_manager'] },
+        { name: 'Leads', route: '/leads', icon: 'pi pi-warehouse', roles: ['admin', 'sales','branch_manager'] },
         { name: 'Orders', route: '/orders', icon: 'pi pi-box', roles: ['admin', 'sales', 'dealer'] }
       ]
     }
@@ -93,7 +94,6 @@ export class Sidebar implements OnInit {
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
         this.expanded.set(false);
     }
-
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
@@ -106,8 +106,6 @@ export class Sidebar implements OnInit {
   // Corrected filtering logic to match a single role string against the arrays
   protected readonly filteredNavigation = computed(() => {
     const currentRole = this.userRole();
-
-    // Safety check: if no role exists, show nothing
     if (!currentRole) return [];
 
     return this.allNavigationModules
@@ -118,7 +116,10 @@ export class Sidebar implements OnInit {
           .filter(item => item.roles.includes(currentRole))
           .map(item => ({
             ...item,
-            subpages: item.subpages?.filter(sub => sub.roles.includes(currentRole))
+            subpages: item.subpages?.filter(sub => {
+              console.warn('Subpage Roles:', sub.roles); // Debug log
+              return sub.roles.includes(currentRole);
+            })
           }))
       }));
   });
