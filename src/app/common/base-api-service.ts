@@ -9,8 +9,8 @@ import { environment } from '../../environments/environment.prod';
 
 export interface RequestOptions {
   pathParams?: Record<string, string | number>;
-  showLoader?: boolean;       // Default is true, set to false for silent background requests
-  successMessage?: string;    // If provided, automatically pops a success toast
+  showLoader?: boolean;       
+  successMessage?: string;    
 }
 
 @Injectable({

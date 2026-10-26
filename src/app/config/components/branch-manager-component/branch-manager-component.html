@@ -1,0 +1,64 @@
+<!-- Outer wrapper (Scrollable if needed) -->
+<div class="flex flex-col h-full w-full rounded-xl gap-4 relative overflow-y-auto pb-4">
+
+  <!-- TOP DIV: Header section (Full Width) -->
+  <div class="w-full flex flex-col bg-[var(--bg-2)] border border-[var(--line)] px-5 py-3 rounded-[30px] items-center justify-between shrink-0">
+    <div class="flex w-full justify-between items-center">
+      <h2 class="text-base md:text-lg font-medium md:font-semibold text-gray-800">Create Branch Manager</h2>
+    </div>
+  </div>
+
+  <!-- Main Content Container (Constrained Width & Centered on Desktop) -->
+  <div class="w-full md:max-w-md md:mx-auto flex flex-col bg-white border border-[var(--line)] rounded-xl shadow-sm overflow-hidden p-4 md:p-6 shrink-0 mt-2">
+    
+    <form class="flex flex-col gap-6" [formGroup]="managerForm">
+      
+      <!-- Form Fields -->
+      <div class="flex flex-col gap-5">
+        
+        <app-input-text 
+          class="w-full block" 
+          [control]="managerForm.controls.username" 
+          label="Login Username">
+        </app-input-text>
+
+        <app-input-password 
+          class="w-full block" 
+          [control]="managerForm.controls.password" 
+          [requireConfirm]="true"
+          label="Login Password">
+        </app-input-password>
+
+      </div>
+
+      <!-- FORM ACTIONS -->
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 border-t border-gray-100 mt-2">
+        
+        <!-- Unified Error Display -->
+        <span class="text-red-600 text-xs md:text-sm italic w-full sm:w-auto text-left">{{ currentFormError }}</span>
+        
+        <!-- PrimeNG Buttons -->
+        <div class="flex gap-2 w-full sm:w-auto justify-end shrink-0">
+          <p-button 
+            label="Clear" 
+            [outlined]="true" 
+            severity="secondary" 
+            styleClass="!text-sm w-full sm:w-auto" 
+            (onClick)="clearForm()" />
+          
+          <p-button 
+            label="Save" 
+            severity="success" 
+            styleClass="!text-sm w-full sm:w-auto" 
+            (onClick)="saveManager()" 
+            [disabled]="managerForm.invalid" 
+            [loading]="isSaving" />
+        </div>
+
+      </div>
+      
+    </form>
+
+  </div>
+
+</div>

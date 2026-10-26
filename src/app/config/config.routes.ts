@@ -14,4 +14,8 @@ export const routes: Routes = [
         path: 'areas',
         loadComponent: () => import('./components/areas-component/areas-component').then(m => m.AreasComponent),
     },
+    {
+        path: 'branchManager',
+        loadComponent: () => import('./components/branch-manager-component/branch-manager-component').then(m => m.BranchManagerComponent),
+    },
 ];
